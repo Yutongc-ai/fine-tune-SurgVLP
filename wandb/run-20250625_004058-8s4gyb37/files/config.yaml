@@ -1,0 +1,93 @@
+wandb_version: 1
+
+_wandb:
+  desc: null
+  value:
+    cli_version: 0.13.5
+    framework: huggingface
+    huggingface_version: 4.30.2
+    is_jupyter_run: false
+    is_kaggle_kernel: false
+    python_version: 3.8.20
+    start_time: 1750783258.292718
+    t:
+      1:
+      - 1
+      - 11
+      - 41
+      - 49
+      - 51
+      - 55
+      - 82
+      2:
+      - 1
+      - 11
+      - 41
+      - 49
+      - 51
+      - 55
+      - 82
+      3:
+      - 2
+      - 13
+      - 16
+      - 23
+      4: 3.8.20
+      5: 0.13.5
+      6: 4.30.2
+      8:
+      - 5
+attention_pooling:
+  desc: null
+  value: false
+batch_size:
+  desc: null
+  value: 64
+cache_dir:
+  desc: null
+  value: /home/yongxuan/SurgVLP/cache
+dataset_config:
+  desc: null
+  value:
+    dataset_root: /home/yongxuan/datasets/cholec80
+    num_classes: 7
+epochs:
+  desc: null
+  value: 30
+lr:
+  desc: null
+  value: 0.001
+model_config:
+  desc: null
+  value:
+    backbone_img:
+      backbone_name: resnet_50
+      img_norm: false
+      num_classes: 768
+      pretrained: imagenet
+      type: img_backbones/ImageEncoder
+    backbone_text:
+      text_agg_tokens: true
+      text_aggregate_method: sum
+      text_bert_type: emilyalsentzer/Bio_ClinicalBERT
+      text_embedding_dim: 768
+      text_freeze_bert: false
+      text_last_n_layers: 4
+      text_norm: false
+      type: text_backbones/BertEncoder
+    type: SurgVLP
+num_shots:
+  desc: null
+  value: 4
+preload_local_features:
+  desc: null
+  value: true
+tasks:
+  desc: null
+  value: 5
+unfreeze:
+  desc: null
+  value: true
+unfreeze_layer:
+  desc: null
+  value: last

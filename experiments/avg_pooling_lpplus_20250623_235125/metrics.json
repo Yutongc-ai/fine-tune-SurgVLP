@@ -1,0 +1,40 @@
+{
+    "classnames": [
+        "Grasper",
+        "Bipolar",
+        "Hook",
+        "Scissors",
+        "Clipper",
+        "Irrigator",
+        "SpecimenBag"
+    ],
+    "templates": {
+        "Grasper": "I use grasper tor cautery forcep to grasp it",
+        "Bipolar": "I use bipolar to coagulate and clean the bleeding",
+        "Hook": "I use hook to dissect it",
+        "Scissors": "I use scissors",
+        "Clipper": "I use clipper to clip it",
+        "Irrigator": "I use irrigator to suck it",
+        "SpecimenBag": "I use specimenbag to wrap it"
+    },
+    "start_time": "2025-06-23 23:41:08",
+    "metrics": {
+        "batch_size": 64,
+        "num_shots": 4,
+        "tasks": "5",
+        "epochs": 200,
+        "precision_avg": 0.227,
+        "precision_std": 0.0373,
+        "precision_min": 0.1711,
+        "precision_max": 0.2711,
+        "recall_avg": 0.6337,
+        "recall_std": 0.1404,
+        "recall_min": 0.4241,
+        "recall_max": 0.8138,
+        "f1_avg": 0.3298,
+        "f1_std": 0.0495,
+        "f1_min": 0.2766,
+        "f1_max": 0.3989
+    },
+    "method_class": "avg_pooling_lpplus"
+}

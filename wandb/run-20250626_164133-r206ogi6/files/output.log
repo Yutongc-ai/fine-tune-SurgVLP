@@ -1,0 +1,628 @@
+/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/huggingface_hub/file_download.py:943: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/yongxuan/SurgVLP/datasets/utils.py:74: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  features = torch.load(f"{cfg.cache_dir}/{split}local_f_part{part_idx}.pt")
+loading num parts:  0
+loading num parts:  1
+/home/yongxuan/SurgVLP/datasets/utils.py:75: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  labels = torch.load(f"{cfg.cache_dir}/{split}local_l_part{part_idx}.pt")
+loading num parts:  2
+loading num parts:  3
+loading num parts:  4
+num_shots is  1
+num_shots is  1
+Epoch 1 Loss: 1.1130 Alpha: tensor([0.2010, 0.1990, 0.2010, 0.1990, 0.1990, 0.1990, 0.1990],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 1 best val f1 0.2128 test f1 0.30620673298835754
+Epoch 2 Loss: 1.1046 Alpha: tensor([0.2020, 0.1980, 0.2020, 0.1980, 0.1980, 0.1980, 0.1980],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 3 Loss: 1.0962 Alpha: tensor([0.2030, 0.1970, 0.2030, 0.1970, 0.1970, 0.1970, 0.1970],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 4 Loss: 1.0879 Alpha: tensor([0.2040, 0.1960, 0.2040, 0.1960, 0.1960, 0.1960, 0.1960],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 5 Loss: 1.0797 Alpha: tensor([0.2050, 0.1950, 0.2049, 0.1950, 0.1950, 0.1950, 0.1950],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 6 Loss: 1.0715 Alpha: tensor([0.2060, 0.1940, 0.2058, 0.1940, 0.1940, 0.1940, 0.1940],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 7 Loss: 1.0634 Alpha: tensor([0.2069, 0.1930, 0.2068, 0.1930, 0.1930, 0.1930, 0.1930],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 8 Loss: 1.0554 Alpha: tensor([0.2079, 0.1920, 0.2076, 0.1920, 0.1920, 0.1920, 0.1920],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 9 Loss: 1.0474 Alpha: tensor([0.2089, 0.1910, 0.2084, 0.1910, 0.1910, 0.1910, 0.1910],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 10 Loss: 1.0396 Alpha: tensor([0.2098, 0.1900, 0.2092, 0.1900, 0.1900, 0.1900, 0.1900],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 11 Loss: 1.0318 Alpha: tensor([0.2108, 0.1890, 0.2099, 0.1890, 0.1890, 0.1890, 0.1890],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 12 Loss: 1.0241 Alpha: tensor([0.2117, 0.1880, 0.2105, 0.1880, 0.1880, 0.1880, 0.1880],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 12 best val f1 0.2174 test f1 0.2996233105659485
+Epoch 13 Loss: 1.0166 Alpha: tensor([0.2127, 0.1870, 0.2110, 0.1869, 0.1870, 0.1870, 0.1870],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 14 Loss: 1.0091 Alpha: tensor([0.2136, 0.1860, 0.2115, 0.1859, 0.1860, 0.1859, 0.1860],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 15 Loss: 1.0017 Alpha: tensor([0.2145, 0.1849, 0.2118, 0.1849, 0.1850, 0.1849, 0.1849],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 16 Loss: 0.9944 Alpha: tensor([0.2154, 0.1839, 0.2120, 0.1839, 0.1840, 0.1839, 0.1839],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 17 Loss: 0.9872 Alpha: tensor([0.2163, 0.1829, 0.2122, 0.1829, 0.1829, 0.1829, 0.1829],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 18 Loss: 0.9802 Alpha: tensor([0.2171, 0.1819, 0.2122, 0.1819, 0.1819, 0.1819, 0.1819],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 19 Loss: 0.9732 Alpha: tensor([0.2180, 0.1809, 0.2121, 0.1808, 0.1809, 0.1809, 0.1809],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 20 Loss: 0.9663 Alpha: tensor([0.2188, 0.1799, 0.2119, 0.1798, 0.1799, 0.1799, 0.1799],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 21 Loss: 0.9596 Alpha: tensor([0.2196, 0.1789, 0.2116, 0.1788, 0.1789, 0.1788, 0.1789],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 22 Loss: 0.9530 Alpha: tensor([0.2204, 0.1779, 0.2112, 0.1778, 0.1779, 0.1778, 0.1779],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 23 Loss: 0.9464 Alpha: tensor([0.2212, 0.1768, 0.2107, 0.1768, 0.1769, 0.1768, 0.1768],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 24 Loss: 0.9400 Alpha: tensor([0.2220, 0.1758, 0.2102, 0.1757, 0.1759, 0.1758, 0.1758],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 25 Loss: 0.9337 Alpha: tensor([0.2227, 0.1748, 0.2096, 0.1747, 0.1749, 0.1748, 0.1748],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 26 Loss: 0.9275 Alpha: tensor([0.2234, 0.1738, 0.2089, 0.1737, 0.1738, 0.1737, 0.1738],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 27 Loss: 0.9214 Alpha: tensor([0.2241, 0.1728, 0.2082, 0.1726, 0.1728, 0.1727, 0.1727],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 28 Loss: 0.9155 Alpha: tensor([0.2248, 0.1717, 0.2074, 0.1716, 0.1718, 0.1717, 0.1717],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 29 Loss: 0.9096 Alpha: tensor([0.2255, 0.1707, 0.2066, 0.1706, 0.1708, 0.1706, 0.1707],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 30 Loss: 0.9038 Alpha: tensor([0.2261, 0.1697, 0.2058, 0.1695, 0.1698, 0.1696, 0.1697],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 31 Loss: 0.8982 Alpha: tensor([0.2268, 0.1687, 0.2049, 0.1685, 0.1687, 0.1686, 0.1686],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 32 Loss: 0.8926 Alpha: tensor([0.2274, 0.1676, 0.2040, 0.1674, 0.1677, 0.1675, 0.1676],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 33 Loss: 0.8872 Alpha: tensor([0.2280, 0.1666, 0.2031, 0.1664, 0.1667, 0.1665, 0.1666],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 34 Loss: 0.8818 Alpha: tensor([0.2286, 0.1656, 0.2021, 0.1654, 0.1657, 0.1655, 0.1656],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 35 Loss: 0.8766 Alpha: tensor([0.2291, 0.1646, 0.2012, 0.1643, 0.1647, 0.1644, 0.1645],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 36 Loss: 0.8715 Alpha: tensor([0.2296, 0.1635, 0.2002, 0.1633, 0.1636, 0.1634, 0.1635],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 37 Loss: 0.8664 Alpha: tensor([0.2302, 0.1625, 0.1993, 0.1622, 0.1626, 0.1624, 0.1625],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 38 Loss: 0.8615 Alpha: tensor([0.2307, 0.1615, 0.1983, 0.1612, 0.1616, 0.1613, 0.1614],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 39 Loss: 0.8566 Alpha: tensor([0.2311, 0.1605, 0.1973, 0.1601, 0.1606, 0.1603, 0.1604],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 40 Loss: 0.8519 Alpha: tensor([0.2316, 0.1594, 0.1963, 0.1591, 0.1596, 0.1593, 0.1594],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 41 Loss: 0.8472 Alpha: tensor([0.2320, 0.1584, 0.1954, 0.1580, 0.1585, 0.1582, 0.1583],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 42 Loss: 0.8427 Alpha: tensor([0.2324, 0.1574, 0.1944, 0.1570, 0.1575, 0.1572, 0.1573],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 43 Loss: 0.8382 Alpha: tensor([0.2328, 0.1563, 0.1935, 0.1559, 0.1565, 0.1561, 0.1563],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 44 Loss: 0.8338 Alpha: tensor([0.2332, 0.1553, 0.1926, 0.1549, 0.1555, 0.1551, 0.1552],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 45 Loss: 0.8295 Alpha: tensor([0.2336, 0.1543, 0.1917, 0.1538, 0.1544, 0.1541, 0.1542],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 46 Loss: 0.8253 Alpha: tensor([0.2340, 0.1532, 0.1908, 0.1527, 0.1534, 0.1530, 0.1532],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 47 Loss: 0.8212 Alpha: tensor([0.2343, 0.1522, 0.1899, 0.1517, 0.1524, 0.1520, 0.1521],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 48 Loss: 0.8171 Alpha: tensor([0.2346, 0.1512, 0.1891, 0.1506, 0.1514, 0.1509, 0.1511],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 49 Loss: 0.8131 Alpha: tensor([0.2349, 0.1502, 0.1882, 0.1496, 0.1504, 0.1499, 0.1501],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 50 Loss: 0.8092 Alpha: tensor([0.2352, 0.1491, 0.1875, 0.1485, 0.1493, 0.1488, 0.1490],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 51 Loss: 0.8054 Alpha: tensor([0.2355, 0.1481, 0.1867, 0.1475, 0.1483, 0.1478, 0.1480],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 52 Loss: 0.8017 Alpha: tensor([0.2357, 0.1471, 0.1860, 0.1464, 0.1473, 0.1468, 0.1470],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 53 Loss: 0.7980 Alpha: tensor([0.2360, 0.1461, 0.1853, 0.1454, 0.1463, 0.1457, 0.1459],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 54 Loss: 0.7944 Alpha: tensor([0.2362, 0.1450, 0.1847, 0.1443, 0.1452, 0.1447, 0.1449],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 55 Loss: 0.7909 Alpha: tensor([0.2364, 0.1440, 0.1841, 0.1432, 0.1442, 0.1436, 0.1439],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 56 Loss: 0.7874 Alpha: tensor([0.2366, 0.1430, 0.1835, 0.1422, 0.1432, 0.1426, 0.1428],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 57 Loss: 0.7840 Alpha: tensor([0.2368, 0.1420, 0.1830, 0.1411, 0.1422, 0.1416, 0.1418],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 58 Loss: 0.7807 Alpha: tensor([0.2370, 0.1409, 0.1825, 0.1401, 0.1412, 0.1405, 0.1408],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 59 Loss: 0.7774 Alpha: tensor([0.2372, 0.1399, 0.1821, 0.1390, 0.1401, 0.1395, 0.1398],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 60 Loss: 0.7742 Alpha: tensor([0.2373, 0.1389, 0.1817, 0.1380, 0.1391, 0.1384, 0.1387],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 61 Loss: 0.7710 Alpha: tensor([0.2375, 0.1379, 0.1814, 0.1369, 0.1381, 0.1374, 0.1377],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 62 Loss: 0.7679 Alpha: tensor([0.2376, 0.1369, 0.1810, 0.1359, 0.1371, 0.1364, 0.1367],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 63 Loss: 0.7649 Alpha: tensor([0.2377, 0.1359, 0.1808, 0.1348, 0.1361, 0.1353, 0.1356],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 64 Loss: 0.7619 Alpha: tensor([0.2378, 0.1348, 0.1806, 0.1337, 0.1350, 0.1343, 0.1346],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 65 Loss: 0.7590 Alpha: tensor([0.2380, 0.1338, 0.1804, 0.1327, 0.1340, 0.1333, 0.1336],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 66 Loss: 0.7561 Alpha: tensor([0.2381, 0.1328, 0.1803, 0.1316, 0.1330, 0.1322, 0.1326],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 67 Loss: 0.7533 Alpha: tensor([0.2381, 0.1318, 0.1802, 0.1306, 0.1320, 0.1312, 0.1315],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 68 Loss: 0.7505 Alpha: tensor([0.2382, 0.1308, 0.1801, 0.1295, 0.1310, 0.1302, 0.1305],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 69 Loss: 0.7478 Alpha: tensor([0.2383, 0.1298, 0.1801, 0.1285, 0.1300, 0.1291, 0.1295],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 70 Loss: 0.7451 Alpha: tensor([0.2384, 0.1288, 0.1801, 0.1274, 0.1290, 0.1281, 0.1285],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 71 Loss: 0.7424 Alpha: tensor([0.2384, 0.1278, 0.1801, 0.1264, 0.1279, 0.1271, 0.1275],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 72 Loss: 0.7398 Alpha: tensor([0.2385, 0.1268, 0.1802, 0.1253, 0.1269, 0.1261, 0.1265],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 73 Loss: 0.7373 Alpha: tensor([0.2385, 0.1258, 0.1803, 0.1243, 0.1259, 0.1250, 0.1254],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 74 Loss: 0.7348 Alpha: tensor([0.2386, 0.1248, 0.1804, 0.1232, 0.1249, 0.1240, 0.1244],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 75 Loss: 0.7323 Alpha: tensor([0.2386, 0.1238, 0.1806, 0.1222, 0.1239, 0.1230, 0.1234],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 76 Loss: 0.7299 Alpha: tensor([0.2386, 0.1229, 0.1807, 0.1211, 0.1229, 0.1220, 0.1224],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 76 best val f1 0.2222 test f1 0.29322147369384766
+Epoch 77 Loss: 0.7275 Alpha: tensor([0.2387, 0.1219, 0.1809, 0.1201, 0.1219, 0.1209, 0.1214],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 78 Loss: 0.7252 Alpha: tensor([0.2387, 0.1209, 0.1811, 0.1191, 0.1209, 0.1199, 0.1204],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 79 Loss: 0.7229 Alpha: tensor([0.2387, 0.1199, 0.1813, 0.1180, 0.1199, 0.1189, 0.1194],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 80 Loss: 0.7206 Alpha: tensor([0.2387, 0.1189, 0.1815, 0.1170, 0.1189, 0.1179, 0.1184],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 81 Loss: 0.7183 Alpha: tensor([0.2387, 0.1180, 0.1818, 0.1159, 0.1179, 0.1169, 0.1174],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 82 Loss: 0.7161 Alpha: tensor([0.2387, 0.1170, 0.1820, 0.1149, 0.1169, 0.1158, 0.1164],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 83 Loss: 0.7140 Alpha: tensor([0.2387, 0.1160, 0.1822, 0.1139, 0.1159, 0.1148, 0.1154],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 84 Loss: 0.7118 Alpha: tensor([0.2387, 0.1150, 0.1825, 0.1128, 0.1149, 0.1138, 0.1144],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 85 Loss: 0.7097 Alpha: tensor([0.2387, 0.1141, 0.1827, 0.1118, 0.1139, 0.1128, 0.1134],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 86 Loss: 0.7077 Alpha: tensor([0.2387, 0.1131, 0.1830, 0.1107, 0.1129, 0.1118, 0.1124],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 87 Loss: 0.7056 Alpha: tensor([0.2387, 0.1122, 0.1832, 0.1097, 0.1119, 0.1108, 0.1114],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 88 Loss: 0.7036 Alpha: tensor([0.2386, 0.1112, 0.1835, 0.1087, 0.1109, 0.1098, 0.1104],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 89 Loss: 0.7016 Alpha: tensor([0.2386, 0.1103, 0.1837, 0.1076, 0.1099, 0.1088, 0.1094],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 90 Loss: 0.6997 Alpha: tensor([0.2386, 0.1093, 0.1839, 0.1066, 0.1089, 0.1078, 0.1084],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 91 Loss: 0.6977 Alpha: tensor([0.2386, 0.1084, 0.1841, 0.1056, 0.1079, 0.1068, 0.1074],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 92 Loss: 0.6958 Alpha: tensor([0.2386, 0.1074, 0.1844, 0.1046, 0.1069, 0.1058, 0.1065],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 93 Loss: 0.6940 Alpha: tensor([0.2385, 0.1065, 0.1846, 0.1035, 0.1060, 0.1048, 0.1055],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 94 Loss: 0.6921 Alpha: tensor([0.2385, 0.1056, 0.1848, 0.1025, 0.1050, 0.1038, 0.1045],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 95 Loss: 0.6903 Alpha: tensor([0.2385, 0.1046, 0.1850, 0.1015, 0.1040, 0.1028, 0.1035],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 96 Loss: 0.6885 Alpha: tensor([0.2384, 0.1037, 0.1851, 0.1005, 0.1030, 0.1018, 0.1025],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 97 Loss: 0.6867 Alpha: tensor([0.2384, 0.1028, 0.1853, 0.0994, 0.1020, 0.1008, 0.1016],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 98 Loss: 0.6850 Alpha: tensor([0.2384, 0.1019, 0.1855, 0.0984, 0.1010, 0.0998, 0.1006],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 99 Loss: 0.6833 Alpha: tensor([0.2383, 0.1010, 0.1856, 0.0974, 0.1001, 0.0988, 0.0996],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 100 Loss: 0.6816 Alpha: tensor([0.2383, 0.1001, 0.1858, 0.0964, 0.0991, 0.0978, 0.0987],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 101 Loss: 0.6799 Alpha: tensor([0.2383, 0.0991, 0.1859, 0.0954, 0.0981, 0.0968, 0.0977],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 102 Loss: 0.6782 Alpha: tensor([0.2382, 0.0982, 0.1860, 0.0944, 0.0971, 0.0959, 0.0968],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 103 Loss: 0.6766 Alpha: tensor([0.2382, 0.0973, 0.1861, 0.0933, 0.0962, 0.0949, 0.0958],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 104 Loss: 0.6750 Alpha: tensor([0.2381, 0.0965, 0.1862, 0.0923, 0.0952, 0.0939, 0.0948],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 104 best val f1 0.2286 test f1 0.3040858209133148
+Epoch 105 Loss: 0.6734 Alpha: tensor([0.2381, 0.0956, 0.1863, 0.0913, 0.0942, 0.0929, 0.0939],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 106 Loss: 0.6718 Alpha: tensor([0.2381, 0.0947, 0.1864, 0.0903, 0.0933, 0.0919, 0.0929],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 107 Loss: 0.6703 Alpha: tensor([0.2380, 0.0938, 0.1865, 0.0893, 0.0923, 0.0910, 0.0920],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 108 Loss: 0.6687 Alpha: tensor([0.2380, 0.0929, 0.1865, 0.0883, 0.0913, 0.0900, 0.0910],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 109 Loss: 0.6672 Alpha: tensor([0.2379, 0.0921, 0.1866, 0.0873, 0.0904, 0.0890, 0.0901],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 110 Loss: 0.6657 Alpha: tensor([0.2379, 0.0912, 0.1866, 0.0863, 0.0894, 0.0880, 0.0892],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 111 Loss: 0.6642 Alpha: tensor([0.2378, 0.0903, 0.1867, 0.0853, 0.0884, 0.0871, 0.0882],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 112 Loss: 0.6628 Alpha: tensor([0.2378, 0.0895, 0.1867, 0.0843, 0.0875, 0.0861, 0.0873],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 113 Loss: 0.6613 Alpha: tensor([0.2378, 0.0886, 0.1868, 0.0833, 0.0865, 0.0852, 0.0864],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 114 Loss: 0.6599 Alpha: tensor([0.2377, 0.0878, 0.1868, 0.0823, 0.0856, 0.0842, 0.0854],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 115 Loss: 0.6585 Alpha: tensor([0.2377, 0.0869, 0.1869, 0.0813, 0.0846, 0.0832, 0.0845],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 116 Loss: 0.6571 Alpha: tensor([0.2376, 0.0861, 0.1869, 0.0803, 0.0837, 0.0823, 0.0836],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 117 Loss: 0.6558 Alpha: tensor([0.2376, 0.0852, 0.1869, 0.0793, 0.0827, 0.0813, 0.0827],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 118 Loss: 0.6544 Alpha: tensor([0.2376, 0.0844, 0.1869, 0.0783, 0.0818, 0.0804, 0.0818],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 119 Loss: 0.6531 Alpha: tensor([0.2375, 0.0836, 0.1870, 0.0773, 0.0808, 0.0794, 0.0808],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 120 Loss: 0.6517 Alpha: tensor([0.2375, 0.0828, 0.1870, 0.0763, 0.0799, 0.0785, 0.0799],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 121 Loss: 0.6504 Alpha: tensor([0.2374, 0.0820, 0.1870, 0.0753, 0.0789, 0.0775, 0.0790],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 122 Loss: 0.6491 Alpha: tensor([0.2374, 0.0811, 0.1870, 0.0744, 0.0780, 0.0766, 0.0781],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 123 Loss: 0.6479 Alpha: tensor([0.2374, 0.0803, 0.1870, 0.0734, 0.0771, 0.0756, 0.0772],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 124 Loss: 0.6466 Alpha: tensor([0.2373, 0.0795, 0.1871, 0.0724, 0.0761, 0.0747, 0.0763],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 125 Loss: 0.6454 Alpha: tensor([0.2373, 0.0787, 0.1871, 0.0714, 0.0752, 0.0738, 0.0754],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 126 Loss: 0.6441 Alpha: tensor([0.2372, 0.0780, 0.1871, 0.0704, 0.0743, 0.0728, 0.0745],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 127 Loss: 0.6429 Alpha: tensor([0.2372, 0.0772, 0.1871, 0.0695, 0.0733, 0.0719, 0.0737],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 128 Loss: 0.6417 Alpha: tensor([0.2372, 0.0764, 0.1872, 0.0685, 0.0724, 0.0710, 0.0728],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 129 Loss: 0.6405 Alpha: tensor([0.2371, 0.0756, 0.1872, 0.0675, 0.0715, 0.0700, 0.0719],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 130 Loss: 0.6393 Alpha: tensor([0.2371, 0.0749, 0.1872, 0.0665, 0.0705, 0.0691, 0.0710],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 130 best val f1 0.2353 test f1 0.32371702790260315
+Epoch 131 Loss: 0.6382 Alpha: tensor([0.2371, 0.0741, 0.1872, 0.0656, 0.0696, 0.0682, 0.0701],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 132 Loss: 0.6370 Alpha: tensor([0.2370, 0.0733, 0.1872, 0.0646, 0.0687, 0.0673, 0.0693],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 133 Loss: 0.6359 Alpha: tensor([0.2370, 0.0726, 0.1873, 0.0636, 0.0678, 0.0664, 0.0684],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 134 Loss: 0.6348 Alpha: tensor([0.2370, 0.0718, 0.1873, 0.0627, 0.0669, 0.0654, 0.0676],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 135 Loss: 0.6337 Alpha: tensor([0.2369, 0.0711, 0.1873, 0.0617, 0.0660, 0.0645, 0.0667],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 136 Loss: 0.6326 Alpha: tensor([0.2369, 0.0704, 0.1874, 0.0607, 0.0650, 0.0636, 0.0658],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 137 Loss: 0.6315 Alpha: tensor([0.2369, 0.0696, 0.1874, 0.0598, 0.0641, 0.0627, 0.0650],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 138 Loss: 0.6304 Alpha: tensor([0.2368, 0.0689, 0.1874, 0.0588, 0.0632, 0.0618, 0.0641],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 139 Loss: 0.6293 Alpha: tensor([0.2368, 0.0682, 0.1874, 0.0579, 0.0623, 0.0609, 0.0633],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 140 Loss: 0.6283 Alpha: tensor([0.2368, 0.0675, 0.1875, 0.0569, 0.0614, 0.0600, 0.0625],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 141 Loss: 0.6273 Alpha: tensor([0.2368, 0.0668, 0.1875, 0.0559, 0.0605, 0.0591, 0.0616],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 142 Loss: 0.6262 Alpha: tensor([0.2367, 0.0661, 0.1875, 0.0550, 0.0596, 0.0582, 0.0608],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 143 Loss: 0.6252 Alpha: tensor([0.2367, 0.0654, 0.1876, 0.0540, 0.0587, 0.0573, 0.0600],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 144 Loss: 0.6242 Alpha: tensor([0.2367, 0.0647, 0.1876, 0.0531, 0.0578, 0.0564, 0.0591],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 145 Loss: 0.6232 Alpha: tensor([0.2367, 0.0640, 0.1876, 0.0522, 0.0570, 0.0555, 0.0583],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 146 Loss: 0.6222 Alpha: tensor([0.2366, 0.0633, 0.1876, 0.0512, 0.0561, 0.0546, 0.0575],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 147 Loss: 0.6213 Alpha: tensor([0.2366, 0.0627, 0.1877, 0.0503, 0.0552, 0.0538, 0.0567],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 148 Loss: 0.6203 Alpha: tensor([0.2366, 0.0620, 0.1877, 0.0493, 0.0543, 0.0529, 0.0559],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 149 Loss: 0.6194 Alpha: tensor([0.2366, 0.0613, 0.1877, 0.0484, 0.0534, 0.0520, 0.0551],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 150 Loss: 0.6184 Alpha: tensor([0.2365, 0.0607, 0.1878, 0.0475, 0.0525, 0.0511, 0.0543],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 150 best val f1 0.2424 test f1 0.35169026255607605
+Epoch 151 Loss: 0.6175 Alpha: tensor([0.2365, 0.0600, 0.1878, 0.0465, 0.0517, 0.0502, 0.0535],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 152 Loss: 0.6166 Alpha: tensor([0.2365, 0.0594, 0.1878, 0.0456, 0.0508, 0.0494, 0.0527],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 153 Loss: 0.6157 Alpha: tensor([0.2365, 0.0587, 0.1878, 0.0447, 0.0499, 0.0485, 0.0519],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 154 Loss: 0.6148 Alpha: tensor([0.2365, 0.0581, 0.1878, 0.0437, 0.0490, 0.0476, 0.0511],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 155 Loss: 0.6139 Alpha: tensor([0.2364, 0.0575, 0.1879, 0.0428, 0.0482, 0.0468, 0.0503],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 155 best val f1 0.2500 test f1 0.3615029752254486
+Epoch 156 Loss: 0.6131 Alpha: tensor([0.2364, 0.0569, 0.1879, 0.0419, 0.0473, 0.0459, 0.0496],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 157 Loss: 0.6122 Alpha: tensor([0.2364, 0.0563, 0.1879, 0.0409, 0.0465, 0.0451, 0.0488],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 158 Loss: 0.6113 Alpha: tensor([0.2364, 0.0557, 0.1879, 0.0400, 0.0456, 0.0442, 0.0480],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 159 Loss: 0.6105 Alpha: tensor([0.2364, 0.0551, 0.1879, 0.0391, 0.0447, 0.0434, 0.0473],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 160 Loss: 0.6097 Alpha: tensor([0.2364, 0.0545, 0.1880, 0.0382, 0.0439, 0.0425, 0.0465],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 161 Loss: 0.6088 Alpha: tensor([0.2363, 0.0539, 0.1880, 0.0373, 0.0430, 0.0417, 0.0458],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 162 Loss: 0.6080 Alpha: tensor([0.2363, 0.0533, 0.1880, 0.0364, 0.0422, 0.0408, 0.0450],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 163 Loss: 0.6072 Alpha: tensor([0.2363, 0.0527, 0.1880, 0.0354, 0.0414, 0.0400, 0.0443],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 164 Loss: 0.6064 Alpha: tensor([0.2363, 0.0521, 0.1880, 0.0345, 0.0405, 0.0391, 0.0435],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 164 best val f1 0.2581 test f1 0.3837221562862396
+Epoch 165 Loss: 0.6056 Alpha: tensor([0.2363, 0.0516, 0.1880, 0.0336, 0.0397, 0.0383, 0.0428],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 165 best val f1 0.2667 test f1 0.38668933510780334
+Epoch 166 Loss: 0.6049 Alpha: tensor([0.2363, 0.0510, 0.1880, 0.0327, 0.0388, 0.0375, 0.0421],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 167 Loss: 0.6041 Alpha: tensor([0.2363, 0.0505, 0.1881, 0.0318, 0.0380, 0.0367, 0.0414],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 168 Loss: 0.6033 Alpha: tensor([0.2362, 0.0499, 0.1881, 0.0309, 0.0372, 0.0358, 0.0406],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 169 Loss: 0.6026 Alpha: tensor([0.2362, 0.0494, 0.1881, 0.0300, 0.0364, 0.0350, 0.0399],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 170 Loss: 0.6019 Alpha: tensor([0.2362, 0.0488, 0.1881, 0.0291, 0.0355, 0.0342, 0.0392],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 171 Loss: 0.6011 Alpha: tensor([0.2362, 0.0483, 0.1881, 0.0282, 0.0347, 0.0334, 0.0385],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 172 Loss: 0.6004 Alpha: tensor([0.2362, 0.0478, 0.1881, 0.0273, 0.0339, 0.0326, 0.0378],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 172 best val f1 0.2759 test f1 0.41037705540657043
+Epoch 173 Loss: 0.5997 Alpha: tensor([0.2362, 0.0473, 0.1881, 0.0264, 0.0331, 0.0318, 0.0371],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 174 Loss: 0.5990 Alpha: tensor([0.2362, 0.0468, 0.1881, 0.0256, 0.0323, 0.0309, 0.0364],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 174 best val f1 0.2963 test f1 0.4174501597881317
+Epoch 175 Loss: 0.5983 Alpha: tensor([0.2362, 0.0463, 0.1881, 0.0247, 0.0315, 0.0301, 0.0357],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 176 Loss: 0.5976 Alpha: tensor([0.2362, 0.0458, 0.1881, 0.0238, 0.0306, 0.0293, 0.0351],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 177 Loss: 0.5969 Alpha: tensor([0.2361, 0.0453, 0.1881, 0.0229, 0.0298, 0.0285, 0.0344],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 178 Loss: 0.5962 Alpha: tensor([0.2361, 0.0448, 0.1882, 0.0220, 0.0290, 0.0278, 0.0337],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 179 Loss: 0.5956 Alpha: tensor([0.2361, 0.0443, 0.1882, 0.0211, 0.0283, 0.0270, 0.0330],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 180 Loss: 0.5949 Alpha: tensor([0.2361, 0.0438, 0.1882, 0.0203, 0.0275, 0.0262, 0.0324],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 181 Loss: 0.5943 Alpha: tensor([0.2361, 0.0434, 0.1882, 0.0194, 0.0267, 0.0254, 0.0317],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 181 best val f1 0.3077 test f1 0.4411342740058899
+Epoch 182 Loss: 0.5936 Alpha: tensor([0.2361, 0.0429, 0.1882, 0.0185, 0.0259, 0.0246, 0.0311],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 183 Loss: 0.5930 Alpha: tensor([0.2361, 0.0424, 0.1882, 0.0177, 0.0251, 0.0238, 0.0304],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 184 Loss: 0.5924 Alpha: tensor([0.2361, 0.0420, 0.1882, 0.0168, 0.0243, 0.0231, 0.0298],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 184 best val f1 0.3200 test f1 0.4497527480125427
+Epoch 185 Loss: 0.5917 Alpha: tensor([0.2361, 0.0415, 0.1882, 0.0159, 0.0235, 0.0223, 0.0291],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 186 Loss: 0.5911 Alpha: tensor([0.2361, 0.0411, 0.1882, 0.0151, 0.0228, 0.0215, 0.0285],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 187 Loss: 0.5905 Alpha: tensor([0.2361, 0.0407, 0.1882, 0.0142, 0.0220, 0.0207, 0.0279],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 188 Loss: 0.5899 Alpha: tensor([0.2361, 0.0402, 0.1882, 0.0133, 0.0212, 0.0200, 0.0273],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 189 Loss: 0.5893 Alpha: tensor([0.2361, 0.0398, 0.1882, 0.0125, 0.0205, 0.0192, 0.0266],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 190 Loss: 0.5888 Alpha: tensor([0.2361, 0.0394, 0.1882, 0.0116, 0.0197, 0.0185, 0.0260],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 191 Loss: 0.5882 Alpha: tensor([0.2361, 0.0390, 0.1882, 0.0108, 0.0189, 0.0177, 0.0254],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 192 Loss: 0.5876 Alpha: tensor([0.2361, 0.0386, 0.1882, 0.0099, 0.0182, 0.0170, 0.0248],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 193 Loss: 0.5871 Alpha: tensor([0.2360, 0.0382, 0.1882, 0.0091, 0.0174, 0.0162, 0.0242],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 194 Loss: 0.5865 Alpha: tensor([0.2360, 0.0378, 0.1882, 0.0082, 0.0167, 0.0155, 0.0236],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 195 Loss: 0.5860 Alpha: tensor([0.2360, 0.0374, 0.1883, 0.0074, 0.0160, 0.0147, 0.0231],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 196 Loss: 0.5854 Alpha: tensor([0.2360, 0.0370, 0.1883, 0.0066, 0.0152, 0.0140, 0.0225],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 197 Loss: 0.5849 Alpha: tensor([0.2360, 0.0366, 0.1883, 0.0057, 0.0145, 0.0133, 0.0219],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 198 Loss: 0.5844 Alpha: tensor([0.2360, 0.0363, 0.1883, 0.0049, 0.0137, 0.0125, 0.0213],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 199 Loss: 0.5838 Alpha: tensor([0.2360, 0.0359, 0.1883, 0.0040, 0.0130, 0.0118, 0.0208],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 200 Loss: 0.5833 Alpha: tensor([0.2360, 0.0355, 0.1883, 0.0032, 0.0123, 0.0111, 0.0202],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 201 Loss: 0.5828 Alpha: tensor([0.2360, 0.0352, 0.1883, 0.0024, 0.0116, 0.0104, 0.0196],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 202 Loss: 0.5823 Alpha: tensor([0.2360, 0.0348, 0.1883, 0.0016, 0.0108, 0.0097, 0.0191],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 203 Loss: 0.5818 Alpha: tensor([0.2360, 0.0345, 0.1883, 0.0007, 0.0101, 0.0090, 0.0185],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 204 Loss: 0.5813 Alpha: tensor([ 2.3601e-01,  3.4128e-02,  1.8829e-01, -7.8647e-05,  9.4166e-03,
+         8.2450e-03,  1.8003e-02], device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 205 Loss: 0.5808 Alpha: tensor([ 0.2360,  0.0338,  0.1883, -0.0009,  0.0087,  0.0075,  0.0175],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 206 Loss: 0.5804 Alpha: tensor([ 0.2360,  0.0335,  0.1883, -0.0017,  0.0080,  0.0068,  0.0169],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 207 Loss: 0.5799 Alpha: tensor([ 0.2360,  0.0331,  0.1883, -0.0025,  0.0073,  0.0061,  0.0164],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 208 Loss: 0.5794 Alpha: tensor([ 0.2360,  0.0328,  0.1883, -0.0033,  0.0066,  0.0054,  0.0159],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 209 Loss: 0.5790 Alpha: tensor([ 0.2360,  0.0325,  0.1883, -0.0041,  0.0059,  0.0048,  0.0154],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 210 Loss: 0.5785 Alpha: tensor([ 0.2360,  0.0322,  0.1883, -0.0050,  0.0052,  0.0041,  0.0149],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 211 Loss: 0.5781 Alpha: tensor([ 0.2360,  0.0319,  0.1883, -0.0058,  0.0045,  0.0034,  0.0144],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 212 Loss: 0.5776 Alpha: tensor([ 0.2360,  0.0316,  0.1883, -0.0066,  0.0038,  0.0027,  0.0139],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 213 Loss: 0.5772 Alpha: tensor([ 0.2360,  0.0313,  0.1883, -0.0074,  0.0032,  0.0020,  0.0134],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 214 Loss: 0.5767 Alpha: tensor([ 0.2360,  0.0310,  0.1883, -0.0082,  0.0025,  0.0014,  0.0129],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 215 Loss: 0.5763 Alpha: tensor([ 0.2360,  0.0307,  0.1883, -0.0089,  0.0018,  0.0007,  0.0124],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 216 Loss: 0.5759 Alpha: tensor([ 2.3599e-01,  3.0416e-02,  1.8833e-01, -9.7375e-03,  1.1536e-03,
+         1.9032e-05,  1.1907e-02], device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 217 Loss: 0.5755 Alpha: tensor([ 0.2360,  0.0301,  0.1883, -0.0105,  0.0005, -0.0006,  0.0114],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 218 Loss: 0.5751 Alpha: tensor([ 2.3599e-01,  2.9865e-02,  1.8833e-01, -1.1312e-02, -1.7206e-04,
+        -1.3025e-03,  1.0961e-02], device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 219 Loss: 0.5747 Alpha: tensor([ 0.2360,  0.0296,  0.1883, -0.0121, -0.0008, -0.0020,  0.0105],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 220 Loss: 0.5743 Alpha: tensor([ 0.2360,  0.0293,  0.1883, -0.0129, -0.0015, -0.0026,  0.0100],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 221 Loss: 0.5739 Alpha: tensor([ 0.2360,  0.0291,  0.1883, -0.0137, -0.0021, -0.0033,  0.0096],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 222 Loss: 0.5735 Alpha: tensor([ 0.2360,  0.0288,  0.1883, -0.0144, -0.0028, -0.0039,  0.0091],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 223 Loss: 0.5731 Alpha: tensor([ 0.2360,  0.0286,  0.1883, -0.0152, -0.0034, -0.0045,  0.0087],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 224 Loss: 0.5727 Alpha: tensor([ 0.2360,  0.0283,  0.1883, -0.0160, -0.0041, -0.0052,  0.0082],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 225 Loss: 0.5723 Alpha: tensor([ 0.2360,  0.0281,  0.1883, -0.0167, -0.0047, -0.0058,  0.0078],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 226 Loss: 0.5720 Alpha: tensor([ 0.2360,  0.0278,  0.1883, -0.0175, -0.0053, -0.0064,  0.0074],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 227 Loss: 0.5716 Alpha: tensor([ 0.2360,  0.0276,  0.1883, -0.0183, -0.0060, -0.0071,  0.0069],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 228 Loss: 0.5712 Alpha: tensor([ 0.2360,  0.0274,  0.1883, -0.0190, -0.0066, -0.0077,  0.0065],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 229 Loss: 0.5709 Alpha: tensor([ 0.2360,  0.0271,  0.1884, -0.0198, -0.0072, -0.0083,  0.0061],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 230 Loss: 0.5705 Alpha: tensor([ 0.2360,  0.0269,  0.1884, -0.0205, -0.0078, -0.0089,  0.0057],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 231 Loss: 0.5702 Alpha: tensor([ 0.2360,  0.0267,  0.1884, -0.0213, -0.0084, -0.0095,  0.0053],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 232 Loss: 0.5698 Alpha: tensor([ 0.2360,  0.0265,  0.1884, -0.0220, -0.0090, -0.0102,  0.0049],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 233 Loss: 0.5695 Alpha: tensor([ 0.2360,  0.0263,  0.1884, -0.0228, -0.0096, -0.0108,  0.0045],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 234 Loss: 0.5692 Alpha: tensor([ 0.2360,  0.0261,  0.1884, -0.0235, -0.0102, -0.0114,  0.0041],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 235 Loss: 0.5688 Alpha: tensor([ 0.2360,  0.0259,  0.1884, -0.0243, -0.0108, -0.0120,  0.0037],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 236 Loss: 0.5685 Alpha: tensor([ 0.2360,  0.0257,  0.1884, -0.0250, -0.0114, -0.0125,  0.0033],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 237 Loss: 0.5682 Alpha: tensor([ 0.2360,  0.0255,  0.1884, -0.0258, -0.0120, -0.0131,  0.0029],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 238 Loss: 0.5679 Alpha: tensor([ 0.2360,  0.0253,  0.1884, -0.0265, -0.0126, -0.0137,  0.0026],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 239 Loss: 0.5676 Alpha: tensor([ 0.2360,  0.0251,  0.1884, -0.0272, -0.0132, -0.0143,  0.0022],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 240 Loss: 0.5672 Alpha: tensor([ 0.2360,  0.0249,  0.1884, -0.0280, -0.0138, -0.0149,  0.0018],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 241 Loss: 0.5669 Alpha: tensor([ 0.2360,  0.0247,  0.1884, -0.0287, -0.0143, -0.0155,  0.0015],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 242 Loss: 0.5666 Alpha: tensor([ 0.2360,  0.0246,  0.1884, -0.0294, -0.0149, -0.0160,  0.0011],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 243 Loss: 0.5663 Alpha: tensor([ 0.2360,  0.0244,  0.1884, -0.0301, -0.0155, -0.0166,  0.0008],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 244 Loss: 0.5660 Alpha: tensor([ 0.2360,  0.0242,  0.1884, -0.0308, -0.0160, -0.0172,  0.0004],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 245 Loss: 0.5658 Alpha: tensor([ 2.3598e-01,  2.4037e-02,  1.8837e-01, -3.1554e-02, -1.6582e-02,
+        -1.7732e-02,  6.3421e-05], device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 246 Loss: 0.5655 Alpha: tensor([ 0.2360,  0.0239,  0.1884, -0.0323, -0.0171, -0.0183, -0.0003],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 247 Loss: 0.5652 Alpha: tensor([ 0.2360,  0.0237,  0.1884, -0.0330, -0.0177, -0.0188, -0.0006],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 248 Loss: 0.5649 Alpha: tensor([ 0.2360,  0.0236,  0.1884, -0.0337, -0.0182, -0.0194, -0.0009],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 249 Loss: 0.5646 Alpha: tensor([ 0.2360,  0.0234,  0.1884, -0.0344, -0.0188, -0.0199, -0.0013],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 250 Loss: 0.5644 Alpha: tensor([ 0.2360,  0.0232,  0.1884, -0.0351, -0.0193, -0.0205, -0.0016],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 251 Loss: 0.5641 Alpha: tensor([ 0.2360,  0.0231,  0.1884, -0.0358, -0.0198, -0.0210, -0.0019],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 252 Loss: 0.5638 Alpha: tensor([ 0.2360,  0.0230,  0.1884, -0.0365, -0.0204, -0.0216, -0.0022],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 253 Loss: 0.5636 Alpha: tensor([ 0.2360,  0.0228,  0.1884, -0.0372, -0.0209, -0.0221, -0.0025],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 254 Loss: 0.5633 Alpha: tensor([ 0.2360,  0.0227,  0.1884, -0.0379, -0.0214, -0.0226, -0.0028],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 255 Loss: 0.5630 Alpha: tensor([ 0.2360,  0.0225,  0.1884, -0.0386, -0.0219, -0.0231, -0.0031],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 256 Loss: 0.5628 Alpha: tensor([ 0.2360,  0.0224,  0.1884, -0.0392, -0.0225, -0.0237, -0.0034],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 257 Loss: 0.5625 Alpha: tensor([ 0.2360,  0.0223,  0.1884, -0.0399, -0.0230, -0.0242, -0.0037],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 258 Loss: 0.5623 Alpha: tensor([ 0.2360,  0.0221,  0.1884, -0.0406, -0.0235, -0.0247, -0.0040],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 259 Loss: 0.5621 Alpha: tensor([ 0.2360,  0.0220,  0.1884, -0.0413, -0.0240, -0.0252, -0.0043],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 260 Loss: 0.5618 Alpha: tensor([ 0.2360,  0.0219,  0.1884, -0.0419, -0.0245, -0.0257, -0.0046],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 261 Loss: 0.5616 Alpha: tensor([ 0.2360,  0.0218,  0.1884, -0.0426, -0.0250, -0.0262, -0.0049],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 262 Loss: 0.5614 Alpha: tensor([ 0.2360,  0.0216,  0.1884, -0.0433, -0.0255, -0.0267, -0.0051],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 263 Loss: 0.5611 Alpha: tensor([ 0.2360,  0.0215,  0.1884, -0.0440, -0.0260, -0.0272, -0.0054],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 264 Loss: 0.5609 Alpha: tensor([ 0.2360,  0.0214,  0.1884, -0.0446, -0.0264, -0.0277, -0.0057],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 265 Loss: 0.5607 Alpha: tensor([ 0.2360,  0.0213,  0.1884, -0.0453, -0.0269, -0.0282, -0.0059],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 266 Loss: 0.5605 Alpha: tensor([ 0.2360,  0.0212,  0.1884, -0.0459, -0.0274, -0.0287, -0.0062],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 267 Loss: 0.5602 Alpha: tensor([ 0.2360,  0.0211,  0.1884, -0.0466, -0.0279, -0.0292, -0.0065],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 268 Loss: 0.5600 Alpha: tensor([ 0.2360,  0.0210,  0.1884, -0.0472, -0.0284, -0.0296, -0.0067],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 269 Loss: 0.5598 Alpha: tensor([ 0.2360,  0.0209,  0.1884, -0.0479, -0.0288, -0.0301, -0.0070],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 270 Loss: 0.5596 Alpha: tensor([ 0.2360,  0.0208,  0.1884, -0.0485, -0.0293, -0.0306, -0.0072],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 270 best val f1 0.3636 test f1 0.45346105098724365
+Epoch 271 Loss: 0.5594 Alpha: tensor([ 0.2360,  0.0207,  0.1884, -0.0492, -0.0297, -0.0311, -0.0074],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 272 Loss: 0.5592 Alpha: tensor([ 0.2360,  0.0206,  0.1884, -0.0498, -0.0302, -0.0315, -0.0077],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 273 Loss: 0.5590 Alpha: tensor([ 0.2360,  0.0205,  0.1884, -0.0505, -0.0306, -0.0320, -0.0079],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 274 Loss: 0.5588 Alpha: tensor([ 0.2360,  0.0204,  0.1884, -0.0511, -0.0311, -0.0324, -0.0082],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 275 Loss: 0.5586 Alpha: tensor([ 0.2360,  0.0203,  0.1884, -0.0517, -0.0315, -0.0329, -0.0084],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 276 Loss: 0.5584 Alpha: tensor([ 0.2360,  0.0202,  0.1884, -0.0523, -0.0320, -0.0333, -0.0086],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 277 Loss: 0.5582 Alpha: tensor([ 0.2360,  0.0201,  0.1884, -0.0530, -0.0324, -0.0338, -0.0088],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 278 Loss: 0.5580 Alpha: tensor([ 0.2360,  0.0201,  0.1884, -0.0536, -0.0328, -0.0342, -0.0090],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 279 Loss: 0.5578 Alpha: tensor([ 0.2360,  0.0200,  0.1884, -0.0542, -0.0333, -0.0347, -0.0093],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 280 Loss: 0.5577 Alpha: tensor([ 0.2360,  0.0199,  0.1884, -0.0548, -0.0337, -0.0351, -0.0095],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 281 Loss: 0.5575 Alpha: tensor([ 0.2360,  0.0198,  0.1884, -0.0554, -0.0341, -0.0355, -0.0097],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 282 Loss: 0.5573 Alpha: tensor([ 0.2360,  0.0198,  0.1884, -0.0561, -0.0345, -0.0360, -0.0099],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 283 Loss: 0.5571 Alpha: tensor([ 0.2360,  0.0197,  0.1884, -0.0567, -0.0350, -0.0364, -0.0101],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 284 Loss: 0.5570 Alpha: tensor([ 0.2360,  0.0196,  0.1884, -0.0573, -0.0354, -0.0368, -0.0103],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 285 Loss: 0.5568 Alpha: tensor([ 0.2360,  0.0195,  0.1884, -0.0579, -0.0358, -0.0372, -0.0105],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 286 Loss: 0.5566 Alpha: tensor([ 0.2360,  0.0195,  0.1884, -0.0585, -0.0362, -0.0377, -0.0107],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 287 Loss: 0.5564 Alpha: tensor([ 0.2360,  0.0194,  0.1884, -0.0591, -0.0366, -0.0381, -0.0109],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 288 Loss: 0.5563 Alpha: tensor([ 0.2360,  0.0193,  0.1884, -0.0597, -0.0370, -0.0385, -0.0110],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 289 Loss: 0.5561 Alpha: tensor([ 0.2360,  0.0193,  0.1884, -0.0603, -0.0374, -0.0389, -0.0112],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 289 best val f1 0.4167 test f1 0.42999595403671265
+Epoch 290 Loss: 0.5560 Alpha: tensor([ 0.2360,  0.0192,  0.1884, -0.0608, -0.0378, -0.0393, -0.0114],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 291 Loss: 0.5558 Alpha: tensor([ 0.2360,  0.0191,  0.1884, -0.0614, -0.0381, -0.0397, -0.0116],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 292 Loss: 0.5556 Alpha: tensor([ 0.2360,  0.0191,  0.1884, -0.0620, -0.0385, -0.0401, -0.0118],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 293 Loss: 0.5555 Alpha: tensor([ 0.2360,  0.0190,  0.1884, -0.0626, -0.0389, -0.0405, -0.0119],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 294 Loss: 0.5553 Alpha: tensor([ 0.2360,  0.0190,  0.1884, -0.0632, -0.0393, -0.0409, -0.0121],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 295 Loss: 0.5552 Alpha: tensor([ 0.2360,  0.0189,  0.1884, -0.0637, -0.0396, -0.0413, -0.0123],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 296 Loss: 0.5550 Alpha: tensor([ 0.2360,  0.0189,  0.1884, -0.0643, -0.0400, -0.0416, -0.0124],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 297 Loss: 0.5549 Alpha: tensor([ 0.2360,  0.0188,  0.1884, -0.0649, -0.0404, -0.0420, -0.0126],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 298 Loss: 0.5548 Alpha: tensor([ 0.2360,  0.0188,  0.1884, -0.0655, -0.0407, -0.0424, -0.0127],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 299 Loss: 0.5546 Alpha: tensor([ 0.2360,  0.0187,  0.1884, -0.0660, -0.0411, -0.0428, -0.0129],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 300 Loss: 0.5545 Alpha: tensor([ 0.2360,  0.0187,  0.1884, -0.0666, -0.0415, -0.0431, -0.0131],
+       device='cuda:0', grad_fn=<SelectBackward0>)

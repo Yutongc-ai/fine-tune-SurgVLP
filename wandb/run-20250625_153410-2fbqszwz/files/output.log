@@ -1,0 +1,18 @@
+/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/huggingface_hub/file_download.py:943: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+  0%|                                                                        | 0/408 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "few_shot.py", line 82, in <module>
+    main(configs[args.method], args.method)
+  File "few_shot.py", line 58, in main
+    metrics = method(dataset)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yongxuan/SurgVLP/methods/linear_probe_plus.py", line 176, in forward
+    test_features, test_labels = preload_local_features(self.configs, "test", self.model, test_loader)
+  File "/home/yongxuan/SurgVLP/datasets/utils.py", line 34, in preload_local_features
+    assert(0)
+AssertionError
+torch.Size([64, 2048, 7, 7])

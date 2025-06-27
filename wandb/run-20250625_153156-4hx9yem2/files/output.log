@@ -1,0 +1,28 @@
+/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/huggingface_hub/file_download.py:943: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/yongxuan/SurgVLP/datasets/utils.py:74: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  features = torch.load(f"{cfg.cache_dir}/{split}local_f_part{part_idx}.pt")
+torch.Size([7, 768])
+loading num parts:  0
+Traceback (most recent call last):
+  File "few_shot.py", line 82, in <module>
+    main(configs[args.method], args.method)
+  File "few_shot.py", line 58, in main
+    metrics = method(dataset)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yongxuan/SurgVLP/methods/linear_probe_plus.py", line 177, in forward
+    test_features, test_labels = preload_local_features(self.configs, "test", self.model, test_loader)
+  File "/home/yongxuan/SurgVLP/datasets/utils.py", line 74, in preload_local_features
+    features = torch.load(f"{cfg.cache_dir}/{split}local_f_part{part_idx}.pt")
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/serialization.py", line 1097, in load
+    return _load(
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/serialization.py", line 1525, in _load
+    result = unpickler.load()
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/serialization.py", line 1492, in persistent_load
+    typed_storage = load_tensor(dtype, nbytes, key, _maybe_decode_ascii(location))
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/serialization.py", line 1457, in load_tensor
+    storage = zip_file.get_storage_from_record(name, numel, torch.UntypedStorage)._typed_storage()._untyped_storage
+KeyboardInterrupt

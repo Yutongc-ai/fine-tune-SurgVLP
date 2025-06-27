@@ -1,0 +1,1 @@
+{"epoch_loss": 0.4011796712875366, "epoch": 99, "_timestamp": 1750676270.0226831, "_runtime": 49.272714138031006, "_step": 432, "val_f1": 0.25, "val_precision": 1.0, "val_recall": 0.1428571492433548, "test_f1": 0.31171464920043945, "test_precision": 0.18469300866127014, "test_recall": 0.9982689023017883, "_wandb": {"runtime": 37}}

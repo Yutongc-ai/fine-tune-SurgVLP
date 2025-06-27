@@ -1,0 +1,139 @@
+/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/huggingface_hub/file_download.py:943: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/yongxuan/SurgVLP/datasets/utils.py:74: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  features = torch.load(f"{cfg.cache_dir}/{split}local_f_part{part_idx}.pt")
+loading num parts:  0
+loading num parts:  1
+/home/yongxuan/SurgVLP/datasets/utils.py:75: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  labels = torch.load(f"{cfg.cache_dir}/{split}local_l_part{part_idx}.pt")
+loading num parts:  2
+loading num parts:  3
+loading num parts:  4
+ 50%|█████████████████████████████████                                 | 1/2 [00:00<00:00,  1.32it/s]
+num_shots is  16
+num_shots is  16
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:01<00:00,  1.53it/s]
+ 50%|█████████████████████████████████                                 | 1/2 [00:00<00:00,  1.97it/s]
+Epoch 1 best val f1 0.2472 test f1 0.3578542470932007
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.23it/s]
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.26it/s]
+Epoch 2 best val f1 0.5196 test f1 0.5183197855949402
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+Epoch 3 Loss: 0.0702
+  0%|                                                                          | 0/2 [00:00<?, ?it/s]
+Epoch 3 best val f1 0.5825 test f1 0.48250705003738403
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.24it/s]
+  0%|                                                                          | 0/2 [00:00<?, ?it/s]
+torch.Size([48, 49, 768])
+Epoch 4 Loss: -0.1819
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.27it/s]
+  0%|                                                                          | 0/2 [00:00<?, ?it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.20it/s]
+ 50%|█████████████████████████████████                                 | 1/2 [00:00<00:00,  1.97it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.26it/s]
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.28it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+Epoch 8 Loss: -0.3819
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.27it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+Epoch 9 Loss: -0.4182
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.24it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+Epoch 10 Loss: -0.4425
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.24it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+Epoch 11 Loss: -0.4687
+torch.Size([64, 49, 768])
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.25it/s]
+  0%|                                                                          | 0/2 [00:00<?, ?it/s]
+torch.Size([48, 49, 768])
+Epoch 12 Loss: -0.5013
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.27it/s]
+  0%|                                                                          | 0/2 [00:00<?, ?it/s]
+torch.Size([48, 49, 768])
+Epoch 13 Loss: -0.5322
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.28it/s]
+ 50%|█████████████████████████████████                                 | 1/2 [00:00<00:00,  1.98it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.28it/s]
+ 50%|█████████████████████████████████                                 | 1/2 [00:00<00:00,  1.97it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.16it/s]
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.25it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+Epoch 17 Loss: -0.6462
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.26it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+Epoch 18 Loss: -0.6713
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.25it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+Epoch 19 Loss: -0.6899
+torch.Size([64, 49, 768])
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.27it/s]
+  0%|                                                                          | 0/2 [00:00<?, ?it/s]
+torch.Size([48, 49, 768])
+Epoch 20 Loss: -0.7178
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.27it/s]
+  0%|                                                                          | 0/2 [00:00<?, ?it/s]
+torch.Size([48, 49, 768])
+Epoch 21 Loss: -0.7328
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.28it/s]
+ 50%|█████████████████████████████████                                 | 1/2 [00:00<00:00,  1.95it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.23it/s]
+ 50%|█████████████████████████████████                                 | 1/2 [00:00<00:00,  1.97it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.26it/s]
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.28it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+Epoch 25 Loss: -0.8075
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.28it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+Epoch 26 Loss: -0.8208
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.28it/s]
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+Epoch 27 Loss: -0.8346
+torch.Size([64, 49, 768])
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.26it/s]
+  0%|                                                                          | 0/2 [00:00<?, ?it/s]
+torch.Size([48, 49, 768])
+Epoch 28 Loss: -0.8461
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.28it/s]
+  0%|                                                                          | 0/2 [00:00<?, ?it/s]
+torch.Size([48, 49, 768])
+Epoch 29 Loss: -0.8565
+torch.Size([64, 49, 768])
+torch.Size([48, 49, 768])
+
+100%|██████████████████████████████████████████████████████████████████| 2/2 [00:00<00:00,  2.23it/s]

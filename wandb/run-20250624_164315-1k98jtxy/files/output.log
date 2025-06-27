@@ -1,0 +1,47 @@
+/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/huggingface_hub/file_download.py:943: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+
+
+  2%|█▎                                                              | 8/408 [00:05<04:21,  1.53it/s]
+Traceback (most recent call last):
+  File "few_shot.py", line 80, in <module>
+    main(configs[args.method], args.method)
+  File "few_shot.py", line 56, in main
+    metrics = method(dataset)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yongxuan/SurgVLP/methods/zoom_in.py", line 157, in forward
+    test_features, test_labels = preload_local_features(self.configs, "test", self.model, test_loader)
+  File "/home/yongxuan/SurgVLP/datasets/utils.py", line 22, in preload_local_features
+    for i, (images, target) in enumerate(tqdm(loader)):
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/tqdm/std.py", line 1195, in __iter__
+    for obj in iterable:
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 630, in __next__
+    data = self._next_data()
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 673, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/_utils/fetch.py", line 52, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/_utils/fetch.py", line 52, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/yongxuan/SurgVLP/datasets/utils.py", line 306, in __getitem__
+    img = self._transform_image(self.transform, img0)
+  File "/home/yongxuan/SurgVLP/datasets/utils.py", line 321, in _transform_image
+    img_list.append(tfm(img0))
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py", line 95, in __call__
+    img = t(img)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py", line 354, in forward
+    return F.resize(img, self.size, self.interpolation, self.max_size, self.antialias)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torchvision/transforms/functional.py", line 477, in resize
+    return F_pil.resize(img, size=output_size, interpolation=pil_interpolation)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torchvision/transforms/_functional_pil.py", line 250, in resize
+    return img.resize(tuple(size[::-1]), interpolation)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/PIL/Image.py", line 2115, in resize
+    return self._new(self.im.resize(size, resample, box))
+KeyboardInterrupt

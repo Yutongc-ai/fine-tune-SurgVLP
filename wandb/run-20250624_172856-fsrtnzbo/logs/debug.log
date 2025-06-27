@@ -1,0 +1,86 @@
+2025-06-24 17:28:56,596 INFO    MainThread:84696 [wandb_setup.py:_flush():68] Configure stats pid to 84696
+2025-06-24 17:28:56,597 INFO    MainThread:84696 [wandb_setup.py:_flush():68] Loading settings from /home/yongxuan/.config/wandb/settings
+2025-06-24 17:28:56,597 INFO    MainThread:84696 [wandb_setup.py:_flush():68] Loading settings from /home/yongxuan/SurgVLP/wandb/settings
+2025-06-24 17:28:56,597 INFO    MainThread:84696 [wandb_setup.py:_flush():68] Loading settings from environment variables: {'_require_service': 'True'}
+2025-06-24 17:28:56,597 INFO    MainThread:84696 [wandb_setup.py:_flush():68] Inferring run settings from compute environment: {'program_relpath': 'few_shot.py', 'program': 'few_shot.py'}
+2025-06-24 17:28:56,597 INFO    MainThread:84696 [wandb_init.py:_log_setup():476] Logging user logs to /home/yongxuan/SurgVLP/wandb/run-20250624_172856-fsrtnzbo/logs/debug.log
+2025-06-24 17:28:56,597 INFO    MainThread:84696 [wandb_init.py:_log_setup():477] Logging internal logs to /home/yongxuan/SurgVLP/wandb/run-20250624_172856-fsrtnzbo/logs/debug-internal.log
+2025-06-24 17:28:56,597 INFO    MainThread:84696 [wandb_init.py:init():516] calling init triggers
+2025-06-24 17:28:56,597 INFO    MainThread:84696 [wandb_init.py:init():519] wandb.init called with sweep_config: {}
+config: {'dataset_config': {'dataset_root': '/home/yongxuan/datasets/cholec80', 'num_classes': 7}, 'model_config': {'type': 'SurgVLP', 'backbone_img': {'type': 'img_backbones/ImageEncoder', 'num_classes': 768, 'pretrained': 'imagenet', 'backbone_name': 'resnet_50', 'img_norm': False}, 'backbone_text': {'type': 'text_backbones/BertEncoder', 'text_bert_type': 'emilyalsentzer/Bio_ClinicalBERT', 'text_last_n_layers': 4, 'text_aggregate_method': 'sum', 'text_norm': False, 'text_embedding_dim': 768, 'text_freeze_bert': False, 'text_agg_tokens': True}}, 'attention_pooling': False, 'preload_local_features': True, 'cache_dir': '/home/yongxuan/SurgVLP/cache', 'batch_size': 64, 'tasks': 5, 'num_shots': 4, 'lr': 0.001, 'epochs': 100, 'unfreeze': True, 'unfreeze_layer': 'last'}
+2025-06-24 17:28:56,597 INFO    MainThread:84696 [wandb_init.py:init():569] starting backend
+2025-06-24 17:28:56,597 INFO    MainThread:84696 [wandb_init.py:init():573] setting up manager
+2025-06-24 17:28:56,599 INFO    MainThread:84696 [backend.py:_multiprocessing_setup():102] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2025-06-24 17:28:56,599 INFO    MainThread:84696 [wandb_init.py:init():580] backend started and connected
+2025-06-24 17:28:56,601 INFO    MainThread:84696 [wandb_init.py:init():658] updated telemetry
+2025-06-24 17:28:56,622 INFO    MainThread:84696 [wandb_init.py:init():693] communicating run to backend with 60 second timeout
+2025-06-24 17:29:48,175 ERROR   Thread-1  :84696 [retry.py:__call__():154] Retry attempt failed:
+Traceback (most recent call last):
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/urllib3/connectionpool.py", line 466, in _make_request
+    self._validate_conn(conn)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/urllib3/connectionpool.py", line 1095, in _validate_conn
+    conn.connect()
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/urllib3/connection.py", line 730, in connect
+    sock_and_verified = _ssl_wrap_socket_and_match_hostname(
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/urllib3/connection.py", line 909, in _ssl_wrap_socket_and_match_hostname
+    ssl_sock = ssl_wrap_socket(
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/urllib3/util/ssl_.py", line 469, in ssl_wrap_socket
+    ssl_sock = _ssl_wrap_socket_impl(sock, context, tls_in_tls, server_hostname)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/urllib3/util/ssl_.py", line 513, in _ssl_wrap_socket_impl
+    return ssl_context.wrap_socket(sock, server_hostname=server_hostname)
+  File "/home/yongxuan/anaconda3/envs/clip/lib/python3.8/ssl.py", line 500, in wrap_socket
+    return self.sslsocket_class._create(
+  File "/home/yongxuan/anaconda3/envs/clip/lib/python3.8/ssl.py", line 1073, in _create
+    self.do_handshake()
+  File "/home/yongxuan/anaconda3/envs/clip/lib/python3.8/ssl.py", line 1342, in do_handshake
+    self._sslobj.do_handshake()
+socket.timeout: _ssl.c:1132: The handshake operation timed out
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/requests/adapters.py", line 667, in send
+    resp = conn.urlopen(
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/urllib3/connectionpool.py", line 843, in urlopen
+    retries = retries.increment(
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/urllib3/util/retry.py", line 474, in increment
+    raise reraise(type(error), error, _stacktrace)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/urllib3/util/util.py", line 39, in reraise
+    raise value
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/urllib3/connectionpool.py", line 789, in urlopen
+    response = self._make_request(
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/urllib3/connectionpool.py", line 490, in _make_request
+    raise new_e
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/urllib3/connectionpool.py", line 468, in _make_request
+    self._raise_timeout(err=e, url=url, timeout_value=conn.timeout)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/urllib3/connectionpool.py", line 369, in _raise_timeout
+    raise ReadTimeoutError(
+urllib3.exceptions.ReadTimeoutError: HTTPSConnectionPool(host='api.wandb.ai', port=443): Read timed out. (read timeout=10)
+
+During handling of the above exception, another exception occurred:
+
+Traceback (most recent call last):
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/wandb/sdk/lib/retry.py", line 113, in __call__
+    result = self._call_fn(*args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/wandb/sdk/internal/internal_api.py", line 210, in execute
+    return self.client.execute(*args, **kwargs)  # type: ignore
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/wandb/vendor/gql-0.2.0/wandb_gql/client.py", line 52, in execute
+    result = self._get_result(document, *args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/wandb/vendor/gql-0.2.0/wandb_gql/client.py", line 60, in _get_result
+    return self.transport.execute(document, *args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/wandb/vendor/gql-0.2.0/wandb_gql/transport/requests.py", line 38, in execute
+    request = requests.post(self.url, **post_args)
+  File "/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/requests/api.py", line 115, in post
+    return request("post", url, data=data, json=json, **kwargs)
+  File "/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/requests/api.py", line 59, in request
+    return session.request(method=method, url=url, **kwargs)
+  File "/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/requests/sessions.py", line 589, in request
+    resp = self.send(prep, **send_kwargs)
+  File "/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/requests/sessions.py", line 703, in send
+    r = adapter.send(request, **kwargs)
+  File "/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/requests/adapters.py", line 713, in send
+    raise ReadTimeout(e, request=request)
+requests.exceptions.ReadTimeout: HTTPSConnectionPool(host='api.wandb.ai', port=443): Read timed out. (read timeout=10)
+2025-06-24 17:29:56,644 ERROR   MainThread:84696 [wandb_init.py:init():704] backend process timed out
+2025-06-24 17:29:56,644 ERROR   MainThread:84696 [wandb_init.py:init():713] encountered error: Error communicating with wandb process
+For more info see: https://docs.wandb.ai/library/init#init-start-error

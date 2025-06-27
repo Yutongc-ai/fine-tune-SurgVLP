@@ -1,0 +1,32 @@
+2025-06-26 14:46:49,725 INFO    MainThread:117527 [wandb_setup.py:_flush():68] Configure stats pid to 117527
+2025-06-26 14:46:49,725 INFO    MainThread:117527 [wandb_setup.py:_flush():68] Loading settings from /home/yongxuan/.config/wandb/settings
+2025-06-26 14:46:49,725 INFO    MainThread:117527 [wandb_setup.py:_flush():68] Loading settings from /home/yongxuan/SurgVLP/wandb/settings
+2025-06-26 14:46:49,725 INFO    MainThread:117527 [wandb_setup.py:_flush():68] Loading settings from environment variables: {'_require_service': 'True'}
+2025-06-26 14:46:49,725 INFO    MainThread:117527 [wandb_setup.py:_flush():68] Inferring run settings from compute environment: {'program_relpath': 'few_shot.py', 'program': 'few_shot.py'}
+2025-06-26 14:46:49,725 INFO    MainThread:117527 [wandb_init.py:_log_setup():476] Logging user logs to /home/yongxuan/SurgVLP/wandb/run-20250626_144649-tcsx4d5s/logs/debug.log
+2025-06-26 14:46:49,725 INFO    MainThread:117527 [wandb_init.py:_log_setup():477] Logging internal logs to /home/yongxuan/SurgVLP/wandb/run-20250626_144649-tcsx4d5s/logs/debug-internal.log
+2025-06-26 14:46:49,725 INFO    MainThread:117527 [wandb_init.py:init():516] calling init triggers
+2025-06-26 14:46:49,725 INFO    MainThread:117527 [wandb_init.py:init():519] wandb.init called with sweep_config: {}
+config: {'dataset_config': {'dataset_root': '/home/yongxuan/datasets/cholec80', 'num_classes': 7}, 'model_config': {'type': 'SurgVLP', 'backbone_img': {'type': 'img_backbones/ImageEncoder', 'num_classes': 768, 'pretrained': 'imagenet', 'backbone_name': 'resnet_50', 'img_norm': False}, 'backbone_text': {'type': 'text_backbones/BertEncoder', 'text_bert_type': 'emilyalsentzer/Bio_ClinicalBERT', 'text_last_n_layers': 4, 'text_aggregate_method': 'sum', 'text_norm': False, 'text_embedding_dim': 768, 'text_freeze_bert': False, 'text_agg_tokens': True}}, 'attention_pooling': False, 'preload_local_features': True, 'cache_dir': '/home/yongxuan/SurgVLP/cache', 'batch_size': 64, 'tasks': 5, 'num_shots': 1, 'lr': 0.001, 'epochs': 100, 'unfreeze': False, 'unfreeze_layer': 'last'}
+2025-06-26 14:46:49,725 INFO    MainThread:117527 [wandb_init.py:init():569] starting backend
+2025-06-26 14:46:49,725 INFO    MainThread:117527 [wandb_init.py:init():573] setting up manager
+2025-06-26 14:46:49,726 INFO    MainThread:117527 [backend.py:_multiprocessing_setup():102] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2025-06-26 14:46:49,726 INFO    MainThread:117527 [wandb_init.py:init():580] backend started and connected
+2025-06-26 14:46:49,727 INFO    MainThread:117527 [wandb_init.py:init():658] updated telemetry
+2025-06-26 14:46:49,757 INFO    MainThread:117527 [wandb_init.py:init():693] communicating run to backend with 60 second timeout
+2025-06-26 14:46:50,377 INFO    MainThread:117527 [wandb_run.py:_on_init():2000] communicating current version
+2025-06-26 14:46:50,420 INFO    MainThread:117527 [wandb_run.py:_on_init():2004] got version response upgrade_message: "wandb version 0.20.1 is available!  To upgrade, please run:\n $ pip install wandb --upgrade"
+
+2025-06-26 14:46:50,420 INFO    MainThread:117527 [wandb_init.py:init():728] starting run threads in backend
+2025-06-26 14:46:51,078 INFO    MainThread:117527 [wandb_run.py:_console_start():1980] atexit reg
+2025-06-26 14:46:51,078 INFO    MainThread:117527 [wandb_run.py:_redirect():1838] redirect: SettingsConsole.WRAP_RAW
+2025-06-26 14:46:51,078 INFO    MainThread:117527 [wandb_run.py:_redirect():1903] Wrapping output streams.
+2025-06-26 14:46:51,078 INFO    MainThread:117527 [wandb_run.py:_redirect():1925] Redirects installed.
+2025-06-26 14:46:51,079 INFO    MainThread:117527 [wandb_init.py:init():765] run started, returning control to user process
+2025-06-26 14:47:11,623 INFO    MainThread:117527 [wandb_run.py:_finish():1746] finishing run caoyutong26-nus/few-shot-surgvlp/tcsx4d5s
+2025-06-26 14:47:11,623 INFO    MainThread:117527 [wandb_run.py:_atexit_cleanup():1949] got exitcode: 0
+2025-06-26 14:47:11,623 INFO    MainThread:117527 [wandb_run.py:_restore():1932] restore
+2025-06-26 14:47:11,623 INFO    MainThread:117527 [wandb_run.py:_restore():1938] restore done
+2025-06-26 14:47:17,879 INFO    MainThread:117527 [wandb_run.py:_footer_history_summary_info():3377] rendering history
+2025-06-26 14:47:17,880 INFO    MainThread:117527 [wandb_run.py:_footer_history_summary_info():3409] rendering summary
+2025-06-26 14:47:17,883 INFO    MainThread:117527 [wandb_run.py:_footer_sync_info():3333] logging synced files

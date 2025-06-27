@@ -1,0 +1,40 @@
+/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/huggingface_hub/file_download.py:943: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/yongxuan/SurgVLP/datasets/utils.py:74: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  features = torch.load(f"{cfg.cache_dir}/{split}local_f_part{part_idx}.pt")
+/home/yongxuan/SurgVLP/datasets/utils.py:75: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  labels = torch.load(f"{cfg.cache_dir}/{split}local_l_part{part_idx}.pt")
+loading num parts:  0
+num_shots is  1
+num_shots is  1
+tensor([[0.2208, 0.2181, 0.1776, 0.1422, 0.1395, 0.1386, 0.1256],
+        [0.1542, 0.1414, 0.1412, 0.1297, 0.1272, 0.1248, 0.1244],
+        [0.1667, 0.1544, 0.1531, 0.1527, 0.1498, 0.1496, 0.1387],
+        [0.1646, 0.1528, 0.1520, 0.1470, 0.1411, 0.1296, 0.1261],
+        [0.1729, 0.1554, 0.1505, 0.1463, 0.1417, 0.1403, 0.1377],
+        [0.1483, 0.1333, 0.1309, 0.1180, 0.1074, 0.1000, 0.0899],
+        [0.1560, 0.1534, 0.1334, 0.1322, 0.1274, 0.1132, 0.1033]],
+       device='cuda:0', grad_fn=<TopkBackward0>)
+tensor([[0.1728, 0.1607, 0.1462, 0.1368, 0.1316, 0.1251, 0.1183],
+        [0.1449, 0.1420, 0.1319, 0.1305, 0.1238, 0.1139, 0.1108],
+        [0.1265, 0.1111, 0.0853, 0.0759, 0.0718, 0.0683, 0.0653],
+        [0.1524, 0.1447, 0.1409, 0.1328, 0.1180, 0.1156, 0.1130],
+        [0.1531, 0.1525, 0.1354, 0.1346, 0.1305, 0.1258, 0.1237],
+        [0.1630, 0.1340, 0.1254, 0.1249, 0.1191, 0.1187, 0.1122],
+        [0.1488, 0.1399, 0.1382, 0.1381, 0.1369, 0.1359, 0.1346]],
+       device='cuda:0', grad_fn=<TopkBackward0>)
+  0%|                                                                          | 0/1 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "few_shot.py", line 80, in <module>
+    main(configs[args.method], args.method)
+  File "few_shot.py", line 56, in main
+    metrics = method(dataset)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yongxuan/SurgVLP/methods/zoom_in.py", line 217, in forward
+    (sim_scores, patch_indexes, class_indexes), (neg_sim_scores, neg_patch_indexes, neg_class_indexes) = self.get_zoomin_patches(image_features)
+  File "/home/yongxuan/SurgVLP/methods/zoom_in.py", line 71, in get_zoomin_patches
+    assert(0)
+AssertionError

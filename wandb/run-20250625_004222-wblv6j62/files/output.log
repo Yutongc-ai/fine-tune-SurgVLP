@@ -1,0 +1,82 @@
+/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/huggingface_hub/file_download.py:943: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/yongxuan/SurgVLP/datasets/utils.py:74: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  features = torch.load(f"{cfg.cache_dir}/{split}local_f_part{part_idx}.pt")
+loading num parts:  0
+loading num parts:  1
+/home/yongxuan/SurgVLP/datasets/utils.py:75: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  labels = torch.load(f"{cfg.cache_dir}/{split}local_l_part{part_idx}.pt")
+loading num parts:  2
+loading num parts:  3
+loading num parts:  4
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.61it/s]
+num_shots is  4
+num_shots is  4
+Epoch 1 Loss: 1.5150
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.58it/s]
+Epoch 1 best val f1 0.2821 test f1 0.3077543079853058
+Epoch 2 Loss: 0.3003
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.60it/s]
+Epoch 2 best val f1 0.4270 test f1 0.43112412095069885
+Epoch 3 Loss: -0.2049
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.62it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.62it/s]
+Epoch 3 best val f1 0.4468 test f1 0.46448683738708496
+Epoch 4 Loss: -0.2762
+Epoch 5 Loss: -0.3225
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.59it/s]
+Epoch 5 best val f1 0.4583 test f1 0.46387067437171936
+Epoch 6 Loss: -0.3493
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.66it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.65it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.65it/s]
+  0%|                                                                          | 0/1 [00:00<?, ?it/s]
+Epoch 7 Loss: -0.3684
+Epoch 8 Loss: -0.3848
+Epoch 9 Loss: -0.4019
+Epoch 10 Loss: -0.4201
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.65it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.66it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.65it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.66it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.65it/s]
+Epoch 12 Loss: -0.4541
+Epoch 13 Loss: -0.4706
+Epoch 14 Loss: -0.4870
+Epoch 15 Loss: -0.5035
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.66it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.66it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.63it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.65it/s]
+  0%|                                                                          | 0/1 [00:00<?, ?it/s]
+Epoch 16 Loss: -0.5200
+Epoch 17 Loss: -0.5367
+Epoch 18 Loss: -0.5534
+Epoch 19 Loss: -0.5701
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.66it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.66it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.67it/s]
+Epoch 21 Loss: -0.6031
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.62it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.67it/s]
+Epoch 21 best val f1 0.4848 test f1 0.4606555998325348
+Epoch 22 Loss: -0.6193
+Epoch 23 Loss: -0.6352
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.61it/s]
+Epoch 23 best val f1 0.4950 test f1 0.46671295166015625
+Epoch 24 Loss: -0.6507
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.58it/s]
+  0%|                                                                          | 0/1 [00:00<?, ?it/s]
+Epoch 24 best val f1 0.5098 test f1 0.46966105699539185
+Epoch 25 Loss: -0.6659
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.65it/s]
+  0%|                                                                          | 0/1 [00:00<?, ?it/s]
+Epoch 26 best val f1 0.5192 test f1 0.47433963418006897
+Epoch 27 Loss: -0.6949
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.63it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.64it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  4.65it/s]
+Epoch 29 Loss: -0.7220
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00,  3.59it/s]
+Epoch 29 best val f1 0.5283 test f1 0.47938063740730286
+Epoch 30 Loss: -0.7350

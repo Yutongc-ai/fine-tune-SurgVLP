@@ -1,0 +1,36 @@
+{
+    "dataset_config": {
+        "dataset_root": "/home/yongxuan/datasets/cholec80",
+        "num_classes": 7
+    },
+    "model_config": {
+        "type": "SurgVLP",
+        "backbone_img": {
+            "type": "img_backbones/ImageEncoder",
+            "num_classes": 768,
+            "pretrained": "imagenet",
+            "backbone_name": "resnet_50",
+            "img_norm": false
+        },
+        "backbone_text": {
+            "type": "text_backbones/BertEncoder",
+            "text_bert_type": "emilyalsentzer/Bio_ClinicalBERT",
+            "text_last_n_layers": 4,
+            "text_aggregate_method": "sum",
+            "text_norm": false,
+            "text_embedding_dim": 768,
+            "text_freeze_bert": false,
+            "text_agg_tokens": true
+        }
+    },
+    "attention_pooling": true,
+    "preload_local_features": true,
+    "cache_dir": "/home/yongxuan/SurgVLP/cache",
+    "batch_size": 64,
+    "tasks": 1,
+    "num_shots": 4,
+    "lr": 0.001,
+    "epochs": 100,
+    "unfreeze": false,
+    "unfreeze_layer": "last"
+}

@@ -1,0 +1,183 @@
+/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/huggingface_hub/file_download.py:943: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/yongxuan/SurgVLP/datasets/utils.py:74: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  features = torch.load(f"{cfg.cache_dir}/{split}local_f_part{part_idx}.pt")
+loading num parts:  0
+loading num parts:  1
+/home/yongxuan/SurgVLP/datasets/utils.py:75: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  labels = torch.load(f"{cfg.cache_dir}/{split}local_l_part{part_idx}.pt")
+loading num parts:  2
+loading num parts:  3
+loading num parts:  4
+  7%|████▋                                                            | 1/14 [00:00<00:07,  1.82it/s]
+Epoch 0 test f1 0.28642749786376953
+num_shots is  128
+
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:08<00:00,  1.73it/s]
+Epoch 1 Loss: 0.8741
+Epoch 1 best val f1 0.6115 test f1 0.3851655125617981
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+Epoch 2 Loss: -0.0557
+  0%|                                                                         | 0/14 [00:00<?, ?it/s]
+
+
+
+ 86%|██████████████████████████████████████████████████████▊         | 12/14 [00:06<00:01,  1.99it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+  7%|████▋                                                            | 1/14 [00:00<00:06,  1.98it/s]
+
+
+
+ 93%|███████████████████████████████████████████████████████████▍    | 13/14 [00:06<00:00,  1.98it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+
+
+
+ 93%|███████████████████████████████████████████████████████████▍    | 13/14 [00:06<00:00,  1.99it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.97it/s]
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+Epoch 6 Loss: -0.8617
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+Epoch 7 Loss: -0.9044
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+Epoch 8 Loss: -0.9297
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+Epoch 9 Loss: -0.9419
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+Epoch 10 Loss: -0.9501
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+Epoch 11 Loss: -0.9565
+
+
+
+ 86%|██████████████████████████████████████████████████████▊         | 12/14 [00:06<00:01,  1.98it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.98it/s]
+
+
+
+ 86%|██████████████████████████████████████████████████████▊         | 12/14 [00:06<00:01,  1.98it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+
+
+
+ 86%|██████████████████████████████████████████████████████▊         | 12/14 [00:06<00:01,  1.98it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.98it/s]
+
+
+
+ 93%|███████████████████████████████████████████████████████████▍    | 13/14 [00:06<00:00,  1.99it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.98it/s]
+
+
+
+ 93%|███████████████████████████████████████████████████████████▍    | 13/14 [00:06<00:00,  1.98it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+
+
+
+ 93%|███████████████████████████████████████████████████████████▍    | 13/14 [00:06<00:00,  1.99it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.98it/s]
+Epoch 18 Loss: -0.9766
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+Epoch 19 Loss: -0.9747
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+Epoch 20 Loss: -0.9773
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.98it/s]
+Epoch 21 Loss: -0.9767
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.98it/s]
+Epoch 22 Loss: -0.9796
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+Epoch 23 Loss: -0.9821
+
+
+
+ 79%|██████████████████████████████████████████████████▎             | 11/14 [00:05<00:01,  1.98it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+
+
+
+ 86%|██████████████████████████████████████████████████████▊         | 12/14 [00:06<00:01,  1.99it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+
+
+
+ 86%|██████████████████████████████████████████████████████▊         | 12/14 [00:06<00:01,  1.99it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+
+
+
+ 93%|███████████████████████████████████████████████████████████▍    | 13/14 [00:06<00:00,  1.97it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.98it/s]
+
+
+
+ 93%|███████████████████████████████████████████████████████████▍    | 13/14 [00:06<00:00,  2.00it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+
+
+
+ 93%|███████████████████████████████████████████████████████████▍    | 13/14 [00:06<00:00,  1.98it/s]
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+
+
+
+100%|████████████████████████████████████████████████████████████████| 14/14 [00:07<00:00,  1.99it/s]
+Epoch 30 Loss: -0.9871

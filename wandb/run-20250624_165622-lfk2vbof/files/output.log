@@ -1,0 +1,143 @@
+/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/huggingface_hub/file_download.py:943: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/yongxuan/SurgVLP/datasets/utils.py:74: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  features = torch.load(f"{cfg.cache_dir}/{split}local_f_part{part_idx}.pt")
+/home/yongxuan/SurgVLP/datasets/utils.py:75: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  labels = torch.load(f"{cfg.cache_dir}/{split}local_l_part{part_idx}.pt")
+loading num parts:  0
+num_shots is  1
+num_shots is  1
+Epoch 1 Loss: 1.1332
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 12.88it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.09it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 12.68it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 12.23it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 13.97it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 14.03it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 13.82it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.31it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.16it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.40it/s]
+  0%|                                                                          | 0/1 [00:00<?, ?it/s]
+Epoch 1 best val f1 0.3000 test f1 0.14561353623867035
+Epoch 2 Loss: 0.3767
+Epoch 3 Loss: 0.0045
+Epoch 4 Loss: -0.0880
+Epoch 5 Loss: -0.1338
+Epoch 6 Loss: -0.1746
+Epoch 7 Loss: -0.2063
+Epoch 8 Loss: -0.2397
+Epoch 9 Loss: -0.2769
+Epoch 10 Loss: -0.3121
+Epoch 11 Loss: -0.3454
+Epoch 12 Loss: -0.3762
+Epoch 13 Loss: -0.4058
+Epoch 14 Loss: -0.4357
+Epoch 15 Loss: -0.4662
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.30it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.38it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.41it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.43it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.28it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.98it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.81it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.38it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.12it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.38it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 11.41it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.42it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.26it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.72it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.03it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.21it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.93it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.49it/s]
+Epoch 17 Loss: -0.5274
+Epoch 18 Loss: -0.5571
+Epoch 19 Loss: -0.5866
+Epoch 20 Loss: -0.6159
+Epoch 21 Loss: -0.6453
+Epoch 22 Loss: -0.6745
+Epoch 23 Loss: -0.7041
+Epoch 24 Loss: -0.7334
+Epoch 25 Loss: -0.7627
+Epoch 26 Loss: -0.7925
+Epoch 27 Loss: -0.8238
+Epoch 28 Loss: -0.8562
+Epoch 29 Loss: -0.8893
+Epoch 30 Loss: -0.9233
+Epoch 31 Loss: -0.9586
+Epoch 32 Loss: -0.9944
+Epoch 33 Loss: -1.0305
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.42it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.55it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.38it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.42it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.21it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.25it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.42it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.37it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.07it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.97it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.30it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.54it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.19it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.97it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.71it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.78it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.74it/s]
+  0%|                                                                          | 0/1 [00:00<?, ?it/s]
+Epoch 34 Loss: -1.0670
+Epoch 35 Loss: -1.1031
+Epoch 36 Loss: -1.1394
+Epoch 37 Loss: -1.1763
+Epoch 38 Loss: -1.2129
+Epoch 39 Loss: -1.2512
+Epoch 40 Loss: -1.2895
+Epoch 41 Loss: -1.3277
+Epoch 42 Loss: -1.3657
+Epoch 43 Loss: -1.4033
+Epoch 44 Loss: -1.4408
+Epoch 45 Loss: -1.4787
+Epoch 46 Loss: -1.5164
+Epoch 47 Loss: -1.5543
+Epoch 48 Loss: -1.5925
+Epoch 49 Loss: -1.6308
+Epoch 50 Loss: -1.6696
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 15.61it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 15.77it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.67it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 17.07it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.90it/s]
+100%|██████████████████████████████████████████████████████████████████| 1/1 [00:00<00:00, 16.70it/s]
+  0%|                                                                          | 0/1 [00:00<?, ?it/s]
+Traceback (most recent call last):
+  File "few_shot.py", line 80, in <module>
+    main(configs[args.method], args.method)
+  File "few_shot.py", line 56, in main
+    metrics = method(dataset)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yongxuan/SurgVLP/methods/zoom_in.py", line 201, in forward
+    epoch_loss = 0.0
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/tqdm/std.py", line 1195, in __iter__
+    for obj in iterable:
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 630, in __next__
+    data = self._next_data()
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 673, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/_utils/fetch.py", line 52, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/_utils/fetch.py", line 52, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/yongxuan/SurgVLP/datasets/utils.py", line 303, in __getitem__
+    img0 = read_image(item.impath)
+  File "/home/yongxuan/SurgVLP/datasets/utils.py", line 146, in read_image
+    img = Image.open(path).convert('RGB')
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/PIL/Image.py", line 921, in convert
+    self.load()
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/PIL/ImageFile.py", line 260, in load
+    n, err_code = decoder.decode(b)
+KeyboardInterrupt

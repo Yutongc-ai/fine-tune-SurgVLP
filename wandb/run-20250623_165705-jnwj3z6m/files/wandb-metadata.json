@@ -1,0 +1,188 @@
+{
+    "os": "Linux-5.15.0-139-generic-x86_64-with-glibc2.17",
+    "python": "3.8.20",
+    "heartbeatAt": "2025-06-23T08:57:06.996913",
+    "startedAt": "2025-06-23T08:57:05.212216",
+    "docker": null,
+    "cuda": null,
+    "args": [
+        "--method",
+        "avg_pooling_lpplus"
+    ],
+    "state": "running",
+    "program": "few_shot.py",
+    "codePath": "few_shot.py",
+    "git": {
+        "remote": "https://github.com/CAMMA-public/SurgVLP.git",
+        "commit": "f51ec486e486b9e40e7adbe8065ada0eeb3ee5ff"
+    },
+    "email": null,
+    "root": "/home/yongxuan/SurgVLP",
+    "host": "yongxuan-desktop",
+    "username": "yongxuan",
+    "executable": "/home/yongxuan/anaconda3/envs/clip/bin/python",
+    "cpu_count": 20,
+    "cpu_count_logical": 28,
+    "cpu_freq": {
+        "current": 3316.912857142857,
+        "min": 800.0,
+        "max": 5000.0
+    },
+    "cpu_freq_per_core": [
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 1091.563,
+            "min": 800.0,
+            "max": 5600.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5600.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5600.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5600.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 5500.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 4300.0
+        },
+        {
+            "current": 3400.0,
+            "min": 800.0,
+            "max": 4300.0
+        }
+    ],
+    "disk": {
+        "total": 119.59508895874023,
+        "used": 101.360107421875
+    },
+    "gpu": "NVIDIA GeForce RTX 4070 SUPER",
+    "gpu_count": 1,
+    "gpu_devices": [
+        {
+            "name": "NVIDIA GeForce RTX 4070 SUPER",
+            "memory_total": 12878610432
+        }
+    ],
+    "memory": {
+        "total": 31.15241241455078
+    }
+}

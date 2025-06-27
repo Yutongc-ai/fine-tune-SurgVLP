@@ -1,0 +1,133 @@
+/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/huggingface_hub/file_download.py:943: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/yongxuan/SurgVLP/datasets/utils.py:74: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  features = torch.load(f"{cfg.cache_dir}/{split}local_f_part{part_idx}.pt")
+loading num parts:  0
+num_shots is  1
+num_shots is  1
+/home/yongxuan/SurgVLP/datasets/utils.py:75: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  labels = torch.load(f"{cfg.cache_dir}/{split}local_l_part{part_idx}.pt")
+Epoch 1 Loss: 0.7099 Alpha: tensor([0.4990, 0.4990, 0.4990, 0.4990, 0.4990, 0.4990, 0.4990],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 1 best val f1 0.4194 test f1 0.3081541061401367
+Epoch 2 Loss: 0.7088 Alpha: tensor([0.4980, 0.4980, 0.4980, 0.4980, 0.4980, 0.4980, 0.4980],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 3 Loss: 0.7078 Alpha: tensor([0.4970, 0.4970, 0.4970, 0.4970, 0.4970, 0.4970, 0.4970],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 4 Loss: 0.7069 Alpha: tensor([0.4960, 0.4960, 0.4960, 0.4960, 0.4960, 0.4960, 0.4960],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 5 Loss: 0.7060 Alpha: tensor([0.4950, 0.4950, 0.4950, 0.4950, 0.4950, 0.4950, 0.4950],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 6 Loss: 0.7052 Alpha: tensor([0.4940, 0.4940, 0.4940, 0.4940, 0.4940, 0.4940, 0.4940],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 7 Loss: 0.7043 Alpha: tensor([0.4930, 0.4930, 0.4930, 0.4930, 0.4930, 0.4930, 0.4930],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 8 Loss: 0.7036 Alpha: tensor([0.4920, 0.4920, 0.4920, 0.4920, 0.4920, 0.4920, 0.4920],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 9 Loss: 0.7028 Alpha: tensor([0.4910, 0.4910, 0.4910, 0.4910, 0.4910, 0.4910, 0.4910],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 10 Loss: 0.7021 Alpha: tensor([0.4900, 0.4900, 0.4900, 0.4900, 0.4900, 0.4900, 0.4900],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 11 Loss: 0.7014 Alpha: tensor([0.4890, 0.4890, 0.4890, 0.4890, 0.4890, 0.4890, 0.4890],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 12 Loss: 0.7008 Alpha: tensor([0.4880, 0.4880, 0.4880, 0.4880, 0.4880, 0.4880, 0.4880],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 13 Loss: 0.7002 Alpha: tensor([0.4870, 0.4870, 0.4870, 0.4870, 0.4870, 0.4870, 0.4870],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 14 Loss: 0.6996 Alpha: tensor([0.4860, 0.4860, 0.4860, 0.4860, 0.4860, 0.4860, 0.4860],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 15 Loss: 0.6990 Alpha: tensor([0.4850, 0.4850, 0.4850, 0.4850, 0.4850, 0.4850, 0.4850],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 16 Loss: 0.6985 Alpha: tensor([0.4840, 0.4840, 0.4840, 0.4840, 0.4840, 0.4840, 0.4840],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 17 Loss: 0.6979 Alpha: tensor([0.4830, 0.4830, 0.4830, 0.4830, 0.4830, 0.4830, 0.4830],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 18 Loss: 0.6974 Alpha: tensor([0.4820, 0.4820, 0.4820, 0.4820, 0.4820, 0.4820, 0.4820],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 19 Loss: 0.6969 Alpha: tensor([0.4810, 0.4810, 0.4810, 0.4810, 0.4810, 0.4810, 0.4810],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 20 Loss: 0.6964 Alpha: tensor([0.4801, 0.4800, 0.4800, 0.4800, 0.4800, 0.4800, 0.4800],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 21 Loss: 0.6960 Alpha: tensor([0.4791, 0.4790, 0.4790, 0.4790, 0.4790, 0.4790, 0.4790],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 22 Loss: 0.6955 Alpha: tensor([0.4781, 0.4780, 0.4780, 0.4780, 0.4780, 0.4780, 0.4780],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 23 Loss: 0.6951 Alpha: tensor([0.4771, 0.4771, 0.4770, 0.4770, 0.4770, 0.4770, 0.4770],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 24 Loss: 0.6947 Alpha: tensor([0.4761, 0.4761, 0.4760, 0.4760, 0.4760, 0.4760, 0.4760],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 25 Loss: 0.6942 Alpha: tensor([0.4751, 0.4751, 0.4750, 0.4750, 0.4750, 0.4750, 0.4750],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 26 Loss: 0.6938 Alpha: tensor([0.4741, 0.4741, 0.4740, 0.4740, 0.4740, 0.4740, 0.4741],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 27 Loss: 0.6935 Alpha: tensor([0.4731, 0.4731, 0.4730, 0.4730, 0.4731, 0.4731, 0.4731],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 28 Loss: 0.6931 Alpha: tensor([0.4721, 0.4721, 0.4721, 0.4720, 0.4721, 0.4721, 0.4721],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 29 Loss: 0.6927 Alpha: tensor([0.4712, 0.4711, 0.4711, 0.4711, 0.4711, 0.4711, 0.4711],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 30 Loss: 0.6923 Alpha: tensor([0.4702, 0.4701, 0.4701, 0.4701, 0.4701, 0.4701, 0.4701],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 31 Loss: 0.6920 Alpha: tensor([0.4692, 0.4691, 0.4691, 0.4691, 0.4691, 0.4691, 0.4691],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 32 Loss: 0.6916 Alpha: tensor([0.4682, 0.4681, 0.4681, 0.4681, 0.4681, 0.4681, 0.4681],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 33 Loss: 0.6913 Alpha: tensor([0.4672, 0.4672, 0.4671, 0.4671, 0.4671, 0.4671, 0.4671],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 34 Loss: 0.6910 Alpha: tensor([0.4663, 0.4662, 0.4661, 0.4661, 0.4661, 0.4661, 0.4661],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 35 Loss: 0.6907 Alpha: tensor([0.4653, 0.4652, 0.4651, 0.4651, 0.4651, 0.4651, 0.4652],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 36 Loss: 0.6904 Alpha: tensor([0.4643, 0.4642, 0.4641, 0.4641, 0.4642, 0.4641, 0.4642],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 37 Loss: 0.6900 Alpha: tensor([0.4633, 0.4632, 0.4631, 0.4631, 0.4632, 0.4632, 0.4632],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 38 Loss: 0.6897 Alpha: tensor([0.4624, 0.4623, 0.4622, 0.4622, 0.4622, 0.4622, 0.4622],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 38 best val f1 0.4262 test f1 0.3188987374305725
+Epoch 39 Loss: 0.6894 Alpha: tensor([0.4614, 0.4613, 0.4612, 0.4612, 0.4612, 0.4612, 0.4612],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 40 Loss: 0.6891 Alpha: tensor([0.4604, 0.4603, 0.4602, 0.4602, 0.4602, 0.4602, 0.4603],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 41 Loss: 0.6888 Alpha: tensor([0.4595, 0.4593, 0.4592, 0.4592, 0.4592, 0.4592, 0.4593],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 42 Loss: 0.6886 Alpha: tensor([0.4585, 0.4583, 0.4582, 0.4582, 0.4583, 0.4582, 0.4583],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 43 Loss: 0.6883 Alpha: tensor([0.4575, 0.4574, 0.4572, 0.4573, 0.4573, 0.4573, 0.4573],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 44 Loss: 0.6880 Alpha: tensor([0.4566, 0.4564, 0.4563, 0.4563, 0.4563, 0.4563, 0.4563],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 45 Loss: 0.6877 Alpha: tensor([0.4556, 0.4554, 0.4553, 0.4553, 0.4553, 0.4553, 0.4554],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Epoch 46 Loss: 0.6875 Alpha: tensor([0.4546, 0.4545, 0.4543, 0.4543, 0.4544, 0.4543, 0.4544],
+       device='cuda:0', grad_fn=<SelectBackward0>)
+Traceback (most recent call last):
+  File "few_shot.py", line 82, in <module>
+    main(configs[args.method], args.method)
+  File "few_shot.py", line 58, in main
+    metrics = method(dataset)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yongxuan/SurgVLP/methods/linear_probe_plus.py", line 311, in forward
+    test_metrics = self.get_test_metrics()
+  File "/home/yongxuan/SurgVLP/methods/linear_probe_plus.py", line 74, in get_test_metrics
+    for batch_features, batch_labels in self.test_loader:
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 630, in __next__
+    data = self._next_data()
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 673, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/_utils/fetch.py", line 55, in fetch
+    return self.collate_fn(data)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/_utils/collate.py", line 317, in default_collate
+    return collate(batch, collate_fn_map=default_collate_fn_map)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/_utils/collate.py", line 174, in collate
+    return [collate(samples, collate_fn_map=collate_fn_map) for samples in transposed]  # Backwards compatibility.
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/_utils/collate.py", line 174, in <listcomp>
+    return [collate(samples, collate_fn_map=collate_fn_map) for samples in transposed]  # Backwards compatibility.
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/_utils/collate.py", line 142, in collate
+    return collate_fn_map[elem_type](batch, collate_fn_map=collate_fn_map)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/_utils/collate.py", line 214, in collate_tensor_fn
+    return torch.stack(batch, 0, out=out)
+KeyboardInterrupt

@@ -1,0 +1,129 @@
+/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/huggingface_hub/file_download.py:943: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/yongxuan/SurgVLP/datasets/utils.py:74: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  features = torch.load(f"{cfg.cache_dir}/{split}local_f_part{part_idx}.pt")
+loading num parts:  0
+loading num parts:  1
+/home/yongxuan/SurgVLP/datasets/utils.py:75: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  labels = torch.load(f"{cfg.cache_dir}/{split}local_l_part{part_idx}.pt")
+loading num parts:  2
+loading num parts:  3
+loading num parts:  4
+num_shots is  4
+num_shots is  4
+Epoch 1 Loss: 0.8984
+Epoch 1 best val f1 0.4444 test f1 0.3057743310928345
+Epoch 2 Loss: 0.8652
+Epoch 3 Loss: 0.8381
+Epoch 4 Loss: 0.8157
+Epoch 5 Loss: 0.7968
+Epoch 6 Loss: 0.7803
+Epoch 7 Loss: 0.7663
+Epoch 8 Loss: 0.7537
+Epoch 9 Loss: 0.7425
+Epoch 10 Loss: 0.7323
+Epoch 11 Loss: 0.7233
+Epoch 12 Loss: 0.7152
+Epoch 13 Loss: 0.7075
+Epoch 14 Loss: 0.7006
+Epoch 15 Loss: 0.6941
+Epoch 16 Loss: 0.6881
+Epoch 17 Loss: 0.6824
+Epoch 18 Loss: 0.6770
+Epoch 19 Loss: 0.6720
+Epoch 20 Loss: 0.6671
+Epoch 21 Loss: 0.6624
+Epoch 21 best val f1 0.4462 test f1 0.3067299425601959
+Epoch 22 Loss: 0.6578
+Epoch 22 best val f1 0.4480 test f1 0.30698156356811523
+Epoch 23 Loss: 0.6535
+Epoch 23 best val f1 0.4498 test f1 0.30735480785369873
+Epoch 24 Loss: 0.6493
+Epoch 25 Loss: 0.6452
+Epoch 25 best val f1 0.4553 test f1 0.3084237575531006
+Epoch 26 Loss: 0.6411
+Epoch 27 Loss: 0.6370
+Epoch 27 best val f1 0.4557 test f1 0.30990171432495117
+Epoch 28 Loss: 0.6331
+Epoch 28 best val f1 0.4675 test f1 0.31078383326530457
+Epoch 29 Loss: 0.6292
+Epoch 29 best val f1 0.4716 test f1 0.311767041683197
+Epoch 30 Loss: 0.6254
+Epoch 30 best val f1 0.4865 test f1 0.3128890097141266
+Epoch 31 Loss: 0.6215
+Epoch 31 best val f1 0.4907 test f1 0.3142254054546356
+Epoch 32 Loss: 0.6177
+Epoch 32 best val f1 0.5096 test f1 0.3156833350658417
+Epoch 33 Loss: 0.6143
+Epoch 34 Loss: 0.6111
+Epoch 34 best val f1 0.5152 test f1 0.31900158524513245
+Epoch 35 Loss: 0.6078
+Epoch 35 best val f1 0.5376 test f1 0.3209395706653595
+Epoch 36 Loss: 0.6044
+Epoch 37 Loss: 0.6008
+Epoch 37 best val f1 0.5478 test f1 0.3247354328632355
+Epoch 38 Loss: 0.5980
+Epoch 38 best val f1 0.5816 test f1 0.32679837942123413
+Epoch 39 Loss: 0.5958
+Epoch 40 Loss: 0.5936
+Epoch 40 best val f1 0.5833 test f1 0.33077916502952576
+Epoch 41 Loss: 0.5912
+Epoch 42 Loss: 0.5885
+Epoch 43 Loss: 0.5855
+Epoch 44 Loss: 0.5823
+Epoch 45 Loss: 0.5791
+Epoch 46 Loss: 0.5756
+Epoch 47 Loss: 0.5720
+Epoch 48 Loss: 0.5682
+Epoch 49 Loss: 0.5646
+Epoch 50 Loss: 0.5609
+Epoch 51 Loss: 0.5573
+Epoch 52 Loss: 0.5536
+Epoch 53 Loss: 0.5501
+Epoch 54 Loss: 0.5466
+Epoch 55 Loss: 0.5433
+Epoch 56 Loss: 0.5400
+Epoch 57 Loss: 0.5369
+Epoch 58 Loss: 0.5338
+Epoch 59 Loss: 0.5307
+Epoch 60 Loss: 0.5277
+Epoch 61 Loss: 0.5248
+Epoch 62 Loss: 0.5220
+Epoch 63 Loss: 0.5192
+Epoch 64 Loss: 0.5175
+Epoch 65 Loss: 0.5164
+Epoch 66 Loss: 0.5155
+Epoch 67 Loss: 0.5143
+Epoch 68 Loss: 0.5129
+Epoch 69 Loss: 0.5114
+Epoch 70 Loss: 0.5095
+Epoch 71 Loss: 0.5073
+Epoch 72 Loss: 0.5049
+Epoch 73 Loss: 0.5023
+Epoch 74 Loss: 0.4996
+Epoch 75 Loss: 0.4969
+Epoch 76 Loss: 0.4940
+Epoch 77 Loss: 0.4912
+Epoch 78 Loss: 0.4883
+Epoch 79 Loss: 0.4854
+Epoch 80 Loss: 0.4826
+Epoch 81 Loss: 0.4801
+Epoch 82 Loss: 0.4781
+Epoch 83 Loss: 0.4761
+Epoch 84 Loss: 0.4739
+Epoch 85 Loss: 0.4714
+Epoch 86 Loss: 0.4692
+Epoch 87 Loss: 0.4669
+Epoch 88 Loss: 0.4643
+Epoch 89 Loss: 0.4615
+Epoch 90 Loss: 0.4587
+Epoch 91 Loss: 0.4559
+Epoch 92 Loss: 0.4530
+Epoch 93 Loss: 0.4501
+Epoch 94 Loss: 0.4472
+Epoch 95 Loss: 0.4445
+Epoch 96 Loss: 0.4417
+Epoch 97 Loss: 0.4390
+Epoch 98 Loss: 0.4362
+Epoch 99 Loss: 0.4335
+Epoch 100 Loss: 0.4307

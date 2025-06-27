@@ -1,0 +1,40 @@
+2025-06-26 14:19:25,273 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Configure stats pid to 115657
+2025-06-26 14:19:25,274 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Loading settings from /home/yongxuan/.config/wandb/settings
+2025-06-26 14:19:25,274 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Loading settings from /home/yongxuan/SurgVLP/wandb/settings
+2025-06-26 14:19:25,274 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Loading settings from environment variables: {'_require_service': 'True'}
+2025-06-26 14:19:25,274 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Inferring run settings from compute environment: {'program_relpath': 'few_shot.py', 'program': 'few_shot.py'}
+2025-06-26 14:19:25,274 INFO    MainThread:115657 [wandb_init.py:_log_setup():476] Logging user logs to /home/yongxuan/SurgVLP/wandb/run-20250626_141925-ilmc5qvh/logs/debug.log
+2025-06-26 14:19:25,274 INFO    MainThread:115657 [wandb_init.py:_log_setup():477] Logging internal logs to /home/yongxuan/SurgVLP/wandb/run-20250626_141925-ilmc5qvh/logs/debug-internal.log
+2025-06-26 14:19:25,274 INFO    MainThread:115657 [wandb_init.py:init():516] calling init triggers
+2025-06-26 14:19:25,274 INFO    MainThread:115657 [wandb_init.py:init():519] wandb.init called with sweep_config: {}
+config: {'dataset_config': {'dataset_root': '/home/yongxuan/datasets/cholec80', 'num_classes': 7}, 'model_config': {'type': 'SurgVLP', 'backbone_img': {'type': 'img_backbones/ImageEncoder', 'num_classes': 768, 'pretrained': 'imagenet', 'backbone_name': 'resnet_50', 'img_norm': False}, 'backbone_text': {'type': 'text_backbones/BertEncoder', 'text_bert_type': 'emilyalsentzer/Bio_ClinicalBERT', 'text_last_n_layers': 4, 'text_aggregate_method': 'sum', 'text_norm': False, 'text_embedding_dim': 768, 'text_freeze_bert': False, 'text_agg_tokens': True}}, 'attention_pooling': False, 'preload_local_features': True, 'cache_dir': '/home/yongxuan/SurgVLP/cache', 'batch_size': 64, 'tasks': 5, 'num_shots': 1, 'lr': 0.001, 'epochs': 100, 'unfreeze': False, 'unfreeze_layer': 'last'}
+2025-06-26 14:19:25,274 INFO    MainThread:115657 [wandb_init.py:init():564] wandb.init() called when a run is still active
+2025-06-26 14:19:48,991 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Configure stats pid to 115657
+2025-06-26 14:19:48,991 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Loading settings from /home/yongxuan/.config/wandb/settings
+2025-06-26 14:19:48,991 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Loading settings from /home/yongxuan/SurgVLP/wandb/settings
+2025-06-26 14:19:48,991 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Loading settings from environment variables: {'_require_service': 'True'}
+2025-06-26 14:19:48,991 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Inferring run settings from compute environment: {'program_relpath': 'few_shot.py', 'program': 'few_shot.py'}
+2025-06-26 14:19:48,991 INFO    MainThread:115657 [wandb_init.py:_log_setup():476] Logging user logs to /home/yongxuan/SurgVLP/wandb/run-20250626_141948-mbzl10bw/logs/debug.log
+2025-06-26 14:19:48,991 INFO    MainThread:115657 [wandb_init.py:_log_setup():477] Logging internal logs to /home/yongxuan/SurgVLP/wandb/run-20250626_141948-mbzl10bw/logs/debug-internal.log
+2025-06-26 14:19:48,991 INFO    MainThread:115657 [wandb_init.py:init():516] calling init triggers
+2025-06-26 14:19:48,991 INFO    MainThread:115657 [wandb_init.py:init():519] wandb.init called with sweep_config: {}
+config: {'dataset_config': {'dataset_root': '/home/yongxuan/datasets/cholec80', 'num_classes': 7}, 'model_config': {'type': 'SurgVLP', 'backbone_img': {'type': 'img_backbones/ImageEncoder', 'num_classes': 768, 'pretrained': 'imagenet', 'backbone_name': 'resnet_50', 'img_norm': False}, 'backbone_text': {'type': 'text_backbones/BertEncoder', 'text_bert_type': 'emilyalsentzer/Bio_ClinicalBERT', 'text_last_n_layers': 4, 'text_aggregate_method': 'sum', 'text_norm': False, 'text_embedding_dim': 768, 'text_freeze_bert': False, 'text_agg_tokens': True}}, 'attention_pooling': False, 'preload_local_features': True, 'cache_dir': '/home/yongxuan/SurgVLP/cache', 'batch_size': 64, 'tasks': 5, 'num_shots': 1, 'lr': 0.001, 'epochs': 100, 'unfreeze': False, 'unfreeze_layer': 'last'}
+2025-06-26 14:19:48,991 INFO    MainThread:115657 [wandb_init.py:init():564] wandb.init() called when a run is still active
+2025-06-26 14:20:12,743 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Configure stats pid to 115657
+2025-06-26 14:20:12,743 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Loading settings from /home/yongxuan/.config/wandb/settings
+2025-06-26 14:20:12,743 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Loading settings from /home/yongxuan/SurgVLP/wandb/settings
+2025-06-26 14:20:12,743 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Loading settings from environment variables: {'_require_service': 'True'}
+2025-06-26 14:20:12,743 INFO    MainThread:115657 [wandb_setup.py:_flush():68] Inferring run settings from compute environment: {'program_relpath': 'few_shot.py', 'program': 'few_shot.py'}
+2025-06-26 14:20:12,743 INFO    MainThread:115657 [wandb_init.py:_log_setup():476] Logging user logs to /home/yongxuan/SurgVLP/wandb/run-20250626_142012-i9mt49cg/logs/debug.log
+2025-06-26 14:20:12,743 INFO    MainThread:115657 [wandb_init.py:_log_setup():477] Logging internal logs to /home/yongxuan/SurgVLP/wandb/run-20250626_142012-i9mt49cg/logs/debug-internal.log
+2025-06-26 14:20:12,743 INFO    MainThread:115657 [wandb_init.py:init():516] calling init triggers
+2025-06-26 14:20:12,743 INFO    MainThread:115657 [wandb_init.py:init():519] wandb.init called with sweep_config: {}
+config: {'dataset_config': {'dataset_root': '/home/yongxuan/datasets/cholec80', 'num_classes': 7}, 'model_config': {'type': 'SurgVLP', 'backbone_img': {'type': 'img_backbones/ImageEncoder', 'num_classes': 768, 'pretrained': 'imagenet', 'backbone_name': 'resnet_50', 'img_norm': False}, 'backbone_text': {'type': 'text_backbones/BertEncoder', 'text_bert_type': 'emilyalsentzer/Bio_ClinicalBERT', 'text_last_n_layers': 4, 'text_aggregate_method': 'sum', 'text_norm': False, 'text_embedding_dim': 768, 'text_freeze_bert': False, 'text_agg_tokens': True}}, 'attention_pooling': False, 'preload_local_features': True, 'cache_dir': '/home/yongxuan/SurgVLP/cache', 'batch_size': 64, 'tasks': 5, 'num_shots': 1, 'lr': 0.001, 'epochs': 100, 'unfreeze': False, 'unfreeze_layer': 'last'}
+2025-06-26 14:20:12,743 INFO    MainThread:115657 [wandb_init.py:init():564] wandb.init() called when a run is still active
+2025-06-26 14:20:33,976 INFO    MainThread:115657 [wandb_run.py:_finish():1746] finishing run caoyutong26-nus/few-shot-surgvlp/e7vwvw9s
+2025-06-26 14:20:33,977 INFO    MainThread:115657 [wandb_run.py:_atexit_cleanup():1949] got exitcode: 0
+2025-06-26 14:20:33,978 INFO    MainThread:115657 [wandb_run.py:_restore():1932] restore
+2025-06-26 14:20:33,978 INFO    MainThread:115657 [wandb_run.py:_restore():1938] restore done
+2025-06-26 14:20:41,303 INFO    MainThread:115657 [wandb_run.py:_footer_history_summary_info():3377] rendering history
+2025-06-26 14:20:41,305 INFO    MainThread:115657 [wandb_run.py:_footer_history_summary_info():3409] rendering summary
+2025-06-26 14:20:41,317 INFO    MainThread:115657 [wandb_run.py:_footer_sync_info():3333] logging synced files

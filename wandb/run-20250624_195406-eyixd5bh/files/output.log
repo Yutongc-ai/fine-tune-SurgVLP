@@ -1,0 +1,62 @@
+/home/yongxuan/anaconda3/envs/clip/lib/python3.8/site-packages/huggingface_hub/file_download.py:943: FutureWarning: `resume_download` is deprecated and will be removed in version 1.0.0. Downloads always resume when possible. If you want to force a new download, use `force_download=True`.
+  warnings.warn(
+/home/yongxuan/SurgVLP/datasets/utils.py:74: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  features = torch.load(f"{cfg.cache_dir}/{split}local_f_part{part_idx}.pt")
+/home/yongxuan/SurgVLP/datasets/utils.py:75: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  labels = torch.load(f"{cfg.cache_dir}/{split}local_l_part{part_idx}.pt")
+  0%|                                                                          | 0/7 [00:00<?, ?it/s]
+loading num parts:  0
+num_shots is  64
+
+
+ 86%|████████████████████████████████████████████████████████▌         | 6/7 [00:03<00:00,  1.77it/s]
+
+100%|██████████████████████████████████████████████████████████████████| 7/7 [00:04<00:00,  1.72it/s]
+Epoch 1 best val f1 0.5943 test f1 0.39765867590904236
+
+100%|██████████████████████████████████████████████████████████████████| 7/7 [00:03<00:00,  2.00it/s]
+Epoch 2 Loss: -0.0657
+ 14%|█████████▍                                                        | 1/7 [00:00<00:02,  2.03it/s]
+
+100%|██████████████████████████████████████████████████████████████████| 7/7 [00:03<00:00,  2.00it/s]
+Traceback (most recent call last):
+  File "few_shot.py", line 82, in <module>
+    main(configs[args.method], args.method)
+  File "few_shot.py", line 58, in main
+    metrics = method(dataset)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yongxuan/SurgVLP/methods/zoom_in.py", line 257, in forward
+    val_metrics = self.get_val_metrics(val_loader)
+  File "/home/yongxuan/SurgVLP/methods/zoom_in.py", line 111, in get_val_metrics
+    for val_images, val_labels in val_loader:
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 630, in __next__
+    data = self._next_data()
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/dataloader.py", line 673, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/_utils/fetch.py", line 52, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/utils/data/_utils/fetch.py", line 52, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "/home/yongxuan/SurgVLP/datasets/utils.py", line 306, in __getitem__
+    img = self._transform_image(self.transform, img0)
+  File "/home/yongxuan/SurgVLP/datasets/utils.py", line 321, in _transform_image
+    img_list.append(tfm(img0))
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py", line 95, in __call__
+    img = t(img)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
+    return forward_call(*args, **kwargs)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torchvision/transforms/transforms.py", line 354, in forward
+    return F.resize(img, self.size, self.interpolation, self.max_size, self.antialias)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torchvision/transforms/functional.py", line 477, in resize
+    return F_pil.resize(img, size=output_size, interpolation=pil_interpolation)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/torchvision/transforms/_functional_pil.py", line 250, in resize
+    return img.resize(tuple(size[::-1]), interpolation)
+  File "/home/yongxuan/.local/lib/python3.8/site-packages/PIL/Image.py", line 2115, in resize
+    return self._new(self.im.resize(size, resample, box))
+KeyboardInterrupt
+Epoch 3 Loss: -0.4976
