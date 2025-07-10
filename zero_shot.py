@@ -38,7 +38,7 @@ assert(0)
 # }
 
 image = preprocess(Image.open("./tests/video12_000176.png")).unsqueeze(0).to(device)
-text = surgvlp.tokenize(["I use grasper tor cautery forcep to grasp it", 'I use bipolar to coagulate and clean the bleeding'], device=device)
+text = surgvlp.tokenize(["I use grasper to cautery forcep to grasp it", 'I use bipolar to coagulate and clean the bleeding'], device=device)
 print(text['input_ids'].shape)
 
 with torch.no_grad():

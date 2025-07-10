@@ -1,14 +1,14 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import TensorDataset, DataLoader
+from methods.loss import NegationLoss
 from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features
 from methods.utils import multilabel_metrics
 from tqdm import tqdm
 import wandb
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-class LP(nn.Module):
+class Negation(nn.Module):
     def __init__(self, configs, model, preprocess, tokenizer):
         super().__init__()
         self.model = model
@@ -16,6 +16,9 @@ class LP(nn.Module):
         self.tokenizer = tokenizer
         self.configs = configs
         self.attn_pooling = configs.attention_pooling
+
+        if self.attn_pooling:
+            assert(0, "attn pooling version of negation method is not realized yet")
 
         self.temperature = 100
         self.threshold = 0.5
@@ -27,25 +30,38 @@ class LP(nn.Module):
 
         self.classifier = torch.nn.Linear(self.feature_width, self.num_classes, bias=False).to(device)
         self.criterion = torch.nn.BCEWithLogitsLoss()
+        self.loss_func = NegationLoss()
 
         self.norm = nn.LayerNorm(self.feature_width).to(device)
 
         for param in self.model.parameters():
             # print(param.requires_grad)
             param.requires_grad = False
+        
         # unfreeze settings
 
-        self.unfreeze = configs["unfreeze"]
-        self.unfreeze_layer = configs.unfreeze_layer
-        if self.unfreeze:
+        # vision encoder settings
+        self.unfreeze_vision = configs["unfreeze_vision"]
+        self.unfreeze_vision_layer = configs.unfreeze_vision_layer
+        if self.unfreeze_vision:
             for param in self.model.backbone_img.global_embedder.parameters():
                 param.requires_grad = True
-            if self.unfreeze_layer == 'last':
+            
+            if self.unfreeze_vision_layer == 'last':
                 for param in self.model.backbone_img.model.layer4.parameters():
                     param.requires_grad = True
                 print("Unfrozen layer4 of vision encoder")
         else:
             print("Keep vision encoder frozen")
+
+        # text encoder settings
+        self.unfreeze_text = configs["unfreeze_text"]
+        if self.unfreeze_text:
+            for name, param in self.model.backbone_text.named_parameters():
+                param.requires_grad = True
+            print("Unfreeze whole text encoder")
+        else:
+            print("Keep text encoder frozen")
 
     def get_metrics(self, split):
         # total_loss = 0.0
@@ -62,17 +78,24 @@ class LP(nn.Module):
         with torch.no_grad():
 
             for _ in range(len(feature_loader)):
-                g_, local_image_features, label = feature_loader[_]
+                global_image_features, local_image_features, label = feature_loader[_]
                 local_image_features = local_image_features.to(device)
+                global_image_features = global_image_features.to(device)
                 local_image_features = local_image_features.permute(0, 3, 1, 2)
 
                 if self.attn_pooling:
-                    local_image_features = self.model.attention_pooling(local_image_features, self.templates)
+                    image_features = self.model.attention_pooling(local_image_features, self.templates)
                 else:
-                    local_image_features = self.model.average_pooling(local_image_features)
+                    image_features = global_image_features
 
-                local_image_features = self.norm(local_image_features)
-                logits = self.classifier(local_image_features)
+                _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
+
+                image_features = image_features / image_features.norm(dim = -1, keepdim = True)
+
+                feats_templates = feats_templates / feats_templates.norm(dim = -1, keepdim = True)
+                feats_templates = feats_templates[:7, :].cuda()
+
+                logits = self.temperature * image_features @ feats_templates.T
                 probs = logits.sigmoid()
 
                 all_probs.append(probs)
@@ -88,15 +111,16 @@ class LP(nn.Module):
     def forward(self,
                 dataset: MultiLabelDatasetBase):
         templates = dataset.templates
+        negated_templates = dataset.negated_templates
 
         wandb.init(
-            project="lp-few-shot-surgvlp",
-            name=f"{'attn' if self.attn_pooling else 'avg'}_{'unfreeze' if self.unfreeze else 'freeze'}_shot{self.configs.num_shots}_epoch{self.epochs}",
+            project="negation-few-shot-surgvlp",
+            name=f"{'attn' if self.attn_pooling else 'avg'}_{'unfreeze' if self.unfreeze_vision or self.unfreeze_text else 'freeze'}_shot{self.configs.num_shots}_epoch{self.epochs}",
             config=self.configs,
         )
 
         # test data preparations
-        self.templates = self.tokenizer(templates, device = device)
+        self.templates = self.tokenizer(templates + negated_templates, device = device)
         
         self.input_ids = self.templates['input_ids']
         self.token_type_ids = self.templates['token_type_ids']
@@ -129,11 +153,14 @@ class LP(nn.Module):
             {'params': self.classifier.parameters(), 'lr': self.lr},
         ]
 
-        if self.unfreeze:
+        if self.unfreeze_vision:
             optim_params.append({'params': self.model.backbone_img.global_embedder.parameters(), 'lr': self.lr * 0.1})
-            if self.unfreeze_layer == 'last':
+            if self.unfreeze_vision_layer == 'last':
                 optim_params.append({'params': self.model.backbone_img.model.layer4.parameters(), 'lr': self.lr * 0.1})
         
+        if self.unfreeze_text:
+            optim_params.append({'params': self.model.backbone_text.parameters(), 'lr': self.lr * 0.1})
+
         self.optimizer = torch.optim.Adam(optim_params, weight_decay=1e-5)
 
         train_loss = []
@@ -144,32 +171,42 @@ class LP(nn.Module):
             batch_count = 0
             
             self.classifier.train()
-            if self.unfreeze:
+            if self.unfreeze_vision or self.unfreeze_text:
                 self.model.train()
             
-            for i, (images, target) in enumerate(tqdm(train_loader)):
+            for i, (images, target, _) in enumerate(tqdm(train_loader)):
                 images, target = images.cuda(), target.cuda()
                 
-                if self.unfreeze:
-                    _, image_features = self.model.extract_feat_img(images)
+                # Generate negated target
+                negated_target = 1 - target
+                expanded_target = torch.cat([target, negated_target], dim = 1)
+                
+                if self.unfreeze_vision or self.unfreeze_text:
+                    # get image embedding
+                    # global_features: [bs, 768] local_features: [bs, 2048, 7, 7]
+                    global_features, image_features = self.model.extract_feat_img(images)
                     if self.attn_pooling:
                         image_features = self.model.attention_pooling(image_features, self.templates)
                     else:
-                        image_features = self.model.average_pooling(image_features)
+                        image_features = global_features
+                    
+                    # get text embedding
+                    # [14, 768]
+                    _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
+
+
                 else:
-                    with torch.no_grad():
-                        _, image_features = self.model.extract_feat_img(images)
-                        if self.attn_pooling:
-                            image_features = self.model.attention_pooling(image_features, self.templates)
-                        else:
-                            image_features = self.model.average_pooling(image_features)
+                    assert(0, "Negation method need to unfreeze encoder")
                 
-                image_features = self.norm(image_features)
+                image_features = image_features / image_features.norm(dim = -1, keepdim = True)
+                feats_templates = feats_templates / feats_templates.norm(dim = -1, keepdim = True)
+                
+                feats_templates = feats_templates.cuda()
 
                 self.optimizer.zero_grad()
-                logits = self.classifier(image_features)
                 
-                loss = self.criterion(logits, target)
+                loss = self.loss_func(image_features, feats_templates, self.temperature, expanded_target)    
+                
                 loss.backward()
                 self.optimizer.step()
 
@@ -183,7 +220,7 @@ class LP(nn.Module):
             print(f'Epoch {epoch+1} Loss: {avg_epoch_loss:.4f}')
             
             self.classifier.eval()
-            if self.unfreeze:
+            if self.unfreeze_vision or self.unfreeze_text:
                 self.model.eval()
 
             train_loss.append(avg_epoch_loss)

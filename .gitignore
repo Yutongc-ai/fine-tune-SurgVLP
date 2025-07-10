@@ -1,3 +1,5 @@
 cache/
 checkpoints/
-tests/
+wandb/
+experiments/
+run_experiments*

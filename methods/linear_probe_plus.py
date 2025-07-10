@@ -1,12 +1,9 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import TensorDataset, DataLoader
-from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features
 from methods.utils import multilabel_metrics
-from tqdm import tqdm
+from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features
 import wandb
-import copy
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 def compute_centroid(features, labels):
@@ -36,9 +33,9 @@ class LPPlus2(nn.Module):
         self.attn_pooling = configs.attention_pooling
 
         self.temperature = 100
-        self.threshold = 0.5
+        # self.threshold = 0.5
         self.lr = 0.001
-        self.lr_alpha = 0.1
+        self.lr_alpha = 0.01
         self.init_alpha = configs.init_alpha
         self.epochs = configs.epochs
         
@@ -46,6 +43,8 @@ class LPPlus2(nn.Module):
         self.num_classes = configs.dataset_config.num_classes
 
         self.classifier = torch.nn.Linear(self.feature_width, self.num_classes, bias=False).to(device)
+
+        self.criterion = torch.nn.BCEWithLogitsLoss()
 
         for param in self.model.parameters():
             # print(param.requires_grad)
@@ -56,6 +55,8 @@ class LPPlus2(nn.Module):
     
         self.unfreeze_layer = configs.unfreeze_layer
         if self.unfreeze:
+            for param in self.model.backbone_img.global_embedder.parameters():
+                param.requires_grad = True
             if self.unfreeze_layer == 'last':
                 for param in self.model.backbone_img.model.layer4.parameters():
                     param.requires_grad = True
@@ -69,69 +70,42 @@ class LPPlus2(nn.Module):
             #         param.requires_grad = True
             #     print("Unfrozen layer3 and layer4 of vision encoder")
 
-    def get_test_metrics(self):
+    def get_metrics(self, split):
         # total_loss = 0.0
-        all_preds = []
-        all_labels = []
-        with torch.no_grad():
-            for batch_features, batch_labels in self.test_loader:
-                batch_features = batch_features.to(device)
-                batch_labels = batch_labels.to(device)
-                
-                if self.attn_pooling:
-                    attn_batch_features = self.model.attention_pooling(batch_features, self.templates)  # (bs, 768)
-                else:
-                    attn_batch_features = self.model.average_pooling(batch_features)  # (bs, 768)
-                
-                batch_logits = self.compute_logits(attn_batch_features)
-                batch_prob = batch_logits.sigmoid()
-                batch_pred = (batch_prob > self.threshold).int()
-                
-                # total_loss += nn.BCEWithLogitsLoss()(batch_logits, batch_labels).item() * batch_features.size(0)
-                all_preds.append(batch_pred.cpu())
-                all_labels.append(batch_labels.cpu())
-
-        # avg_loss = total_loss / len(self.test_loader)
-        final_preds = torch.cat(all_preds, dim=0)
-        final_labels = torch.cat(all_labels, dim=0)
-
-        metrics = multilabel_metrics(final_labels, final_preds)
-        
-        return metrics
-    
-    def get_val_metrics(self, val_loader):
-        # total_loss = 0.0
-        all_preds = []
+        all_probs = []
         all_labels = []
 
+        if split == "val":
+            feature_loader = self.val_feature
+        elif split == "test":
+            feature_loader = self.test_feature
+        else:
+            assert(0, "get metrics split not valid")
+
         with torch.no_grad():
-            for val_images, val_labels in val_loader:
-                val_images = val_images.to(device)
-                val_labels = val_labels.to(device)
-                
-                _, batch_features = self.model.extract_feat_img(val_images)
-                batch_features = batch_features / (batch_features.norm(dim = 1, keepdim = True) + 1e-8)
+
+            for _ in range(len(feature_loader)):
+                g_, local_image_features, label = feature_loader[_]
+                local_image_features = local_image_features.to(device)
+                local_image_features = local_image_features.permute(0, 3, 1, 2)
 
                 if self.attn_pooling:
-                    attn_batch_features = self.model.attention_pooling(batch_features, self.templates)  # (bs, 768)
+                    local_image_features = self.model.attention_pooling(local_image_features, self.templates)
                 else:
-                    attn_batch_features = self.model.average_pooling(batch_features)  # (bs, 768)
-                
-                batch_logits = self.compute_logits(attn_batch_features)
+                    local_image_features = self.model.average_pooling(local_image_features)
 
-                batch_prob = batch_logits.sigmoid()
-                batch_pred = (batch_prob > self.threshold).int()
-                
-                # total_loss += nn.BCEWithLogitsLoss()(batch_logits, batch_labels).item() * batch_features.size(0)
-                all_preds.append(batch_pred.cpu())
-                all_labels.append(val_labels.cpu())
+                local_image_features = local_image_features / local_image_features.norm(dim = -1, keepdim = True)
+                logits = self.compute_logits(local_image_features)
+                probs = logits.sigmoid()
 
-        # avg_loss = total_loss / len(self.test_loader)
-        final_preds = torch.cat(all_preds, dim=0)
+                all_probs.append(probs)
+                all_labels.append(label)
+
         final_labels = torch.cat(all_labels, dim=0)
-
-        metrics = multilabel_metrics(final_labels, final_preds)
         
+        final_probs = torch.cat(all_probs, dim=0).to('cpu')
+        metrics = multilabel_metrics(final_labels, final_probs)
+
         return metrics
 
     def compute_logits(self, features):
@@ -142,24 +116,11 @@ class LPPlus2(nn.Module):
         
         return logits
     
-    def compute_training_logits(self, features):
-        vision_logits = self.classifier(features)
-
-        text_logits = self.temperature * features @ self.text_embeddings.T
-
-        # print(vision_logits)
-        # print(torch.ones(features.shape[0], 1).to(features.dtype).cuda() @ self.alpha_vec * text_logits)
-        # print(1 + self.alpha_vec[0])
-        # print(vision_logits + torch.ones(features.shape[0], 1).to(features.dtype).cuda() @ self.alpha_vec * text_logits)
-        logits = (vision_logits + torch.ones(features.shape[0], 1).to(features.dtype).cuda() @ self.alpha_vec * text_logits) / (1 + self.alpha_vec[0])
-
-        return logits
-
     def forward(self,
                 dataset: MultiLabelDatasetBase):
         wandb.init(
-            project="few-shot-surgvlp",
-            name=f"lpplus_{'attn' if self.attn_pooling else ''}_{'unfreeze' if self.unfreeze else ''}_init_alpha{str(self.init_alpha)}_shot{self.configs.num_shots}_epoch{self.epochs}",
+            project="lp++-few-shot-surgvlp",
+            name=f"{'attn' if self.attn_pooling else ''}_{'unfreeze' if self.unfreeze else ''}_init_alpha{str(self.init_alpha)}_shot{self.configs.num_shots}_epoch{self.epochs}",
             config=self.configs,
         )
         templates = dataset.templates
@@ -178,23 +139,21 @@ class LPPlus2(nn.Module):
 
         test_loader = build_data_loader(data_source=dataset.test, batch_size = self.configs.batch_size, is_train = False, tfm = self.preprocess,
                                     num_classes = dataset.num_classes)
+        val_loader = build_data_loader(data_source=dataset.val, batch_size = self.configs.batch_size, tfm=self.preprocess, is_train=True, 
+                                       num_classes = dataset.num_classes)
+        
+        if not self.configs.preload_local_features:
+            preload_local_features(self.configs, "test", self.model, test_loader)
+            preload_local_features(self.configs, "val", self.model, val_loader)
 
-        test_features, test_labels = preload_local_features(self.configs, "test", self.model, test_loader)
-
-        self.test_dataset = TensorDataset(test_features, test_labels)
-        batch_size = self.configs.batch_size
-        self.test_loader = DataLoader(self.test_dataset, batch_size=batch_size, shuffle=False)
-
-        del test_features, test_labels
+        self.test_feature = Cholec80Features(self.configs, "test")
+        self.val_feature = Cholec80Features(self.configs, "val")
 
         # Generate few shot data
         train_data = dataset.generate_fewshot_dataset_(self.configs.num_shots, split="train")
-        val_data = dataset.generate_fewshot_dataset_(self.configs.num_shots, split="val") 
 
         train_loader = build_data_loader(data_source=train_data, batch_size = self.configs.batch_size, tfm=self.preprocess, is_train=True, 
                                          num_classes = dataset.num_classes)
-        val_loader = build_data_loader(data_source=val_data, batch_size = self.configs.batch_size, tfm=self.preprocess, is_train=True, 
-                                       num_classes = dataset.num_classes)
 
         # compute centroid
         train_features ,train_labels = [], []
@@ -203,11 +162,11 @@ class LPPlus2(nn.Module):
                 images, target = images.cuda(), target.cuda()
             
                 _, image_features = self.model.extract_feat_img(images)
-                image_features = image_features / (image_features.norm(dim = 1, keepdim = True) + 1e-8)
                 if self.attn_pooling:
                     image_features = self.model.attention_pooling(image_features, self.templates)
                 else:
                     image_features = self.model.average_pooling(image_features)
+                image_features = image_features / (image_features.norm(dim = 1, keepdim = True) + 1e-8)
 
                 train_features.append(image_features)
                 train_labels.append(target)
@@ -230,25 +189,20 @@ class LPPlus2(nn.Module):
             requires_grad=True
         )
     
-        self.criterion = torch.nn.BCEWithLogitsLoss()
         optim_params = [
             {'params': self.classifier.parameters(), 'lr': self.lr},
             {'params': self.alpha_vec, 'lr': self.lr}
         ]
 
-        vision_params = []
         if self.unfreeze:
-            
+            optim_params.append({'params': self.model.backbone_img.global_embedder.parameters(), 'lr': self.lr * 0.1})
             if self.unfreeze_layer == 'last':
-                vision_params.append({'params': self.model.backbone_img.model.layer4.parameters(), 'lr': self.lr * 0.1})
+                optim_params.append({'params': self.model.backbone_img.model.layer4.parameters(), 'lr': self.lr * 0.1})
 
-        optim_params.extend(vision_params)
         self.optimizer = torch.optim.Adam(optim_params, weight_decay=0.1)
 
-        test_metrics = self.get_test_metrics()
-
         train_loss = []
-        best_val_f1 = 0
+        best_val_map = 0
         
         for epoch in range(self.epochs):
             epoch_loss = 0.0
@@ -256,14 +210,13 @@ class LPPlus2(nn.Module):
             
             self.classifier.train()
             if self.unfreeze:
-                self.model.backbone_img.model.train()
+                self.model.train()
             
             for i, (images, target) in enumerate(train_loader):
                 images, target = images.cuda(), target.cuda()
                 
                 if self.unfreeze:
                     _, image_features = self.model.extract_feat_img(images)
-                    image_features = image_features / (image_features.norm(dim = 1, keepdim = True) + 1e-8)
                     if self.attn_pooling:
                         image_features = self.model.attention_pooling(image_features, self.templates)
                     else:
@@ -271,25 +224,24 @@ class LPPlus2(nn.Module):
                 else:
                     with torch.no_grad():
                         _, image_features = self.model.extract_feat_img(images)
-                        image_features = image_features / (image_features.norm(dim = 1, keepdim = True) + 1e-8)
                         if self.attn_pooling:
                             image_features = self.model.attention_pooling(image_features, self.templates)
                         else:
                             image_features = self.model.average_pooling(image_features)
+                
+                image_features = image_features / image_features.norm(dim = -1, keepdim = True)
 
                 assert not torch.isnan(image_features).any(), "NaN in image_features"
                 assert not torch.isinf(image_features).any(), "Inf in image_features"
                 assert not torch.isnan(target).any(), "NaN in target"
 
                 self.optimizer.zero_grad()
-                logits = self.compute_training_logits(image_features)
+                logits = self.compute_logits(image_features)
 
                 if torch.isnan(logits).any():
                     print("NaN in logits before loss calculation!")
                 loss = self.criterion(logits, target)
-
                 loss.backward()
-
                 self.optimizer.step()
 
                 epoch_loss += loss.item()
@@ -305,20 +257,22 @@ class LPPlus2(nn.Module):
             
             self.classifier.eval()
             if self.unfreeze:
-                self.model.backbone_img.model.eval()
+                self.model.eval()
             
-            val_metrics = self.get_val_metrics(val_loader)
-            cur_val_f1 = val_metrics["f1"]
-            wandb.log({"val_f1": cur_val_f1, "epoch": epoch})
+            val_metrics = self.get_metrics("val")
+            cur_val_map = val_metrics["mAP"]
+            wandb.log({"val_map": cur_val_map, "epoch": epoch})
+            wandb.log({"val_f1": val_metrics["f1"], "epoch": epoch})
             wandb.log({"val_precision": val_metrics["precision"], "epoch": epoch})
             wandb.log({"val_recall": val_metrics["recall"], "epoch": epoch})
 
-            if cur_val_f1 > best_val_f1:
-                best_val_f1 = cur_val_f1
-                test_metrics = self.get_test_metrics()
-                test_f1 = test_metrics["f1"]
-                print(f"Epoch {epoch + 1} best val f1 {best_val_f1:.4f} test f1 {test_f1}")
-                wandb.log({"test_f1": test_f1, "epoch": epoch})
+            if cur_val_map > best_val_map:
+                best_val_map = cur_val_map
+                test_metrics = self.get_metrics("test")
+                test_map = test_metrics["mAP"]
+                print(f"Epoch {epoch + 1} best val map {best_val_map:.4f} test map {test_map}")
+                wandb.log({"test_map": test_map, "epoch": epoch})
+                wandb.log({"test_f1": test_metrics["f1"], "epoch": epoch})
                 wandb.log({"test_precision": test_metrics["precision"], "epoch": epoch})
                 wandb.log({"test_recall": test_metrics["recall"], "epoch": epoch})
         

@@ -1,11 +1,7 @@
 import os
 import pandas as pd
 import random
-from collections import defaultdict, OrderedDict
-
-import torch
-import torchvision
-import torchvision.transforms as transforms
+import numpy as np
 from .utils import MultiLabelDatum, MultiLabelDatasetBase, read_json, write_json, build_data_loader, listdir_nohidden
 
 labels = []
@@ -13,7 +9,7 @@ labels = []
 class_names = ["Grasper", "Bipolar", "Hook", "Scissors", "Clipper", "Irrigator", "SpecimenBag"]
 
 templates = {
-    "Grasper" : "I use grasper tor cautery forcep to grasp it",
+    "Grasper" : "I use grasper to cautery forcep to grasp it",
     "Bipolar" : "I use bipolar to coagulate and clean the bleeding",
     "Hook" : "I use hook to dissect it",
     "Scissors" : "I use scissors",
@@ -22,23 +18,71 @@ templates = {
     "SpecimenBag" : "I use specimenbag to wrap it",
 }
 
+# templates = {
+#     "I use grasper to cautery forcep to grasp it",
+#     "I use bipolar to coagulate and clean the bleeding",
+#     "I use hook to dissect it",
+#     "I use scissors",
+#     "I use clipper to clip it",
+#     "I use irrigator to suck it",
+#     "I use specimenbag to wrap it",
+# }
+
+# negated_templates = {
+#     "Grasper" : "I did not use grasper to cautery forcep to grasp it",
+#     "Bipolar" : "I did not use bipolar to coagulate and clean the bleeding",
+#     "Hook" : "I did not use hook to dissect it",
+#     "Scissors" : "I did not use scissors",
+#     "Clipper" : "I did not use clipper to clip it",
+#     "Irrigator" : "I did not use irrigator to suck it",
+#     "SpecimenBag" : "I did not use specimenbag to wrap it",
+# }
+
+negated_templates = {
+    "Grasper" : "I did not use grasper",
+    "Bipolar" : "I did not use bipolar",
+    "Hook" : "I did not use hook",
+    "Scissors" : "I did not use scissors",
+    "Clipper" : "I did not use clipper",
+    "Irrigator" : "I did not use irrigator",
+    "SpecimenBag" : "I did not use specimenbag",
+}
+
+# negated_templates = {
+#     "I did not use grasper",
+#     "I did not use bipolar",
+#     "I did not use hook",
+#     "I did not use scissors",
+#     "I did not use clipper",
+#     "I did not use irrigator",
+#     "I did not use specimenbag",
+# }
+
 class Cholec80(MultiLabelDatasetBase):
     def __init__(self, config):
         self.dataset_dir = config["dataset_root"]
+        # self.sample_negated_num = config["sample_negated_num"]
+
         self.image_dir = os.path.join(self.dataset_dir, "frames")
         self.tool_dir = os.path.join(self.dataset_dir, "tool_annotations")
         train_video = [f"video{video_idx:02d}" for video_idx in range(1, 41)]
+        val_video = [f"video{video_idx:02d}" for video_idx in range(41, 45)]
 
         test_video = [f"video{video_idx:02d}" for video_idx in range(61, 71)]
 
-        self.templates = templates
+        self.templates = list(templates.values())
+        self.negated_templates = list(negated_templates.values())
+
         self.class_names = class_names
 
         print("Preparing training dataset")
-        train, val = self.read_data(train_video, "train")
+        train = self.read_data(train_video, "train")
+
+        print("Preparing validation dataset")
+        val = self.read_data(val_video, "val")
          
         print("Preparing testing dataset")
-        test,_ = self.read_data(test_video, "test")
+        test = self.read_data(test_video, "test")
 
         super().__init__(train_x=train, val=val, test=test, class_names=class_names, num_classes=len(class_names))
 
@@ -60,6 +104,13 @@ class Cholec80(MultiLabelDatasetBase):
                     if labels_df.loc[frame_idx, col ] == 1:
                         labels.append(idx-1)
                         classnames.append(col)
+                
+                # sample negated labels
+                # all_values = np.arange(len(self.class_names))
+                # mask = np.isin(all_values, labels, invert=True)
+                # available_values = all_values[mask]
+                # negated_labels = np.random.choice(available_values, size=self.sample_negated_num, replace=False)
+
                 item = MultiLabelDatum(impath=os.path.join(folder, impath), labels=labels, classnames=classnames)
                 items.append(item)
                 data_count += 1
@@ -68,12 +119,96 @@ class Cholec80(MultiLabelDatasetBase):
         
         if split == "train":
             random.shuffle(items)
-            print(f"{len(items[:int(data_count/2)])} for training")
-            print(f"{len(items[:int(data_count/2)])} for validation")
-            return items[:int(data_count/2)], items[int(data_count/2):]
+            # print(f"{len(items[:int(data_count/2)])} for training")
+            # print(f"{len(items[:int(data_count/2)])} for validation")
+            # return items[:int(data_count/2)], items[int(data_count/2):]
+            return items
+    
+        return items
+
+    def generate_fewshot_dataset_(self, num_shots, split):
+
+        print('num_shots is ',num_shots)
+        if split == "train":
+            few_shot_data = self.generate_fewshot_dataset(self.train_x, num_shots=num_shots)
+        elif split == "val":
+            few_shot_data = self.generate_fewshot_dataset(self.val, num_shots=num_shots)
+    
+        return few_shot_data
+    
+class NegationCholec80(MultiLabelDatasetBase):
+    def __init__(self, config):
+        self.dataset_dir = config["dataset_root"]
         
-        if split == "test":
-            return items, items
+        if "sample_negated_num" in config:
+            self.sample_negated_num = config["sample_negated_num"]
+        else:
+            self.sample_negated_num = None
+
+        self.image_dir = os.path.join(self.dataset_dir, "frames")
+        self.tool_dir = os.path.join(self.dataset_dir, "tool_annotations")
+        train_video = [f"video{video_idx:02d}" for video_idx in range(1, 41)]
+        val_video = [f"video{video_idx:02d}" for video_idx in range(41, 45)]
+
+        test_video = [f"video{video_idx:02d}" for video_idx in range(61, 71)]
+
+        self.templates = list(templates.values())
+        self.negated_templates = list(negated_templates.values())
+
+        self.class_names = class_names
+
+        print("Preparing training dataset")
+        train = self.read_data(train_video, "train")
+
+        print("Preparing validation dataset")
+        val = self.read_data(val_video, "val")
+         
+        print("Preparing testing dataset")
+        test = self.read_data(test_video, "test")
+
+        super().__init__(train_x=train, val=val, test=test, class_names=class_names, num_classes=len(class_names))
+
+    def read_data(self, video_idx, split):
+        items = []
+        folders = [os.path.join(self.image_dir, video_dir) for video_dir in video_idx]
+        data_count = 0
+
+        for folder in folders:
+            impaths = listdir_nohidden(folder)
+            video_dir = folder.split("/")[-1]
+            tool_filepath = f"{video_dir}-tool.txt"
+            labels_df = pd.read_csv(os.path.join(self.tool_dir, tool_filepath), sep = '\t')
+            for impath in impaths:
+                frame_idx = int(impath.split(".")[-2].split("_")[-1]) - 1
+                labels = []
+                classnames = []
+                for idx, col in enumerate(labels_df.columns):
+                    if labels_df.loc[frame_idx, col ] == 1:
+                        labels.append(idx-1)
+                        classnames.append(col)
+                
+                # sample negated labels
+                assert(self.sample_negated_num is not None)
+
+                all_values = np.arange(len(self.class_names))
+                mask = np.isin(all_values, labels, invert=True)
+                available_values = all_values[mask]
+                negated_labels = np.random.choice(available_values, size=self.sample_negated_num, replace=False)
+
+                item = MultiLabelDatum(impath=os.path.join(folder, impath), labels=labels, classnames=classnames, negated_labels=negated_labels)
+                items.append(item)
+                data_count += 1
+        
+        print(f"{split} has {data_count} pieces of data")
+        
+        if split == "train":
+            random.shuffle(items)
+            # print(f"{len(items[:int(data_count/2)])} for training")
+            # print(f"{len(items[:int(data_count/2)])} for validation")
+            # return items[:int(data_count/2)], items[int(data_count/2):]
+            return items
+    
+        return items
 
     def generate_fewshot_dataset_(self, num_shots, split):
 

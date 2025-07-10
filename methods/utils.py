@@ -5,9 +5,15 @@ import pandas as pd
 import numpy as np
 from typing import List, Dict
 import torch
+from torchmetrics import AveragePrecision
+from torchmetrics.classification import MultilabelAveragePrecision
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-def multilabel_metrics(targets, preds):
+ap_metric = MultilabelAveragePrecision(num_labels = 7, average = None, thresholds = None)
+
+def multilabel_metrics(targets, probs, threshold = 0.5):
+    preds = (probs > threshold).int()
+
     tp = (preds * targets).sum(dim=0)
     fp = (preds * (1 - targets)).sum(dim=0)
     fn = ((1 - preds) * targets).sum(dim=0)
@@ -18,15 +24,16 @@ def multilabel_metrics(targets, preds):
     micro_rec = tp_micro / (tp_micro + fn_micro + 1e-10)
     micro_f1 = 2 * (micro_prec * micro_rec) / (micro_prec + micro_rec + 1e-10)
     
-    # y_true_num = targets.sum(dim = 1)
-    # y_pred_num = preds.sum(dim = 1)
-
-    # accuracy_num = (y_true_num == y_pred_num).float().mean(dim = 0)
+    targets = targets.int()
+    ap = ap_metric(probs, targets)
+    mAP = ap.mean()
 
     return {
         'precision': micro_prec.item(),
         'recall': micro_rec.item(),
         'f1': micro_f1.item(),
+        'mAP': mAP.item(),
+        'ap': ap,
     }
 
 def save_experiment(configs, method_name, metrics, save_dir="experiments"):
@@ -53,9 +60,11 @@ def update_result_csv(
     row_data = {
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "method": method_name,
+        "attn_pool": configs.get("attention_pooling", "NA"),
         "precision_avg": metrics.get("precision_avg", -1),
         "recall_avg": metrics.get("recall_avg", -1),
         "f1_avg": metrics.get("f1_avg", -1),
+        "mAP_avg": metrics.get("mAP_avg", -1),
         "batch_size": configs.get("batch_size", -1),
         "num_shots": configs.get("num_shots", -1),
         "tasks": str(configs.get("tasks", -1)),
@@ -90,13 +99,26 @@ def aggregate_metrics(metrics_list: List[Dict], configs: Dict) -> Dict:
         values = [m[name] for m in metrics_list]
         
         if isinstance(values[0], torch.Tensor):
-            values = torch.stack(values).cpu().numpy()
+            values = torch.stack(values, dim = 0).cpu()
+            # 在 aggregate_metrics 函数中
+            mean_np = values.mean(dim=0).numpy()
+            aggregated[f"{name}_avg"] = [round(float(x), 4) for x in mean_np]  # 直接格式化每个元素
+
+            std_np = values.std(dim=0).numpy()
+            aggregated[f"{name}_std"] = [round(float(x), 4) for x in std_np]
+
+            min_np = values.min(dim=0).values.numpy()
+            aggregated[f"{name}_min"] = [round(float(x), 4) for x in min_np]
+
+            max_np = values.max(dim=0).values.numpy()
+            aggregated[f"{name}_max"] = [round(float(x), 4) for x in max_np]
+
         else:
             values = np.array(values)
         
-        aggregated[f"{name}_avg"] = round(float(np.mean(values)), 4)
-        aggregated[f"{name}_std"] = round(float(np.std(values)), 4)
-        aggregated[f"{name}_min"] = round(float(np.min(values)), 4)
-        aggregated[f"{name}_max"] = round(float(np.max(values)), 4)
+            aggregated[f"{name}_avg"] = round(float(np.mean(values)), 4)
+            aggregated[f"{name}_std"] = round(float(np.std(values)), 4)
+            aggregated[f"{name}_min"] = round(float(np.min(values)), 4)
+            aggregated[f"{name}_max"] = round(float(np.max(values)), 4)
     
     return aggregated

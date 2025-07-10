@@ -84,15 +84,15 @@ class SurgVLP(nn.Module):
         x = nn.AdaptiveAvgPool2d((1, 1))(test_features)
         x = x.view(x.shape[0], -1)
         x = self.backbone_img.global_embedder(x)
-        x = x / x.norm(dim=-1, keepdim = True)
+        # x = x / x.norm(dim=-1, keepdim = True)
 
         return x
     
-    def sep_attention_pooling(self, test_features, text_embeddings):
-        batch_size = test_features.shape[0]
-        local_feature_dim = test_features.shape[1]
-        test_features = test_features.view(batch_size, local_feature_dim, -1).transpose(1, 2) # result into (batch_size. H*W, dim)
-        test_features = self.backbone_img.global_embedder(test_features) # result into (bs, HW, 768)
+    # def sep_attention_pooling(self, test_features, text_embeddings):
+    #     batch_size = test_features.shape[0]
+    #     local_feature_dim = test_features.shape[1]
+    #     test_features = test_features.view(batch_size, local_feature_dim, -1).transpose(1, 2) # result into (batch_size. H*W, dim)
+    #     test_features = self.backbone_img.global_embedder(test_features) # result into (bs, HW, 768)
         
 
     def attention_pooling(self, test_features, templates):
