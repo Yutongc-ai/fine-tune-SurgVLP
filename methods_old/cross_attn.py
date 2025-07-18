@@ -51,7 +51,7 @@ class CrossAttentionBlock(nn.Module):
         x = self.attention(q_x=self.ln_1(q_x), k_x=k_x, v_x=v_x, attn_mask=attn_mask)
         return x
 
-class ResidualCrossAttn(nn.Module):
+class CrossAttn(nn.Module):
     def __init__(self, configs, model, preprocess, tokenizer):
         super().__init__()
         self.model = model
@@ -73,10 +73,11 @@ class ResidualCrossAttn(nn.Module):
         # self.classifier = torch.nn.Linear(self.feature_width, self.num_classes, bias=False).to(device)
         self.image_query_attn = CrossAttentionBlock(self.feature_width).to(device)
         self.text_query_attn = CrossAttentionBlock(self.feature_width).to(device)
-        # self.text_mlp = torch.nn.Linear(self.feature_width, self.num_classes, bias=False).to(device)
+        self.text_mlp = torch.nn.Linear(self.feature_width, self.num_classes, bias=False).to(device)
         self.image_mlp = torch.nn.Linear(self.feature_width, self.num_classes, bias=False).to(device)
 
         self.criterion = torch.nn.BCEWithLogitsLoss()
+        self.log_alpha = nn.Parameter(torch.log(torch.tensor(0.5)))
 
         self.test_norm1 = nn.LayerNorm(self.layer4_width).to(device)
         self.test_norm2 = nn.LayerNorm(self.feature_width).to(device)
@@ -111,6 +112,7 @@ class ResidualCrossAttn(nn.Module):
 
     def get_metrics(self, split):
         # total_loss = 0.0
+        all_text_probs = []
         all_img_probs = []
         all_labels = []
 
@@ -128,10 +130,12 @@ class ResidualCrossAttn(nn.Module):
                 global_image_features = global_image_features.to(device)
                 local_image_features = local_image_features.to(device)
 
-                img_logits = self.bidirect_cross_attn(local_image_features, global_image_features)
+                img_logits, text_logits = self.bidirect_cross_attn(local_image_features, global_image_features)
 
+                text_prob = text_logits.sigmoid()
                 img_prob = img_logits.sigmoid()
 
+                all_text_probs.append(text_prob)
                 all_img_probs.append(img_prob)
                 all_labels.append(label)
 
@@ -140,7 +144,11 @@ class ResidualCrossAttn(nn.Module):
         final_img_probs = torch.cat(all_img_probs, dim=0).to('cpu')
         img_metrics = multilabel_metrics(final_labels, final_img_probs)
 
-        return img_metrics
+        final_text_probs = torch.cat(all_text_probs, dim=0).to('cpu')
+        text_metrics = multilabel_metrics(final_labels, final_text_probs)
+
+        return [img_metrics, text_metrics]
+        # return img_metrics
 
     def bidirect_cross_attn(self, local_image_features, global_image_features):
         """
@@ -157,8 +165,7 @@ class ResidualCrossAttn(nn.Module):
         local_image_features = self.test_norm2(local_image_features)
         global_image_features = self.test_norm2(global_image_features)
 
-        global_image_features = global_image_features.unsqueeze(1)
-        detached_global_image_features = global_image_features.detach()
+        detached_global_image_features = global_image_features.unsqueeze(1).detach()
         
         # 2. get template text features
         _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
@@ -166,25 +173,22 @@ class ResidualCrossAttn(nn.Module):
         batched_template_features = feats_templates.repeat(bs, 1, 1)
         
         # 3. global image feature query text features
-        attned_text_f = self.image_query_attn(detached_global_image_features, batched_template_features, batched_template_features).squeeze(1)
-        # text_logits = self.text_mlp(attned_text_f)
+        attned_text_f  = self.image_query_attn(detached_global_image_features, batched_template_features, batched_template_features).squeeze(1)
+        text_logits = self.text_mlp(attned_text_f)
 
         # 4. global text features query image features
         detached_text_f = attned_text_f.detach().unsqueeze(1)
         attned_img_f = self.text_query_attn(detached_text_f, local_image_features, local_image_features).squeeze(1)
-        global_image_features = global_image_features.squeeze(1)
-        attned_img_f = (attned_img_f + global_image_features) / 2
-
         img_logits = self.image_mlp(attned_img_f)
 
-        return img_logits
+        return img_logits, text_logits
 
     def forward(self,
                 dataset: MultiLabelDatasetBase):
         templates = dataset.templates
 
         wandb.init(
-            project="few-shot-surgvlp-cross-attn-residual",
+            project="few-shot-surgvlp-cross-attn",
             name=f"multihead_shot{self.configs.num_shots}_epoch{self.epochs}",
             config=self.configs,
         )
@@ -227,9 +231,11 @@ class ResidualCrossAttn(nn.Module):
 
 
         optim_params = [
+            {'params': self.text_mlp.parameters(), 'lr': self.lr},
             {'params': self.image_mlp.parameters(), 'lr': self.lr},
             {'params': self.image_query_attn.parameters(), 'lr': self.lr},
             {'params': self.text_query_attn.parameters(), 'lr': self.lr},
+            {'params': [self.log_alpha], 'lr': self.lr_alpha},
         ]
 
         if self.unfreeze:
@@ -239,13 +245,17 @@ class ResidualCrossAttn(nn.Module):
             if self.unfreeze_layer == 'last':
                 optim_params.append({'params': self.model.backbone_img.model.layer4.parameters(), 'lr': self.lr * 0.1})
         
-        self.optimizer = torch.optim.AdamW(optim_params)
+        self.optimizer = torch.optim.Adam(optim_params, weight_decay=1e-5)
 
         train_loss = []
         best_val_img_map = 0
+        best_val_text_map = 0
         update_test_img_metric = False
+        update_test_text_metric = False
 
-        res_img_metrics = None
+        best_model_weight = None
+
+        res_img_metrics, res_text_metrics = None, None
         
         # initial_params = copy.deepcopy({name: param.data.clone() for name, param in self.model.backbone_img.named_parameters()})
 
@@ -269,14 +279,16 @@ class ResidualCrossAttn(nn.Module):
                     # 1.get global and local image features
                     global_image_features, local_image_features = self.model.extract_feat_img(images)
                     local_image_features = local_image_features.permute(0, 2, 3, 1)
-                    img_logits = self.bidirect_cross_attn(local_image_features, global_image_features)
+                    img_logits, text_logits = self.bidirect_cross_attn(local_image_features, global_image_features)
 
                 else:
                     assert(0, "Can only unfreeze encoder when doing cross attention")
                 
+                text_loss = self.criterion(text_logits, target)
                 img_loss = self.criterion(img_logits, target)
                 
-                loss = img_loss
+                alpha = torch.exp(self.log_alpha)
+                loss = alpha * text_loss + (1 - alpha) * img_loss
 
                 loss.backward()
                 self.optimizer.step()
@@ -284,6 +296,7 @@ class ResidualCrossAttn(nn.Module):
                 epoch_loss += loss.item()
                 batch_count += 1
                 
+            wandb.log({"alpha": torch.exp(self.log_alpha), "epoch": epoch})
 
             avg_epoch_loss = epoch_loss / batch_count
             # wandb.log({"epoch_loss": avg_epoch_loss, "epoch": epoch})
@@ -305,6 +318,7 @@ class ResidualCrossAttn(nn.Module):
             
             # assert(0)
 
+            self.text_mlp.eval()
             self.image_mlp.eval()
             self.text_query_attn.eval()
             self.image_query_attn.eval()
@@ -313,7 +327,7 @@ class ResidualCrossAttn(nn.Module):
 
             train_loss.append(avg_epoch_loss)
 
-            val_img_metrics = self.get_metrics("val")
+            val_img_metrics, val_text_metrics = self.get_metrics("val")
 
             cur_val_img_map = val_img_metrics["mAP"]
             wandb.log({"img_val_map": cur_val_img_map, "epoch": epoch})
@@ -321,21 +335,49 @@ class ResidualCrossAttn(nn.Module):
             wandb.log({"img_val_precision": val_img_metrics["precision"], "epoch": epoch})
             wandb.log({"img_val_recall": val_img_metrics["recall"], "epoch": epoch})
 
+            cur_val_text_map = val_text_metrics["mAP"]
+            wandb.log({"text_val_map": cur_val_text_map, "epoch": epoch})
+            wandb.log({"text_val_f1": val_text_metrics["f1"], "epoch": epoch})
+            wandb.log({"text_val_precision": val_text_metrics["precision"], "epoch": epoch})
+            wandb.log({"text_val_recall": val_text_metrics["recall"], "epoch": epoch})
+
             if cur_val_img_map > best_val_img_map:
                 best_val_img_map = cur_val_img_map
                 update_test_img_metric = True
 
-            if update_test_img_metric:
+            if cur_val_text_map > best_val_text_map:
+                best_val_text_map = cur_val_text_map
+                update_test_text_metric = True
 
-                test_img_metrics = self.get_metrics("test")
-                res_img_metrics = test_img_metrics
-                map = res_img_metrics["mAP"]
-                wandb.log({"img_test_map": map, "epoch": epoch})
-                wandb.log({"img_test_f1": res_img_metrics["f1"], "epoch": epoch})
-                wandb.log({"img_test_precision": res_img_metrics["precision"], "epoch": epoch})
-                wandb.log({"img_test_recall": res_img_metrics["recall"], "epoch": epoch})
+            if update_test_text_metric or update_test_img_metric:
+
+                test_img_metrics, test_text_metrics = self.get_metrics("test")
+                if update_test_img_metric:
+                    res_img_metrics = test_img_metrics
+                    map = res_img_metrics["mAP"]
+                    wandb.log({"img_test_map": map, "epoch": epoch})
+                    wandb.log({"img_test_f1": res_img_metrics["f1"], "epoch": epoch})
+                    wandb.log({"img_test_precision": res_img_metrics["precision"], "epoch": epoch})
+                    wandb.log({"img_test_recall": res_img_metrics["recall"], "epoch": epoch})
+
+                    # update best model weight to save
+                    best_model_weight = {
+                        'epoch': self.epochs,
+                        'model_state_dict': self.state_dict(),
+                        'optimizer_state_dict': self.optimizer.state_dict(),
+                        'loss': loss,
+                    }
+                
+                if update_test_text_metric:
+                    res_text_metrics = test_text_metrics
+                    map = res_text_metrics["mAP"]
+                    wandb.log({"text_test_map": map, "epoch": epoch})
+                    wandb.log({"text_test_f1": res_text_metrics["f1"], "epoch": epoch})
+                    wandb.log({"text_test_precision": res_text_metrics["precision"], "epoch": epoch})
+                    wandb.log({"text_test_recall": res_text_metrics["recall"], "epoch": epoch})
 
             update_test_img_metric = False
+            update_test_text_metric = False
 
         wandb.finish()
-        return res_img_metrics
+        return [res_img_metrics, res_text_metrics], best_model_weight

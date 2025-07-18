@@ -65,17 +65,16 @@ def update_result_csv(
         "recall_avg": metrics.get("recall_avg", -1),
         "f1_avg": metrics.get("f1_avg", -1),
         "mAP_avg": metrics.get("mAP_avg", -1),
-        "batch_size": int(configs.get("batch_size", -1)) * int(configs.get("accumulate_step", -1)),
-        "early_stop": configs.get("patience") if configs.get("early_stop") else "NA",
-        "annealling": configs.get("annealling", False),
-        "lr": configs.get("learning_rate", -1),
+        "batch_size": configs.get("batch_size", -1),
         "num_shots": configs.get("num_shots", -1),
         "tasks": str(configs.get("tasks", -1)),
         "epochs": configs.get("epochs", -1),
-        "unfreeze_vision": configs.get("unfreeze_vision", False),
-        "unfreeze_text": configs.get("unfreeze_text", False),
+        "unfreeze": configs.get("unfreeze", False),
+        "unfreeze_layer": configs.get("unfreeze_layer", "NA"),
         "init_alpha": configs.get("init_alpha", "NA"),
     }
+    if not row_data["unfreeze"]:
+        row_data["unfreeze_layer"] = "NA"
 
     df = pd.DataFrame([row_data])
     

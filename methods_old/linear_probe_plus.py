@@ -199,7 +199,7 @@ class LPPlus2(nn.Module):
             if self.unfreeze_layer == 'last':
                 optim_params.append({'params': self.model.backbone_img.model.layer4.parameters(), 'lr': self.lr * 0.1})
 
-        self.optimizer = torch.optim.AdamW(optim_params)
+        self.optimizer = torch.optim.Adam(optim_params, weight_decay=0.1)
 
         train_loss = []
         best_val_map = 0

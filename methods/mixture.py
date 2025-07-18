@@ -1,14 +1,13 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from torch.utils.data import TensorDataset, DataLoader
 from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features
 from methods.utils import multilabel_metrics
+from methods.early_stopping import EarlyStopping
 from tqdm import tqdm
-import copy
 import wandb
 from typing import Callable, Optional
-from collections import OrderedDict
+from methods.loss import InfoNCE
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class CrossAttentionBlock(nn.Module):
@@ -51,64 +50,72 @@ class CrossAttentionBlock(nn.Module):
         x = self.attention(q_x=self.ln_1(q_x), k_x=k_x, v_x=v_x, attn_mask=attn_mask)
         return x
 
-class CrossAttn(nn.Module):
+class Mixture(nn.Module): # Include cross attention and negation text
     def __init__(self, configs, model, preprocess, tokenizer):
         super().__init__()
         self.model = model
         self.preprocess = preprocess
         self.tokenizer = tokenizer
         self.configs = configs
-        self.attn_pooling = configs.attention_pooling
 
-        self.temperature = 100
-        self.threshold = 0.5
-        self.lr = 0.001
-        self.lr_alpha = 0.01
+        # =====================================Training Settings======================================
+        self.lr = configs.learning_rate
         self.epochs = configs.epochs
+        self.accumulate_step = configs.accumulate_step
+        self.patience = configs.patience
+        self.checkpoint_path =  configs.checkpoint_path
+        self.early_stop = configs.early_stop
+        self.early_stopping = EarlyStopping(patience = self.patience, path = self.checkpoint_path)
+        self.annealling = configs.annealling
 
-        self.layer4_width = 2048
         self.feature_width = configs.model_config.backbone_img.num_classes # 768
         self.num_classes = configs.dataset_config.num_classes
 
+        # ======================================Training Parameters=====================================
         # self.classifier = torch.nn.Linear(self.feature_width, self.num_classes, bias=False).to(device)
         self.image_query_attn = CrossAttentionBlock(self.feature_width).to(device)
         self.text_query_attn = CrossAttentionBlock(self.feature_width).to(device)
         self.text_mlp = torch.nn.Linear(self.feature_width, self.num_classes, bias=False).to(device)
         self.image_mlp = torch.nn.Linear(self.feature_width, self.num_classes, bias=False).to(device)
-
-        self.criterion = torch.nn.BCEWithLogitsLoss()
-        self.log_alpha = nn.Parameter(torch.log(torch.tensor(0.5)))
-
-        self.test_norm1 = nn.LayerNorm(self.layer4_width).to(device)
+        
+        # normalization layer
         self.test_norm2 = nn.LayerNorm(self.feature_width).to(device)
 
-        self.norm1 = nn.LayerNorm(self.layer4_width).to(device)
-        self.norm2 = nn.LayerNorm(self.feature_width).to(device)
+        # balanced parameters
+        self.log_alpha = nn.Parameter(torch.log(torch.tensor(0.5)))
+        self.lr_alpha = 0.01
+
+        # metrcis
+        self.criterion = torch.nn.BCEWithLogitsLoss()
+        # loss function
+        self.loss_func = InfoNCE(negative_mode='paired')
+
+        # self.norm1 = nn.LayerNorm(self.layer4_width).to(device)
+        # self.norm2 = nn.LayerNorm(self.feature_width).to(device)
+
+        # ====================================Unfreeze Settings=========================================
+        self.unfreeze_vision = configs["unfreeze_vision"]
+        self.unfreeze_text = configs["unfreeze_text"]
 
         # unfreeze part of image encoder
-        for name, param in self.model.named_parameters():
+        for param in self.model.parameters():
             # print(param.requires_grad)
             # print(name)
             param.requires_grad = False
-        
-        self.unfreeze = configs["unfreeze"]
-        self.unfreeze_layer = configs.unfreeze_layer
 
-        if self.unfreeze:
-            print("Unfreeze text encoder")
-            for name, param in self.model.backbone_text.named_parameters():
-                # print(name, param.requires_grad)
+        if self.unfreeze_vision:
+            print("Unfreeze vision encoder")
+            for param in self.model.backbone_img.parameters():
                 param.requires_grad = True
-            
-            for param in self.model.backbone_img.global_embedder.parameters():
-                param.requires_grad = True
-
-            if self.unfreeze_layer == 'last':
-                for param in self.model.backbone_img.model.layer4.parameters():
-                    param.requires_grad = True
-                print("Unfrozen layer4 of vision encoder")
         else:
             print("Keep vision encoder frozen")
+
+        if self.unfreeze_text:
+            print("Unfreeze text encoder")
+            for param in self.model.backbone_text.parameters():
+                param.requires_grad = True
+        else:
+            print("Keep text encoder frozen")
 
     def get_metrics(self, split):
         # total_loss = 0.0
@@ -150,7 +157,7 @@ class CrossAttn(nn.Module):
         return [img_metrics, text_metrics]
         # return img_metrics
 
-    def bidirect_cross_attn(self, local_image_features, global_image_features):
+    def bidirect_cross_attn(self, local_image_features, global_image_features, feats_templates):
         """
             local_image_features: [bs, h, w, layer4_width(2048)]
             global_image_features: [bs, feature_width(768)]
@@ -168,8 +175,7 @@ class CrossAttn(nn.Module):
         detached_global_image_features = global_image_features.unsqueeze(1).detach()
         
         # 2. get template text features
-        _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
-
+        # _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
         batched_template_features = feats_templates.repeat(bs, 1, 1)
         
         # 3. global image feature query text features
@@ -181,12 +187,28 @@ class CrossAttn(nn.Module):
         attned_img_f = self.text_query_attn(detached_text_f, local_image_features, local_image_features).squeeze(1)
         img_logits = self.image_mlp(attned_img_f)
 
-        return img_logits, text_logits
+        return img_logits, text_logits, attned_img_f, attned_text_f
+
+    def get_nce_labels(self, target, negated_target, feats_template):
+        batch_size = target.shape[0]
+        _, emb_size = feats_template.shape
+        positive_keys = torch.zeros((batch_size, self.num_classes, emb_size), device=device)
+        negative_keys = torch.zeros((batch_size, self.num_classes, emb_size), device=device)
+
+        for bs in range(batch_size):
+            for index, mask in enumerate(target[bs]):
+                if mask:
+                    positive_keys[bs][index] = feats_template[index]
+
+        for bs in range(batch_size):
+            for index, mask in enumerate(negated_target[bs]):
+                if mask:
+                    negative_keys[bs][index] = feats_template[index + 7]
+        
+        return positive_keys, negative_keys
 
     def forward(self,
                 dataset: MultiLabelDatasetBase):
-        templates = dataset.templates
-
         wandb.init(
             project="few-shot-surgvlp-cross-attn",
             name=f"multihead_shot{self.configs.num_shots}_epoch{self.epochs}",
@@ -194,11 +216,11 @@ class CrossAttn(nn.Module):
         )
 
         # test data preparations
-        self.templates = self.tokenizer(templates, device = device)
+        templates = self.tokenizer(dataset.templates + dataset.negated_templates, device = device)
         
-        self.input_ids = self.templates['input_ids']
-        self.token_type_ids = self.templates['token_type_ids']
-        self.attention_masks = self.templates['attention_mask']
+        self.input_ids = templates['input_ids']
+        self.token_type_ids = templates['token_type_ids']
+        self.attention_masks = templates['attention_mask']
 
         # (num_classes, dim)
 
@@ -224,28 +246,24 @@ class CrossAttn(nn.Module):
         train_loader = build_data_loader(data_source=train_data, batch_size = self.configs.batch_size, tfm=self.preprocess, is_train=True, 
                                          num_classes = dataset.num_classes)
 
-        # for i, (images, target) in enumerate(tqdm(train_loader)):
-        #     print(target)
-
-        # assert(0)
-
 
         optim_params = [
-            {'params': self.text_mlp.parameters(), 'lr': self.lr},
-            {'params': self.image_mlp.parameters(), 'lr': self.lr},
-            {'params': self.image_query_attn.parameters(), 'lr': self.lr},
-            {'params': self.text_query_attn.parameters(), 'lr': self.lr},
+            {'params': self.text_mlp.parameters(), 'lr': self.lr * 10},
+            {'params': self.image_mlp.parameters(), 'lr': self.lr * 10},
+            {'params': self.image_query_attn.parameters(), 'lr': self.lr * 10},
+            {'params': self.text_query_attn.parameters(), 'lr': self.lr * 10},
             {'params': [self.log_alpha], 'lr': self.lr_alpha},
         ]
 
-        if self.unfreeze:
-            optim_params.append({'params': self.model.backbone_text.parameters(), 'lr': self.lr * 0.1})
-            optim_params.append({'params': self.model.backbone_img.global_embedder.parameters(), 'lr': self.lr * 0.1})
+        if self.unfreeze_vision:
+            optim_params.append({'params': self.model.backbone_img.parameters(), 'lr': self.lr})
             
-            if self.unfreeze_layer == 'last':
-                optim_params.append({'params': self.model.backbone_img.model.layer4.parameters(), 'lr': self.lr * 0.1})
+        if self.unfreeze_text:
+            optim_params.append({'params': self.model.backbone_text.parameters(), 'lr': self.lr})
         
         self.optimizer = torch.optim.AdamW(optim_params)
+        if self.annealling:
+            self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, self.epochs * len(train_loader))
 
         train_loss = []
         best_val_img_map = 0
@@ -257,8 +275,6 @@ class CrossAttn(nn.Module):
 
         res_img_metrics, res_text_metrics = None, None
         
-        # initial_params = copy.deepcopy({name: param.data.clone() for name, param in self.model.backbone_img.named_parameters()})
-
         for epoch in range(self.epochs):
             epoch_loss = 0.0
             batch_count = 0
@@ -268,30 +284,47 @@ class CrossAttn(nn.Module):
             self.image_mlp.train()
             self.text_query_attn.train()
             self.image_query_attn.train()
-            if self.unfreeze:
+            if self.unfreeze_vision or self.unfreeze_text:
                 self.model.train()
             
-            for i, (images, target, _) in enumerate(tqdm(train_loader)):
-                self.optimizer.zero_grad()
-                images, target = images.to(device), target.to(device)
+            for i, (images, target, negated_target) in enumerate(tqdm(train_loader)):
+                # self.optimizer.zero_grad()
+                images, target, negated_target = images.to(device), target.to(device), negated_target.to(device)
                 
-                if self.unfreeze:
-                    # 1.get global and local image features
-                    global_image_features, local_image_features = self.model.extract_feat_img(images)
-                    local_image_features = local_image_features.permute(0, 2, 3, 1)
-                    img_logits, text_logits = self.bidirect_cross_attn(local_image_features, global_image_features)
+                # 1.get global and local image features
+                global_image_features, local_image_features = self.model.extract_feat_img(images)
+                local_image_features = local_image_features.permute(0, 2, 3, 1)
+                
+                # 2.get original and negation text templates embedding
+                _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
+                feats_templates = feats_templates.to(device)
 
-                else:
-                    assert(0, "Can only unfreeze encoder when doing cross attention")
+                # 3. cross attention part loss
+                img_logits, text_logits, attned_img, attned_text = self.bidirect_cross_attn(local_image_features, global_image_features, feats_templates[: 7])
                 
                 text_loss = self.criterion(text_logits, target)
                 img_loss = self.criterion(img_logits, target)
                 
                 alpha = torch.exp(self.log_alpha)
-                loss = alpha * text_loss + (1 - alpha) * img_loss
+                loss1 = alpha * text_loss + (1 - alpha) * img_loss
+                
+                # 4. negation part loss
+                positive_keys, negative_keys = self.get_nce_labels(target, negated_target, feats_templates)
+                
+                loss2 = self.loss_func(global_image_features, positive_keys, negative_keys) / self.accumulate_step
+                
+                # combine loss1 and loss2
+                loss = (loss1 + loss2) / 2
+                loss = loss / self.accumulate_step
 
                 loss.backward()
-                self.optimizer.step()
+
+                if i % self.accumulate_step == 0:
+                    self.optimizer.step()
+                    
+                    if self.annealling:
+                        self.scheduler.step()
+                    self.optimizer.zero_grad()
 
                 epoch_loss += loss.item()
                 batch_count += 1
@@ -302,21 +335,6 @@ class CrossAttn(nn.Module):
             # wandb.log({"epoch_loss": avg_epoch_loss, "epoch": epoch})
             print(f'Epoch {epoch+1} Loss: {avg_epoch_loss:.4f}')
             wandb.log({"loss": avg_epoch_loss, "epoch": epoch})
-            
-            # after_epoch1_params = {name: param.data.clone() for name, param in self.model.backbone_img.named_parameters()}
-            # updated_in_epoch1 = False
-            # for name in initial_params:
-            #     if not torch.equal(initial_params[name], after_epoch1_params[name]):
-            #         diff = torch.sum(torch.abs(initial_params[name] - after_epoch1_params[name]))
-            #         print(f"✅ {name} 在 epoch1 更新 | 变化量: {diff:.6f}")
-            #         updated_in_epoch1 = True
-            #     else:
-            #         print(f"❌ {name} 在 epoch1 未更新！请检查优化器/梯度")
-
-            # if not updated_in_epoch1:
-            #     raise RuntimeError("所有参数在 epoch1 均未更新！")
-            
-            # assert(0)
 
             self.text_mlp.eval()
             self.image_mlp.eval()
@@ -341,6 +359,16 @@ class CrossAttn(nn.Module):
             wandb.log({"text_val_precision": val_text_metrics["precision"], "epoch": epoch})
             wandb.log({"text_val_recall": val_text_metrics["recall"], "epoch": epoch})
 
+
+            save_model = self.early_stopping(cur_val_img_map)
+            if save_model:
+                torch.save(self.state_dict(), self.checkpoint_path)
+                print(f'Validation map decreased. Saving model...')
+
+            if self.early_stopping.early_stop:
+                print("Early stopping triggered!")
+                break
+
             if cur_val_img_map > best_val_img_map:
                 best_val_img_map = cur_val_img_map
                 update_test_img_metric = True
@@ -361,13 +389,8 @@ class CrossAttn(nn.Module):
                     wandb.log({"img_test_recall": res_img_metrics["recall"], "epoch": epoch})
 
                     # update best model weight to save
-                    best_model_weight = {
-                        'epoch': self.epochs,
-                        'model_state_dict': self.state_dict(),
-                        'optimizer_state_dict': self.optimizer.state_dict(),
-                        'loss': loss,
-                    }
-                
+                    self.early_stopping.save_checkpoint(self.state_dict(), self.checkpoint_path)
+
                 if update_test_text_metric:
                     res_text_metrics = test_text_metrics
                     map = res_text_metrics["mAP"]
@@ -380,4 +403,4 @@ class CrossAttn(nn.Module):
             update_test_text_metric = False
 
         wandb.finish()
-        return [res_img_metrics, res_text_metrics], best_model_weight
+        return [res_img_metrics, res_text_metrics]

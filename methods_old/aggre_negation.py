@@ -42,15 +42,15 @@ class AggreNegation(nn.Module):
 
         # vision encoder settings
         self.unfreeze_vision = configs["unfreeze_vision"]
-        # self.unfreeze_vision_layer = configs.unfreeze_vision_layer
+        self.unfreeze_vision_layer = configs.unfreeze_vision_layer
         if self.unfreeze_vision:
-            for param in self.model.backbone_img.parameters():
+            for param in self.model.backbone_img.global_embedder.parameters():
                 param.requires_grad = True
             
-            # if self.unfreeze_vision_layer == 'last':
-            #     for param in self.model.backbone_img.model.layer4.parameters():
-            #         param.requires_grad = True
-            print("Unfreeze vision encoder")
+            if self.unfreeze_vision_layer == 'last':
+                for param in self.model.backbone_img.model.layer4.parameters():
+                    param.requires_grad = True
+                print("Unfrozen layer4 of vision encoder")
         else:
             print("Keep vision encoder frozen")
 
@@ -59,7 +59,7 @@ class AggreNegation(nn.Module):
         if self.unfreeze_text:
             for name, param in self.model.backbone_text.named_parameters():
                 param.requires_grad = True
-            print("Unfreeze text encoder")
+            print("Unfreeze whole text encoder")
         else:
             print("Keep text encoder frozen")
 
@@ -182,8 +182,7 @@ class AggreNegation(nn.Module):
         if self.unfreeze_text:
             optim_params.append({'params': self.model.backbone_text.parameters(), 'lr': self.lr * 0.1})
 
-        self.optimizer = torch.optim.AdamW(optim_params)
-        self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, self.epochs * len(train_loader))
+        self.optimizer = torch.optim.Adam(optim_params, weight_decay=1e-5)
 
         train_loss = []
         best_val_map = 0
@@ -244,7 +243,6 @@ class AggreNegation(nn.Module):
                 
                 loss.backward()
                 self.optimizer.step()
-                self.scheduler.step()
 
                 epoch_loss += loss.item()
                 batch_count += 1

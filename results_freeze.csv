@@ -6,14 +6,21 @@ timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,nu
 2025-07-07 15:20:10,linear_probe,True,0.5315,0.656,0.5871,0.3275,64,64,5,30,False,NA,NA
 2025-07-07 16:07:59,linear_probe,True,0.5174,0.6699,0.5838,0.3293,64,64,5,100,False,NA,NA
 2025-07-07 16:34:15,linear_probe,True,0.5434,0.6712,0.6002,0.3387,64,128,5,30,False,NA,NA
+timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,num_shots,tasks,epochs,unfreeze,unfreeze_layer,init_alpha
 2025-07-07 18:10:01,linear_probe,True,0.5443,0.7013,0.6127,0.3393,64,128,5,100,False,NA,NA
+
+
+timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,num_shots,tasks,epochs,unfreeze,unfreeze_layer,init_alpha
 2025-07-08 02:34:59,linear_probe,False,0.3609,0.582,0.4402,0.2176,64,1,5,30,False,NA,NA
 2025-07-08 03:01:26,linear_probe,False,0.3627,0.5882,0.4438,0.2185,64,1,5,100,False,NA,NA
 2025-07-08 03:13:22,linear_probe,False,0.4963,0.6331,0.5562,0.3072,64,16,5,30,False,NA,NA
 2025-07-08 03:42:23,linear_probe,False,0.481,0.6346,0.5464,0.3061,64,16,5,100,False,NA,NA
 2025-07-08 03:59:32,linear_probe,False,0.5222,0.6737,0.5883,0.3258,64,64,5,30,False,NA,NA
 2025-07-08 04:49:17,linear_probe,False,0.5229,0.697,0.5973,0.3321,64,64,5,100,False,NA,NA
+timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,num_shots,tasks,epochs,unfreeze,unfreeze_layer,init_alpha
 2025-07-08 05:15:13,linear_probe,False,0.5389,0.686,0.6035,0.341,64,128,5,30,False,NA,NA
+
+
 2025-07-08 06:19:51,linear_probe++,True,0.2465,0.6469,0.357,0.2713,64,1,1,30,False,NA,0.1
 2025-07-08 06:21:34,linear_probe++,True,0.2415,0.5766,0.3405,0.2667,64,1,1,30,False,NA,0.2
 2025-07-08 06:23:24,linear_probe++,True,0.2381,0.5316,0.3289,0.2634,64,1,1,30,False,NA,0.5
@@ -26,6 +33,8 @@ timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,nu
 2025-07-08 06:47:49,linear_probe++,True,0.2336,0.6702,0.3464,0.2711,64,16,1,100,False,NA,0.1
 2025-07-08 06:52:37,linear_probe++,True,0.2352,0.5904,0.3363,0.2666,64,16,1,100,False,NA,0.2
 2025-07-08 06:57:46,linear_probe++,True,0.2356,0.5328,0.3268,0.2632,64,16,1,100,False,NA,0.5
+
+timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,num_shots,tasks,epochs,unfreeze,unfreeze_layer,init_alpha
 2025-07-08 07:00:54,linear_probe++,True,0.2325,0.6614,0.344,0.2736,64,64,1,30,False,NA,0.1
 2025-07-08 07:04:02,linear_probe++,True,0.234,0.5829,0.334,0.2676,64,64,1,30,False,NA,0.2
 2025-07-08 07:07:13,linear_probe++,True,0.2353,0.5333,0.3265,0.2637,64,64,1,30,False,NA,0.5
@@ -38,6 +47,8 @@ timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,nu
 2025-07-08 08:05:18,linear_probe++,True,0.2337,0.6462,0.3433,0.2732,64,128,1,100,False,NA,0.1
 2025-07-08 08:20:30,linear_probe++,True,0.2349,0.5731,0.3332,0.2671,64,128,1,100,False,NA,0.2
 2025-07-08 08:35:43,linear_probe++,True,0.2733,0.5165,0.3574,0.2635,64,128,1,100,False,NA,0.5
+
+
 2025-07-08 08:36:58,linear_probe++,False,0.2555,0.637,0.3647,0.2819,64,1,1,30,False,NA,0.1
 2025-07-08 08:38:12,linear_probe++,False,0.2536,0.5864,0.3541,0.2759,64,1,1,30,False,NA,0.2
 2025-07-08 08:39:41,linear_probe++,False,0.2511,0.5448,0.3437,0.271,64,1,1,30,False,NA,0.5

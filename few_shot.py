@@ -10,9 +10,10 @@ from methods.linear_probe_plus import LPPlus2
 from methods.zoom_in import ZoomIn
 from methods.cross_attn import CrossAttn
 from methods.cross_attn_residual import ResidualCrossAttn
-from methods.negation import Negation
+from methods.negation_nce import NegationNCE
 from methods.simple import Simple
 from methods.aggre_negation import AggreNegation
+from methods.mixture import Mixture
 import argparse
 import datetime
 from methods.utils import *
@@ -22,6 +23,7 @@ device = "cuda" if torch.cuda.is_available() else "cpu"
 
 def main(configs, method_name):
     torch.cuda.reset_peak_memory_stats()
+    torch.cuda.empty_cache()
 
     # Load config file
 
@@ -39,6 +41,8 @@ def main(configs, method_name):
     print("dataset class names:", classnames)
     print("template:", templates)
 
+    checkpoint_path = configs.get("checkpoint_path", f"{method_name}.pth")
+
     experiment_data = {
         "classnames": classnames,
         "templates": templates,
@@ -52,10 +56,12 @@ def main(configs, method_name):
     all_metrics = []
     all_metrics_img = []
     all_metrics_text = []
+    best_mAP = 0
+
     for task in range(tasks):
         random.seed(task+200)
         torch.manual_seed(task+200)
-        surgvlp_model, preprocess = surgvlp.load(configs.model_config, device='cuda', pretrain='/home/yongxuan/SurgVLP/checkpoints/SurgVLP.pth')
+        surgvlp_model, preprocess = surgvlp.load(configs.model_config, device='cuda', pretrain='/home/yongxuan/SurgVLP/checkpoints/PeskaVLP.pth')
 
         if method_name == "zero_shot":
             method = ZeroShot(configs, surgvlp_model, preprocess, surgvlp.tokenize)
@@ -67,23 +73,39 @@ def main(configs, method_name):
             method = ZoomIn(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         elif method_name == "bi_cross_attn":
             method = CrossAttn(configs, surgvlp_model, preprocess, surgvlp.tokenize)
+            # method.load_state_dict(torch.load("checkpoints/cross_attn.pth", weights_only=True)['model_state_dict'])
         elif method_name == "residual_bi_cross_attn":
             method = ResidualCrossAttn(configs, surgvlp_model, preprocess, surgvlp.tokenize)
-        elif method_name == "negation":
-            method = Negation(configs, surgvlp_model, preprocess, surgvlp.tokenize)
+        # elif method_name == "negation":
+        #     method = Negation(configs, surgvlp_model, preprocess, surgvlp.tokenize)
+        elif method_name == "negation_nce":
+            method = NegationNCE(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         elif method_name == "simple":
             method = Simple(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         elif method_name == "aggre_negation":
             method = AggreNegation(configs, surgvlp_model, preprocess, surgvlp.tokenize)
+        elif method_name == "mixture":
+            method = Mixture(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         metrics = method(dataset)
 
         # all_metrics.append(metrics)
         if method_name != "bi_cross_attn":
             all_metrics.append(metrics)
+            # if metrics["mAP"] > best_mAP:
+            #     best_mAP = metrics["mAP"]
+            #     print("Saving best model to checkpoint path:", checkpoint_path)
+            #     torch.save(model_weight, checkpoint_path)
+
         else:
             all_metrics_img.append(metrics[0])
             all_metrics_text.append(metrics[1])
-    
+            # if metrics[0]["mAP"] > best_mAP:
+            #     best_mAP = metrics[0]["mAP"]
+            #     print("Saving best model to checkpoint path:", checkpoint_path)
+            #     torch.save(model_weight, checkpoint_path)
+                
+        # del model_weight
+
     if method_name != "bi_cross_attn":
         agg_metrics = aggregate_metrics(all_metrics, configs)
     else:
@@ -142,6 +164,11 @@ if __name__ == "__main__":
                         help='Number of training epochs')
     parser.add_argument('--init_alpha',
                         type=float)
+    parser.add_argument('--learning_rate',
+                        type=float)
+    parser.add_argument('--annealling', 
+                        type=lambda x: (str(x).lower() == 'true'),
+                        help='Whether to use cosine annealling (true/false)')
     parser.add_argument('--csv_path',
                         type=str)
     
@@ -152,6 +179,9 @@ if __name__ == "__main__":
     if args.attention_pooling is not None:
         method_configs["attention_pooling"] = args.attention_pooling
     
+    if args.annealling is not None:
+        method_configs["annealling"] = args.annealling
+    
     if args.num_shots:
         method_configs["num_shots"] = args.num_shots
     
@@ -161,6 +191,9 @@ if __name__ == "__main__":
     if args.init_alpha:
         method_configs["init_alpha"] = args.init_alpha
     
+    if args.learning_rate:
+        method_configs["learning_rate"] = args.learning_rate
+
     if args.csv_path:
         method_configs["csv_path"] = args.csv_path
 

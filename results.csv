@@ -12,16 +12,22 @@ timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,nu
 2025-07-06 23:48:57,linear_probe,True,0.3167,0.5677,0.4043,0.2485,64,16,5,100,True,last,NA
 2025-07-07 00:01:10,linear_probe,True,0.3901,0.7081,0.5013,0.2929,64,64,5,30,True,last,NA
 2025-07-07 00:37:58,linear_probe,True,0.3901,0.7081,0.5013,0.2929,64,64,5,100,True,last,NA
+2025-07-07 02:39:32,linear_probe,True,0.3941,0.7591,0.5178,0.3059,64,128,5,30,True,last,NA
+2025-07-07 04:17:11,linear_probe,True,0.3941,0.7591,0.5178,0.3059,64,128,5,100,True,last,NA
+
 2025-07-07 01:10:00,linear_probe,False,0.2367,0.5443,0.3277,0.2198,64,1,5,30,True,last,NA
 2025-07-07 01:23:41,linear_probe,False,0.2369,0.5439,0.3278,0.2198,64,1,5,100,True,last,NA
 2025-07-07 01:31:59,linear_probe,False,0.3005,0.6216,0.4039,0.249,64,16,5,30,True,last,NA
 2025-07-07 01:52:01,linear_probe,False,0.2975,0.6263,0.402,0.2491,64,16,5,100,True,last,NA
 2025-07-07 02:03:52,linear_probe,False,0.3674,0.7278,0.4877,0.2934,64,64,5,30,True,last,NA
 2025-07-07 02:39:32,linear_probe,False,0.3674,0.7278,0.4877,0.2934,64,64,5,100,True,last,NA
-2025-07-07 02:39:32,linear_probe,True,0.3941,0.7591,0.5178,0.3059,64,128,5,30,True,last,NA
-2025-07-07 04:17:11,linear_probe,True,0.3941,0.7591,0.5178,0.3059,64,128,5,100,True,last,NA
 2025-07-07 04:37:43,linear_probe,False,0.3787,0.7662,0.5062,0.3088,64,128,5,30,True,last,NA
 2025-07-07 05:42:32,linear_probe,False,0.3787,0.7662,0.5062,0.3088,64,128,5,100,True,last,NA
+
+2025-07-07 07:00:59,linear_probe++,True,0.2078,0.6526,0.3152,0.1968,64,1,1,30,True,last,0.2
+2025-07-07 07:08:49,linear_probe++,True,0.2065,0.674,0.3162,0.1964,64,16,1,30,True,last,0.2
+2025-07-07 07:23:58,linear_probe++,True,0.2064,0.671,0.3157,0.1964,64,64,1,30,True,last,0.2
+2025-07-07 07:58:24,linear_probe++,True,0.2062,0.6617,0.3145,0.1958,64,128,1,30,True,last,0.2
 
 2025-07-07 07:00:15,linear_probe++,True,0.2098,0.699,0.3227,0.2006,64,1,1,30,True,last,0.1
 2025-07-07 07:00:59,linear_probe++,True,0.2078,0.6526,0.3152,0.1968,64,1,1,30,True,last,0.2
@@ -72,10 +78,12 @@ timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,nu
 2025-07-07 10:12:14,linear_probe++,False,0.2056,0.6414,0.3113,0.2006,64,128,1,100,True,last,0.2
 2025-07-07 10:25:33,linear_probe++,False,0.2044,0.6109,0.3063,0.1982,64,128,1,100,True,last,0.5
 
+timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,num_shots,tasks,epochs,unfreeze,unfreeze_layer, init_alpha
 2025-07-08 12:11:06,bi_cross_attn_img,False,0.4552,0.4861,0.469,0.2105,64,1,3,30,True,last,NA
 2025-07-08 12:11:06,bi_cross_attn_text,False,0.3846,0.5833,0.46,0.2207,64,1,3,30,True,last,NA
 2025-07-08 12:22:48,bi_cross_attn_img,False,0.4552,0.4861,0.469,0.2105,64,1,3,100,True,last,NA
 2025-07-08 12:22:48,bi_cross_attn_text,False,0.3836,0.5805,0.4584,0.2208,64,1,3,100,True,last,NA
+
 2025-07-08 12:32:42,bi_cross_attn_img,False,0.4692,0.5573,0.5002,0.3222,64,64,3,30,True,last,NA
 2025-07-08 12:32:42,bi_cross_attn_text,False,0.3834,0.5477,0.4483,0.2863,64,64,3,30,True,last,NA
 2025-07-08 13:02:46,bi_cross_attn_img,False,0.4692,0.5573,0.5002,0.3222,64,64,3,100,True,last,NA
@@ -99,3 +107,13 @@ timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,nu
 2025-07-08 20:33:16,residual_bi_cross_attn,False,0.2821,0.8265,0.4199,0.2918,64,16,3,30,True,last,NA
 2025-07-08 20:42:34,residual_bi_cross_attn,False,0.3066,0.6586,0.4165,0.3121,64,64,3,30,True,last,NA
 2025-07-08 20:57:19,residual_bi_cross_attn,False,0.347,0.8112,0.4848,0.325,64,128,3,30,True,last,NA
+2025-07-12 16:49:18,bi_cross_attn_img,False,0.5009,0.3922,0.4399,0.2601,64,16,1,1,True,last,NA
+2025-07-12 16:49:18,bi_cross_attn_text,False,0.1261,0.6027,0.2086,0.2385,64,16,1,1,True,last,NA
+2025-07-14 14:28:42,bi_cross_attn_img,False,0.393,0.5334,0.4526,0.203,64,1,1,1,True,last,NA
+2025-07-14 14:28:42,bi_cross_attn_text,False,0.4989,0.3973,0.4423,0.1934,64,1,1,1,True,last,NA
+2025-07-14 14:33:19,bi_cross_attn_img,False,0.4955,0.4591,0.4766,0.2021,64,1,1,1,True,last,NA
+2025-07-14 14:33:19,bi_cross_attn_text,False,0.189,0.6683,0.2947,0.202,64,1,1,1,True,last,NA
+2025-07-14 14:33:49,bi_cross_attn_img,False,0.3808,0.5902,0.4629,0.1922,64,1,1,1,True,last,NA
+2025-07-14 14:33:49,bi_cross_attn_text,False,0.3207,0.5778,0.4125,0.2063,64,1,1,1,True,last,NA
+2025-07-14 15:13:52,bi_cross_attn_img,False,0.5045,0.5872,0.5371,0.32,64,64,5,30,True,last,NA
+2025-07-14 15:13:52,bi_cross_attn_text,False,0.3859,0.5706,0.4584,0.2766,64,64,5,30,True,last,NA
