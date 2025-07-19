@@ -40,7 +40,7 @@ class EarlyStopping:
         """保存最佳模型"""
         torch.save(model.state_dict(), path)
         # print(f'Validation map decreased ({self.val_map_max:.6f} --> {val_map:.6f}). Saving model...')
-        print(f'Validation map decreased. Saving model...')
+        print(f'Validation map increase. Saving model...')
 
 if __name__ == "__main__":
     # ========= 在训练循环中使用 =========

@@ -2,6 +2,9 @@ timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,ea
 2025-07-18 19:27:21,negation_nce,False,0.1887,0.7834,0.3042,0.2084,64,40,True,0.001,16,1,50,True,True,NA
 2025-07-18 19:33:52,negation_nce,False,0.1834,0.5509,0.2752,0.2194,64,40,True,0.001,64,1,50,True,True,NA
 2025-07-18 19:48:30,negation_nce,False,0.1798,0.6274,0.2795,0.2231,64,40,True,0.001,128,1,50,True,True,NA
+2025-07-18 16:56:16,negation_nce,False,0.1887,0.7835,0.3042,0.2084,64,40,False,0.001,16,1,50,True,True,NA
+2025-07-18 17:02:42,negation_nce,False,0.1834,0.5509,0.2752,0.2194,64,40,False,0.001,64,1,50,True,True,NA
+2025-07-18 17:17:53,negation_nce,False,0.1799,0.6316,0.28,0.2228,64,40,False,0.001,128,1,50,True,True,NA
 2025-07-18 19:53:20,negation_nce,False,0.2391,0.8756,0.3757,0.3026,64,40,True,0.0001,16,1,50,True,True,NA
 2025-07-18 19:59:44,negation_nce,False,0.1954,0.7652,0.3113,0.2349,64,40,True,0.0001,64,1,50,True,True,NA
 2025-07-18 20:10:59,negation_nce,False,0.1895,0.6808,0.2965,0.2165,64,40,True,0.0001,128,1,50,True,True,NA
@@ -14,3 +17,41 @@ timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,ea
 2025-07-18 20:55:52,negation_nce,False,0.2385,0.8485,0.3724,0.3124,64,40,False,1e-05,16,1,50,True,True,NA
 2025-07-18 21:02:30,negation_nce,False,0.2382,0.8477,0.3719,0.3139,64,40,False,1e-05,64,1,50,True,True,NA
 2025-07-18 21:13:40,negation_nce,False,0.2364,0.8038,0.3653,0.311,64,40,False,1e-05,128,1,50,True,True,NA
+
+
+// real experiments
+2025-07-19 03:23:49,mixture_img,False,0.4378,0.4026,0.4161,0.2001,256,15,True,1e-05,1,3,50,True,True,NA
+2025-07-19 03:23:49,mixture_text,False,0.4778,0.3987,0.4342,0.1975,256,15,True,1e-05,1,3,50,True,True,NA
+2025-07-19 03:32:44,mixture_img,False,0.4419,0.4018,0.4173,0.2002,256,15,True,1e-05,1,3,100,True,True,NA
+2025-07-19 03:32:44,mixture_text,False,0.4745,0.4003,0.4335,0.1979,256,15,True,1e-05,1,3,100,True,True,NA
+2025-07-19 03:44:59,mixture_img,False,0.5097,0.3855,0.4389,0.2394,256,15,True,1e-05,16,3,50,True,True,NA
+2025-07-19 03:44:59,mixture_text,False,0.4896,0.3564,0.401,0.2594,256,15,True,1e-05,16,3,50,True,True,NA
+2025-07-19 03:57:30,mixture_img,False,0.5101,0.3848,0.4385,0.2396,256,15,True,1e-05,16,3,100,True,True,NA
+2025-07-19 03:57:30,mixture_text,False,0.4873,0.3559,0.4,0.2593,256,15,True,1e-05,16,3,100,True,True,NA
+2025-07-19 04:13:23,mixture_img,False,0.5055,0.3824,0.4353,0.2461,256,15,True,1e-05,64,3,50,True,True,NA
+2025-07-19 04:13:23,mixture_text,False,0.492,0.4488,0.4684,0.2841,256,15,True,1e-05,64,3,50,True,True,NA
+2025-07-19 04:29:13,mixture_img,False,0.5055,0.3822,0.4352,0.2461,256,15,True,1e-05,64,3,100,True,True,NA
+2025-07-19 04:29:13,mixture_text,False,0.492,0.4489,0.4685,0.2841,256,15,True,1e-05,64,3,100,True,True,NA
+2025-07-19 04:47:40,mixture_img,False,0.5061,0.3918,0.441,0.2519,256,15,True,1e-05,128,3,50,True,True,NA
+2025-07-19 04:47:40,mixture_text,False,0.4959,0.4371,0.4639,0.2876,256,15,True,1e-05,128,3,50,True,True,NA
+2025-07-19 05:06:10,mixture_img,False,0.5062,0.3917,0.441,0.2519,256,15,True,1e-05,128,3,100,True,True,NA
+2025-07-19 05:06:10,mixture_text,False,0.496,0.4372,0.4639,0.2876,256,15,True,1e-05,128,3,100,True,True,NA
+2025-07-19 05:31:08,mixture_img,False,0.5009,0.3996,0.4446,0.2604,256,15,True,1e-05,256,3,50,True,True,NA
+2025-07-19 05:31:08,mixture_text,False,0.4787,0.4402,0.4576,0.2828,256,15,True,1e-05,256,3,50,True,True,NA
+2025-07-19 05:56:00,mixture_img,False,0.5009,0.3996,0.4446,0.2604,256,15,True,1e-05,256,3,100,True,True,NA
+2025-07-19 05:56:01,mixture_text,False,0.4787,0.4401,0.4576,0.2828,256,15,True,1e-05,256,3,100,True,True,NA
+2025-07-19 06:37:01,mixture_img,False,0.5019,0.3978,0.4438,0.2633,256,15,True,1e-05,512,3,50,True,True,NA
+2025-07-19 06:37:01,mixture_text,False,0.4778,0.4524,0.4623,0.2879,256,15,True,1e-05,512,3,50,True,True,NA
+2025-07-19 07:17:35,mixture_img,False,0.502,0.3978,0.4439,0.2633,256,15,True,1e-05,512,3,100,True,True,NA
+2025-07-19 07:17:35,mixture_text,False,0.4778,0.4525,0.4623,0.2879,256,15,True,1e-05,512,3,100,True,True,NA
+2025-07-19 08:27:44,mixture_img,False,0.4996,0.4001,0.4443,0.2613,256,15,True,1e-05,1024,3,50,True,True,NA
+2025-07-19 08:27:44,mixture_text,False,0.4483,0.4474,0.4457,0.2742,256,15,True,1e-05,1024,3,50,True,True,NA
+2025-07-19 09:37:20,mixture_img,False,0.4996,0.4001,0.4443,0.2613,256,15,True,1e-05,1024,3,100,True,True,NA
+2025-07-19 09:37:20,mixture_text,False,0.4482,0.4477,0.4458,0.2741,256,15,True,1e-05,1024,3,100,True,True,NA
+2025-07-19 10:37:46,negation_nce,False,0.2229,0.739,0.3425,0.277,64,40,True,1e-05,1,3,50,True,True,NA
+2025-07-19 10:47:42,negation_nce,False,0.2417,0.836,0.3749,0.3145,64,40,True,1e-05,16,3,50,True,True,NA
+2025-07-19 11:07:12,negation_nce,False,0.2413,0.8392,0.3748,0.315,64,40,True,1e-05,64,3,50,True,True,NA
+2025-07-19 11:40:20,negation_nce,False,0.2389,0.8291,0.3709,0.3128,64,40,True,1e-05,128,3,50,True,True,NA
+2025-07-19 12:42:10,negation_nce,False,0.2142,0.7511,0.3332,0.2749,64,40,True,1e-05,256,3,50,True,True,NA
+2025-07-19 14:41:24,negation_nce,False,0.1993,0.7,0.3101,0.2372,64,40,True,1e-05,512,3,50,True,True,NA
+2025-07-19 18:35:40,negation_nce,False,0.19,0.7269,0.3012,0.2166,64,40,True,1e-05,1024,3,50,True,True,NA

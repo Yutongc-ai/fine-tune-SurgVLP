@@ -1,0 +1,80 @@
+{
+    "classnames": [
+        "Grasper",
+        "Bipolar",
+        "Hook",
+        "Scissors",
+        "Clipper",
+        "Irrigator",
+        "SpecimenBag"
+    ],
+    "templates": [
+        "I use grasper to cautery forcep to grasp it",
+        "I use bipolar to coagulate and clean the bleeding",
+        "I use hook to dissect it",
+        "I use scissors",
+        "I use clipper to clip it",
+        "I use irrigator to suck it",
+        "I use specimenbag to wrap it"
+    ],
+    "start_time": "2025-07-20 01:53:24",
+    "metrics": {
+        "batch_size": 64,
+        "num_shots": -1,
+        "tasks": "2",
+        "epochs": -1,
+        "precision_avg": 0.2493,
+        "precision_std": 0.0,
+        "precision_min": 0.2493,
+        "precision_max": 0.2493,
+        "recall_avg": 0.5324,
+        "recall_std": 0.0,
+        "recall_min": 0.5324,
+        "recall_max": 0.5324,
+        "f1_avg": 0.3396,
+        "f1_std": 0.0,
+        "f1_min": 0.3396,
+        "f1_max": 0.3396,
+        "mAP_avg": 0.2157,
+        "mAP_std": 0.0,
+        "mAP_min": 0.2157,
+        "mAP_max": 0.2157,
+        "ap_avg": [
+            0.6073,
+            0.0246,
+            0.6587,
+            0.018,
+            0.0424,
+            0.0146,
+            0.1443
+        ],
+        "ap_std": [
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0,
+            0.0
+        ],
+        "ap_min": [
+            0.6073,
+            0.0246,
+            0.6587,
+            0.018,
+            0.0424,
+            0.0146,
+            0.1443
+        ],
+        "ap_max": [
+            0.6073,
+            0.0246,
+            0.6587,
+            0.018,
+            0.0424,
+            0.0146,
+            0.1443
+        ]
+    },
+    "method_class": "zero_shot"
+}

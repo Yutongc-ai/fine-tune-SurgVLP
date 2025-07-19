@@ -30,11 +30,12 @@ config = {
                 text_agg_tokens=True
             )
         ),
-        attention_pooling = True,
+        attention_pooling = False,
         preload_local_features = True,
         cache_dir = "/home/yongxuan/SurgVLP/cache",
         batch_size = 64,
-        tasks = 1,
+        tasks = 2,
+        csv_path = "results_zero_shot.csv",
     ),
     "linear_probe" : dict(
         dataset_config = dict(
@@ -301,7 +302,7 @@ config = {
         accumulate_step = 8,
         learning_rate = 0.00001,
         annealling = True,
-        tasks = 1,
+        tasks = 3,
         num_shots = 64,
         epochs = 30,
         unfreeze_vision = True,
@@ -335,17 +336,16 @@ config = {
                 text_agg_tokens=True
             )
         ),
-        attention_pooling = False,
         preload_local_features = True,
         cache_dir = "/home/yongxuan/SurgVLP/cache",
-        patience = 10,
+        patience = 15,
         early_stop = True,
-        batch_size = 8,
+        batch_size = 32,
         accumulate_step = 8,
         learning_rate = 0.00001,
         annealling = True,
-        tasks = 1,
-        num_shots = 64,
+        tasks = 3,
+        num_shots = 128,
         epochs = 30,
         unfreeze_vision = True,
         unfreeze_text = True,

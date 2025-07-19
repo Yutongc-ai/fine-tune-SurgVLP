@@ -1,0 +1,6 @@
+timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,early_stop,annealling,lr,num_shots,tasks,epochs,unfreeze_vision,unfreeze_text,init_alpha
+2025-07-20 01:46:12,zero_shot,False,0.2455,0.8413,0.38,0.2122,-64,NA,False,-1,-1,1,-1,False,False,NA
+2025-07-20 01:47:32,zero_shot,False,0.2493,0.5324,0.3396,0.2157,-64,NA,False,-1,-1,1,-1,False,False,NA
+2025-07-20 01:51:50,zero_shot,False,0.2493,0.5324,0.3396,0.2157,-64,NA,False,-1,-1,1,-1,False,False,NA
+2025-07-20 01:53:37,zero_shot,False,0.2493,0.5324,0.3396,0.2157,-64,NA,False,-1,-1,2,-1,False,False,NA
+2025-07-20 01:55:10,zero_shot,False,0.2455,0.8413,0.38,0.2122,-64,NA,False,-1,-1,2,-1,False,False,NA

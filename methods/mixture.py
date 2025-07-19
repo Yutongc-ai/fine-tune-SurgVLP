@@ -61,6 +61,7 @@ class Mixture(nn.Module): # Include cross attention and negation text
         # =====================================Training Settings======================================
         self.lr = configs.learning_rate
         self.epochs = configs.epochs
+        self.batch_size = configs.batch_size
         self.accumulate_step = configs.accumulate_step
         self.patience = configs.patience
         self.checkpoint_path =  configs.checkpoint_path
@@ -137,7 +138,10 @@ class Mixture(nn.Module): # Include cross attention and negation text
                 global_image_features = global_image_features.to(device)
                 local_image_features = local_image_features.to(device)
 
-                img_logits, text_logits = self.bidirect_cross_attn(local_image_features, global_image_features)
+                _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
+                feats_templates = feats_templates.to(device)
+
+                img_logits, text_logits, attned_img, attn_text = self.bidirect_cross_attn(local_image_features, global_image_features, feats_templates[:7])
 
                 text_prob = text_logits.sigmoid()
                 img_prob = img_logits.sigmoid()
@@ -210,8 +214,8 @@ class Mixture(nn.Module): # Include cross attention and negation text
     def forward(self,
                 dataset: MultiLabelDatasetBase):
         wandb.init(
-            project="few-shot-surgvlp-cross-attn",
-            name=f"multihead_shot{self.configs.num_shots}_epoch{self.epochs}",
+            project="few-shot-surgvlp-mixture",
+            name=f"shots{self.configs.num_shots}_epoch{self.epochs}_lr{self.lr}_bs{str(self.batch_size * self.accumulate_step)}_{'annealling' if self.annealling else ''}",
             config=self.configs,
         )
 
@@ -311,7 +315,7 @@ class Mixture(nn.Module): # Include cross attention and negation text
                 # 4. negation part loss
                 positive_keys, negative_keys = self.get_nce_labels(target, negated_target, feats_templates)
                 
-                loss2 = self.loss_func(global_image_features, positive_keys, negative_keys) / self.accumulate_step
+                loss2 = self.loss_func(attned_img, positive_keys, negative_keys) / self.accumulate_step
                 
                 # combine loss1 and loss2
                 loss = (loss1 + loss2) / 2
@@ -340,7 +344,7 @@ class Mixture(nn.Module): # Include cross attention and negation text
             self.image_mlp.eval()
             self.text_query_attn.eval()
             self.image_query_attn.eval()
-            if self.unfreeze:
+            if self.unfreeze_text or self.unfreeze_vision:
                 self.model.eval()
 
             train_loss.append(avg_epoch_loss)
@@ -388,8 +392,8 @@ class Mixture(nn.Module): # Include cross attention and negation text
                     wandb.log({"img_test_precision": res_img_metrics["precision"], "epoch": epoch})
                     wandb.log({"img_test_recall": res_img_metrics["recall"], "epoch": epoch})
 
-                    # update best model weight to save
-                    self.early_stopping.save_checkpoint(self.state_dict(), self.checkpoint_path)
+                    # # update best model weight to save
+                    # self.early_stopping.save_checkpoint(self.state_dict(), self.checkpoint_path)
 
                 if update_test_text_metric:
                     res_text_metrics = test_text_metrics
@@ -403,4 +407,4 @@ class Mixture(nn.Module): # Include cross attention and negation text
             update_test_text_metric = False
 
         wandb.finish()
-        return [res_img_metrics, res_text_metrics]
+        return res_img_metrics, res_text_metrics

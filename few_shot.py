@@ -87,9 +87,11 @@ def main(configs, method_name):
         elif method_name == "mixture":
             method = Mixture(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         metrics = method(dataset)
+        
+        print(metrics)
 
         # all_metrics.append(metrics)
-        if method_name != "bi_cross_attn":
+        if method_name != "bi_cross_attn" and method_name != "mixture":
             all_metrics.append(metrics)
             # if metrics["mAP"] > best_mAP:
             #     best_mAP = metrics["mAP"]
@@ -106,13 +108,13 @@ def main(configs, method_name):
                 
         # del model_weight
 
-    if method_name != "bi_cross_attn":
+    if method_name != "bi_cross_attn" and method_name != "mixture":
         agg_metrics = aggregate_metrics(all_metrics, configs)
     else:
         agg_metrics_img = aggregate_metrics(all_metrics_img, configs)
         agg_metrics_text = aggregate_metrics(all_metrics_text, configs)
 
-    if method_name != "bi_cross_attn":
+    if method_name != "bi_cross_attn" and method_name != "mixture":
         experiment_data.update({
             "metrics": agg_metrics,
             "method_class": method_name
