@@ -10,6 +10,7 @@ import numpy as np
 import torch
 import torch.nn.functional as F
 from torch import nn
+
 class LayerNorm(nn.LayerNorm):
     """Subclass torch's LayerNorm to handle fp16."""
 

@@ -149,6 +149,17 @@ def load(model_config, device: Union[str, torch.device] = "cuda" if torch.cuda.i
 
     return model, _transform(input_size)
 
+def load_from_dict(model_config, device: Union[str, torch.device] = "cuda" if torch.cuda.is_available() else "cpu", download_root: str = None, pretrain_dict: str=None):
+        
+    model_name = model_config['type']
+    input_size = _INPUT_RES[model_name]
+
+    model = build_algorithm(model_config).to(device)
+    model.load_state_dict(pretrain_dict)
+    model = model.eval()
+
+    return model, _transform(input_size)
+
 def load_dataset(config):
     dataset = build_dataset(config)
     return dataset

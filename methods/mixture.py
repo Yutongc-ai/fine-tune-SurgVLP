@@ -2,12 +2,13 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features
-from methods.utils import multilabel_metrics
+from methods.utils import multilabel_metrics, WarmupCosineAnnealing
 from methods.early_stopping import EarlyStopping
 from tqdm import tqdm
 import wandb
 from typing import Callable, Optional
 from methods.loss import InfoNCE
+import math
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class CrossAttentionBlock(nn.Module):
@@ -214,7 +215,7 @@ class Mixture(nn.Module): # Include cross attention and negation text
     def forward(self,
                 dataset: MultiLabelDatasetBase):
         wandb.init(
-            project="few-shot-surgvlp-mixture",
+            project=f"mixture-few-shot-surgvlp-{self.configs.model_config.type}",
             name=f"shots{self.configs.num_shots}_epoch{self.epochs}_lr{self.lr}_bs{str(self.batch_size * self.accumulate_step)}_{'annealling' if self.annealling else ''}",
             config=self.configs,
         )
@@ -267,7 +268,8 @@ class Mixture(nn.Module): # Include cross attention and negation text
         
         self.optimizer = torch.optim.AdamW(optim_params)
         if self.annealling:
-            self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, self.epochs * len(train_loader))
+            self.scheduler = WarmupCosineAnnealing(self.optimizer, warmup_epochs=5, total_epochs=self.epochs, train_loader_length=math.ceil(len(train_loader) / self.accumulate_step))
+            # self.scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(self.optimizer, T_0 = 10 * len(train_loader) / self.accumulate_step)
 
         train_loss = []
         best_val_img_map = 0
@@ -279,6 +281,8 @@ class Mixture(nn.Module): # Include cross attention and negation text
 
         res_img_metrics, res_text_metrics = None, None
         
+        # start_time = time.time()
+
         for epoch in range(self.epochs):
             epoch_loss = 0.0
             batch_count = 0
@@ -323,7 +327,7 @@ class Mixture(nn.Module): # Include cross attention and negation text
 
                 loss.backward()
 
-                if i % self.accumulate_step == 0:
+                if (i+1) % self.accumulate_step == 0 or (i + 1) == len(train_loader):
                     self.optimizer.step()
                     
                     if self.annealling:
@@ -406,5 +410,7 @@ class Mixture(nn.Module): # Include cross attention and negation text
             update_test_img_metric = False
             update_test_text_metric = False
 
+        # end_time = time.time()
+        # cost_time = end_time - 
         wandb.finish()
         return res_img_metrics, res_text_metrics

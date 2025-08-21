@@ -1,7 +1,8 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from methods.utils import multilabel_metrics
+import math
+from methods.utils import multilabel_metrics, WarmupCosineAnnealing
 from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features
 import wandb
 device = "cuda" if torch.cuda.is_available() else "cpu"
@@ -33,42 +34,47 @@ class LPPlus2(nn.Module):
         self.attn_pooling = configs.attention_pooling
 
         self.temperature = 100
-        # self.threshold = 0.5
-        self.lr = 0.001
+        self.threshold = 0.5
+        self.lr = configs.learning_rate
         self.lr_alpha = 0.01
         self.init_alpha = configs.init_alpha
         self.epochs = configs.epochs
+
+        self.annealling = configs.annealling
         
         self.feature_width = configs.model_config.backbone_img.num_classes
         self.num_classes = configs.dataset_config.num_classes
 
+        self.checkpoint_path = configs.checkpoint_path
+        
+        self.accumulate_step = configs.accumulate_step
+        self.batch_size = configs.batch_size
+        print(f"accumulate step: {self.accumulate_step}")
+
         self.classifier = torch.nn.Linear(self.feature_width, self.num_classes, bias=False).to(device)
-
         self.criterion = torch.nn.BCEWithLogitsLoss()
-
+        
         for param in self.model.parameters():
             # print(param.requires_grad)
             param.requires_grad = False
         # unfreeze settings
 
-        self.unfreeze = configs["unfreeze"]
-    
-        self.unfreeze_layer = configs.unfreeze_layer
-        if self.unfreeze:
-            for param in self.model.backbone_img.global_embedder.parameters():
+        self.unfreeze_vision = configs["unfreeze_vision"]
+        self.unfreeze_text = configs["unfreeze_text"]
+        
+        if self.unfreeze_vision:
+            print("Unfreeze vision encoder")
+            for param in self.model.backbone_img.parameters():
                 param.requires_grad = True
-            if self.unfreeze_layer == 'last':
-                for param in self.model.backbone_img.model.layer4.parameters():
-                    param.requires_grad = True
-                print("Unfreeze layer4 of vision encoder")
         else:
             print("Keep vision encoder frozen")
-            # elif self.unfreeze_layer == 'last2':
-            #     for param in self.model.layer3.parameters():
-            #         param.requires_grad = True
-            #     for param in self.model.layer4.parameters():
-            #         param.requires_grad = True
-            #     print("Unfrozen layer3 and layer4 of vision encoder")
+
+        if self.unfreeze_text:
+            print("Unfreeze text encoder")
+            for param in self.model.backbone_text.parameters():
+                param.requires_grad = True
+        else:
+            print("Keep text encoder frozen")
 
     def get_metrics(self, split):
         # total_loss = 0.0
@@ -85,14 +91,15 @@ class LPPlus2(nn.Module):
         with torch.no_grad():
 
             for _ in range(len(feature_loader)):
-                g_, local_image_features, label = feature_loader[_]
+                global_image_features, local_image_features, label = feature_loader[_]
                 local_image_features = local_image_features.to(device)
+                global_image_features = global_image_features.to(device)
                 local_image_features = local_image_features.permute(0, 3, 1, 2)
 
                 if self.attn_pooling:
                     local_image_features = self.model.attention_pooling(local_image_features, self.templates)
                 else:
-                    local_image_features = self.model.average_pooling(local_image_features)
+                    local_image_features = global_image_features
 
                 local_image_features = local_image_features / local_image_features.norm(dim = -1, keepdim = True)
                 logits = self.compute_logits(local_image_features)
@@ -119,9 +126,10 @@ class LPPlus2(nn.Module):
     def forward(self,
                 dataset: MultiLabelDatasetBase):
         wandb.init(
-            project="lp++-few-shot-surgvlp",
-            name=f"{'attn' if self.attn_pooling else ''}_{'unfreeze' if self.unfreeze else ''}_init_alpha{str(self.init_alpha)}_shot{self.configs.num_shots}_epoch{self.epochs}",
+            project=f"lp++-few-shot-{self.configs.model_config.type}",
+            name=f"{'unfreeze' if self.unfreeze_vision or self.unfreeze_text else ''}_init_alpha{str(self.init_alpha)}_shot{self.configs.num_shots}_epoch{self.epochs}",
             config=self.configs,
+            mode="offline",
         )
         templates = dataset.templates
 
@@ -158,14 +166,14 @@ class LPPlus2(nn.Module):
         # compute centroid
         train_features ,train_labels = [], []
         with torch.no_grad():
-            for images, target in train_loader:
+            for images, target,_ in train_loader:
                 images, target = images.cuda(), target.cuda()
             
-                _, image_features = self.model.extract_feat_img(images)
+                global_image_features, image_features = self.model.extract_feat_img(images)
                 if self.attn_pooling:
                     image_features = self.model.attention_pooling(image_features, self.templates)
                 else:
-                    image_features = self.model.average_pooling(image_features)
+                    image_features = global_image_features
                 image_features = image_features / (image_features.norm(dim = 1, keepdim = True) + 1e-8)
 
                 train_features.append(image_features)
@@ -194,12 +202,16 @@ class LPPlus2(nn.Module):
             {'params': self.alpha_vec, 'lr': self.lr}
         ]
 
-        if self.unfreeze:
-            optim_params.append({'params': self.model.backbone_img.global_embedder.parameters(), 'lr': self.lr * 0.1})
-            if self.unfreeze_layer == 'last':
-                optim_params.append({'params': self.model.backbone_img.model.layer4.parameters(), 'lr': self.lr * 0.1})
+        if self.unfreeze_vision:
+            optim_params.append({'params': self.model.backbone_img.parameters(), 'lr': self.lr * 0.01})
+        
+        if self.unfreeze_text:
+            optim_params.append({'params': self.model.backbone_text.parameters(), 'lr': self.lr * 0.01})
 
         self.optimizer = torch.optim.AdamW(optim_params)
+        if self.annealling:
+            self.scheduler = WarmupCosineAnnealing(self.optimizer, warmup_epochs=5, total_epochs=self.epochs, train_loader_length=math.ceil(len(train_loader) / self.accumulate_step))
+            # self.scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(self.optimizer, T_0 = 10 * len(train_loader) / self.accumulate_step)
 
         train_loss = []
         best_val_map = 0
@@ -209,25 +221,25 @@ class LPPlus2(nn.Module):
             batch_count = 0
             
             self.classifier.train()
-            if self.unfreeze:
+            if self.unfreeze_vision or self.unfreeze_text:
                 self.model.train()
             
-            for i, (images, target) in enumerate(train_loader):
+            for i, (images, target, _) in enumerate(train_loader):
                 images, target = images.cuda(), target.cuda()
                 
-                if self.unfreeze:
-                    _, image_features = self.model.extract_feat_img(images)
+                if self.unfreeze_vision or self.unfreeze_text:
+                    global_image_features, image_features = self.model.extract_feat_img(images)
                     if self.attn_pooling:
                         image_features = self.model.attention_pooling(image_features, self.templates)
                     else:
-                        image_features = self.model.average_pooling(image_features)
+                        image_features = global_image_features
                 else:
                     with torch.no_grad():
-                        _, image_features = self.model.extract_feat_img(images)
+                        global_image_features, image_features = self.model.extract_feat_img(images)
                         if self.attn_pooling:
                             image_features = self.model.attention_pooling(image_features, self.templates)
                         else:
-                            image_features = self.model.average_pooling(image_features)
+                            image_features = global_image_features
                 
                 image_features = image_features / image_features.norm(dim = -1, keepdim = True)
 
@@ -235,14 +247,18 @@ class LPPlus2(nn.Module):
                 assert not torch.isinf(image_features).any(), "Inf in image_features"
                 assert not torch.isnan(target).any(), "NaN in target"
 
-                self.optimizer.zero_grad()
                 logits = self.compute_logits(image_features)
 
                 if torch.isnan(logits).any():
                     print("NaN in logits before loss calculation!")
-                loss = self.criterion(logits, target)
+                loss = self.criterion(logits, target) / self.accumulate_step
                 loss.backward()
-                self.optimizer.step()
+
+                if (i+1) % self.accumulate_step == 0 or (i + 1) == len(train_loader):
+                    self.optimizer.step()
+                    if self.annealling:
+                        self.scheduler.step()
+                    self.optimizer.zero_grad()
 
                 epoch_loss += loss.item()
                 batch_count += 1
@@ -256,7 +272,7 @@ class LPPlus2(nn.Module):
             train_loss.append(avg_epoch_loss)
             
             self.classifier.eval()
-            if self.unfreeze:
+            if self.unfreeze_vision or self.unfreeze_text:
                 self.model.eval()
             
             val_metrics = self.get_metrics("val")

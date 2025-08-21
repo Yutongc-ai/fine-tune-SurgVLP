@@ -114,11 +114,14 @@ class BertEncoder(nn.Module):
             )  # layers, batch, sent_len, embedding size
 
             embeddings = embeddings.permute(1, 0, 2, 3)
-
-            if self.agg_tokens:
-                embeddings, sents = self.aggregate_tokens(embeddings, ids)
+            
+            if ids is not None:
+                if self.agg_tokens:
+                    embeddings, sents = self.aggregate_tokens(embeddings, ids)
+                else:
+                    sents = [[self.idxtoword[w.item()] for w in sent] for sent in ids]
             else:
-                sents = [[self.idxtoword[w.item()] for w in sent] for sent in ids]
+                sents = None
 
             sent_embeddings = embeddings.mean(axis=2)
 

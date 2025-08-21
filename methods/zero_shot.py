@@ -42,8 +42,11 @@ class ZeroShot(nn.Module):
                     image_features = self.model.attention_pooling(local_image_features, self.templates)
                 else:
                     image_features = global_image_features
+                
+                image_features = image_features / image_features.norm(dim = -1, keepdim = True)
 
                 _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
+                feats_templates /= feats_templates.norm(dim = -1, keepdim = True)
 
                 logits = self.temperature * image_features @ feats_templates.T
                 probs = logits.sigmoid()

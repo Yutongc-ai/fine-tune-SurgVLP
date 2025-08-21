@@ -1,0 +1,200 @@
+2025-08-04 14:33:29 INFO open for scan: /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/run-t53fmgmu.wandb
+2025-08-04 14:33:30 INFO watching files in: /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files
+2025-08-04 14:33:30 INFO run started: t53fmgmu with start time 1754224218.90701
+2025-08-04 14:33:30 INFO saving file wandb-metadata.json with policy now
+2025-08-04 14:33:30 INFO saving file wandb-summary.json with policy end
+2025-08-04 14:33:30 INFO handling exit code: 0
+2025-08-04 14:33:30 INFO handling runtime: 11353
+2025-08-04 14:33:30 INFO saving file wandb-summary.json with policy end
+2025-08-04 14:33:30 INFO send defer
+2025-08-04 14:33:30 INFO handle sender defer: 0
+2025-08-04 14:33:30 INFO send defer: 1
+2025-08-04 14:33:30 INFO handle sender defer: 1
+2025-08-04 14:33:30 INFO send defer: 2
+2025-08-04 14:33:30 INFO handle sender defer: 2
+2025-08-04 14:33:30 INFO send defer: 3
+2025-08-04 14:33:30 INFO handle sender defer: 3
+2025-08-04 14:33:30 INFO send defer: 4
+2025-08-04 14:33:30 INFO handle sender defer: 4
+2025-08-04 14:33:30 INFO send defer: 5
+2025-08-04 14:33:30 INFO handle sender defer: 5
+2025-08-04 14:33:31 INFO send defer: 6
+2025-08-04 14:33:31 INFO handle sender defer: 6
+2025-08-04 14:33:31 WARNING Terminal output too large. Logging without processing.
+2025-08-04 14:33:31 INFO Uploaded file /tmp/tmp9l0zrq9ywandb/cuyvqsde-wandb-metadata.json
+2025-08-04 14:33:31 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/config.yaml
+2025-08-04 14:33:31 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/wandb-summary.json
+2025-08-04 14:33:31 INFO file/dir created: /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/output.log
+2025-08-04 14:33:32 INFO send defer: 7
+2025-08-04 14:33:32 INFO handle sender defer: 7
+2025-08-04 14:33:32 INFO shutting down directory watcher
+2025-08-04 14:33:33 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/output.log
+2025-08-04 14:33:33 INFO scan: /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files
+2025-08-04 14:33:33 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/wandb-metadata.json wandb-metadata.json
+2025-08-04 14:33:33 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/conda-environment.yaml conda-environment.yaml
+2025-08-04 14:33:33 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/wandb-summary.json wandb-summary.json
+2025-08-04 14:33:33 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/config.yaml config.yaml
+2025-08-04 14:33:33 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/output.log output.log
+2025-08-04 14:33:33 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/requirements.txt requirements.txt
+2025-08-04 14:33:33 INFO send defer: 8
+2025-08-04 14:33:33 INFO handle sender defer: 8
+2025-08-04 14:33:33 INFO shutting down file pusher
+2025-08-04 14:33:33 INFO shutting down sender
+2025-08-04 14:33:33 INFO shutting down file pusher
+2025-08-04 14:33:33 INFO waiting for file pusher
+2025-08-04 14:33:34 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/conda-environment.yaml
+2025-08-04 14:33:34 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/wandb-summary.json
+2025-08-04 14:33:34 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/config.yaml
+2025-08-04 14:33:34 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/requirements.txt
+2025-08-04 14:33:34 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250803_203018-t53fmgmu/files/output.log
+2025-08-04 14:33:34 INFO send defer: 9
+2025-08-04 14:36:50 INFO open for scan: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/run-5whsnza4.wandb
+2025-08-04 14:36:51 INFO watching files in: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files
+2025-08-04 14:36:51 INFO run started: 5whsnza4 with start time 1754033031.282835
+2025-08-04 14:36:51 INFO saving file wandb-metadata.json with policy now
+2025-08-04 14:36:51 INFO saving file wandb-summary.json with policy end
+2025-08-04 14:36:51 INFO handling exit code: 0
+2025-08-04 14:36:51 INFO handling runtime: 1511
+2025-08-04 14:36:51 INFO saving file wandb-summary.json with policy end
+2025-08-04 14:36:51 INFO send defer
+2025-08-04 14:36:51 INFO handle sender defer: 0
+2025-08-04 14:36:51 INFO send defer: 1
+2025-08-04 14:36:51 INFO handle sender defer: 1
+2025-08-04 14:36:51 INFO send defer: 2
+2025-08-04 14:36:51 INFO handle sender defer: 2
+2025-08-04 14:36:51 INFO send defer: 3
+2025-08-04 14:36:51 INFO handle sender defer: 3
+2025-08-04 14:36:51 INFO send defer: 4
+2025-08-04 14:36:51 INFO handle sender defer: 4
+2025-08-04 14:36:51 INFO send defer: 5
+2025-08-04 14:36:51 INFO handle sender defer: 5
+2025-08-04 14:36:51 INFO send defer: 6
+2025-08-04 14:36:51 INFO handle sender defer: 6
+2025-08-04 14:36:52 INFO Uploaded file /tmp/tmp6t_lv5jswandb/fk06uv0t-wandb-metadata.json
+2025-08-04 14:36:52 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/wandb-summary.json
+2025-08-04 14:36:52 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/config.yaml
+2025-08-04 14:36:52 INFO file/dir created: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/output.log
+2025-08-04 14:36:54 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/output.log
+2025-08-04 14:36:55 INFO send defer: 7
+2025-08-04 14:36:55 INFO handle sender defer: 7
+2025-08-04 14:36:55 INFO shutting down directory watcher
+2025-08-04 14:36:56 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/output.log
+2025-08-04 14:36:56 INFO scan: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files
+2025-08-04 14:36:56 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/wandb-metadata.json wandb-metadata.json
+2025-08-04 14:36:56 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/conda-environment.yaml conda-environment.yaml
+2025-08-04 14:36:56 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/wandb-summary.json wandb-summary.json
+2025-08-04 14:36:56 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/config.yaml config.yaml
+2025-08-04 14:36:56 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/output.log output.log
+2025-08-04 14:36:56 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/requirements.txt requirements.txt
+2025-08-04 14:36:56 INFO send defer: 8
+2025-08-04 14:36:56 INFO handle sender defer: 8
+2025-08-04 14:36:56 INFO shutting down file pusher
+2025-08-04 14:36:56 INFO shutting down sender
+2025-08-04 14:36:56 INFO shutting down file pusher
+2025-08-04 14:36:56 INFO waiting for file pusher
+2025-08-04 14:36:57 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/requirements.txt
+2025-08-04 14:36:57 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/wandb-summary.json
+2025-08-04 14:36:57 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/conda-environment.yaml
+2025-08-04 14:36:57 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/config.yaml
+2025-08-04 14:36:57 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_152351-5whsnza4/files/output.log
+2025-08-04 14:36:57 INFO send defer: 9
+2025-08-04 14:40:52 INFO open for scan: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/run-0hhoq9y6.wandb
+2025-08-04 14:40:53 INFO watching files in: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files
+2025-08-04 14:40:53 INFO run started: 0hhoq9y6 with start time 1754034562.825093
+2025-08-04 14:40:53 INFO saving file wandb-metadata.json with policy now
+2025-08-04 14:40:53 INFO saving file wandb-summary.json with policy end
+2025-08-04 14:40:53 INFO handling exit code: 0
+2025-08-04 14:40:53 INFO handling runtime: 2323
+2025-08-04 14:40:53 INFO saving file wandb-summary.json with policy end
+2025-08-04 14:40:53 INFO send defer
+2025-08-04 14:40:53 INFO handle sender defer: 0
+2025-08-04 14:40:53 INFO send defer: 1
+2025-08-04 14:40:53 INFO handle sender defer: 1
+2025-08-04 14:40:53 INFO send defer: 2
+2025-08-04 14:40:53 INFO handle sender defer: 2
+2025-08-04 14:40:53 INFO send defer: 3
+2025-08-04 14:40:53 INFO handle sender defer: 3
+2025-08-04 14:40:53 INFO send defer: 4
+2025-08-04 14:40:53 INFO handle sender defer: 4
+2025-08-04 14:40:53 INFO send defer: 5
+2025-08-04 14:40:53 INFO handle sender defer: 5
+2025-08-04 14:40:53 INFO send defer: 6
+2025-08-04 14:40:53 INFO handle sender defer: 6
+2025-08-04 14:40:54 INFO Uploaded file /tmp/tmpv9mba7k5wandb/66dp2q00-wandb-metadata.json
+2025-08-04 14:40:54 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/config.yaml
+2025-08-04 14:40:54 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/wandb-summary.json
+2025-08-04 14:40:54 INFO file/dir created: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/output.log
+2025-08-04 14:40:56 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/output.log
+2025-08-04 14:40:57 INFO send defer: 7
+2025-08-04 14:40:57 INFO handle sender defer: 7
+2025-08-04 14:40:57 INFO shutting down directory watcher
+2025-08-04 14:40:58 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/output.log
+2025-08-04 14:40:58 INFO scan: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files
+2025-08-04 14:40:58 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/wandb-metadata.json wandb-metadata.json
+2025-08-04 14:40:58 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/conda-environment.yaml conda-environment.yaml
+2025-08-04 14:40:58 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/wandb-summary.json wandb-summary.json
+2025-08-04 14:40:58 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/config.yaml config.yaml
+2025-08-04 14:40:58 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/output.log output.log
+2025-08-04 14:40:58 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/requirements.txt requirements.txt
+2025-08-04 14:40:58 INFO send defer: 8
+2025-08-04 14:40:58 INFO handle sender defer: 8
+2025-08-04 14:40:58 INFO shutting down file pusher
+2025-08-04 14:40:58 INFO shutting down sender
+2025-08-04 14:40:58 INFO shutting down file pusher
+2025-08-04 14:40:58 INFO waiting for file pusher
+2025-08-04 14:40:59 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/conda-environment.yaml
+2025-08-04 14:40:59 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/requirements.txt
+2025-08-04 14:40:59 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/config.yaml
+2025-08-04 14:40:59 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/output.log
+2025-08-04 14:40:59 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_154922-0hhoq9y6/files/wandb-summary.json
+2025-08-04 14:40:59 INFO send defer: 9
+2025-08-04 14:41:51 INFO open for scan: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/run-ny26drwl.wandb
+2025-08-04 14:41:51 INFO watching files in: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files
+2025-08-04 14:41:51 INFO run started: ny26drwl with start time 1754036891.545137
+2025-08-04 14:41:51 INFO saving file wandb-metadata.json with policy now
+2025-08-04 14:41:51 INFO saving file wandb-summary.json with policy end
+2025-08-04 14:41:51 INFO handling exit code: 0
+2025-08-04 14:41:51 INFO handling runtime: 2718
+2025-08-04 14:41:51 INFO saving file wandb-summary.json with policy end
+2025-08-04 14:41:51 INFO send defer
+2025-08-04 14:41:51 INFO handle sender defer: 0
+2025-08-04 14:41:51 INFO send defer: 1
+2025-08-04 14:41:51 INFO handle sender defer: 1
+2025-08-04 14:41:51 INFO send defer: 2
+2025-08-04 14:41:51 INFO handle sender defer: 2
+2025-08-04 14:41:51 INFO send defer: 3
+2025-08-04 14:41:51 INFO handle sender defer: 3
+2025-08-04 14:41:51 INFO send defer: 4
+2025-08-04 14:41:51 INFO handle sender defer: 4
+2025-08-04 14:41:51 INFO send defer: 5
+2025-08-04 14:41:51 INFO handle sender defer: 5
+2025-08-04 14:41:52 INFO send defer: 6
+2025-08-04 14:41:52 INFO handle sender defer: 6
+2025-08-04 14:41:52 INFO Uploaded file /tmp/tmp_g41ermpwandb/2m1ogmrt-wandb-metadata.json
+2025-08-04 14:41:52 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/config.yaml
+2025-08-04 14:41:52 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/wandb-summary.json
+2025-08-04 14:41:52 INFO file/dir created: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/output.log
+2025-08-04 14:41:54 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/output.log
+2025-08-04 14:41:55 INFO send defer: 7
+2025-08-04 14:41:55 INFO handle sender defer: 7
+2025-08-04 14:41:55 INFO shutting down directory watcher
+2025-08-04 14:41:56 INFO file/dir modified: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/output.log
+2025-08-04 14:41:56 INFO scan: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files
+2025-08-04 14:41:56 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/wandb-metadata.json wandb-metadata.json
+2025-08-04 14:41:56 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/conda-environment.yaml conda-environment.yaml
+2025-08-04 14:41:56 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/wandb-summary.json wandb-summary.json
+2025-08-04 14:41:56 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/config.yaml config.yaml
+2025-08-04 14:41:56 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/output.log output.log
+2025-08-04 14:41:56 INFO scan save: /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/requirements.txt requirements.txt
+2025-08-04 14:41:56 INFO send defer: 8
+2025-08-04 14:41:56 INFO handle sender defer: 8
+2025-08-04 14:41:56 INFO shutting down file pusher
+2025-08-04 14:41:56 INFO shutting down sender
+2025-08-04 14:41:56 INFO shutting down file pusher
+2025-08-04 14:41:56 INFO waiting for file pusher
+2025-08-04 14:41:57 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/conda-environment.yaml
+2025-08-04 14:41:57 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/wandb-summary.json
+2025-08-04 14:41:57 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/requirements.txt
+2025-08-04 14:41:57 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/config.yaml
+2025-08-04 14:41:57 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/output.log
+2025-08-04 14:41:57 INFO send defer: 9

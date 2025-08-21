@@ -1,11 +1,12 @@
 import torch
 import torch.nn as nn
-from methods.loss import InfoNCE
+from methods.loss import InfoNCE, WeightedInfoNCE
 from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features
-from methods.utils import multilabel_metrics
+from methods.utils import multilabel_metrics, WarmupCosineAnnealing, cal_phase_metrics
 from methods.early_stopping import EarlyStopping
 from tqdm import tqdm
 import wandb
+import math
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
 class NegationNCE(nn.Module):
@@ -32,8 +33,6 @@ class NegationNCE(nn.Module):
         self.criterion = torch.nn.BCEWithLogitsLoss()
         self.loss_func = InfoNCE(negative_mode='paired')
 
-        self.norm = nn.LayerNorm(self.feature_width).to(device)
-
         self.early_stop = configs.early_stop
         self.patience = configs.patience
 
@@ -43,6 +42,7 @@ class NegationNCE(nn.Module):
         self.early_stopping = EarlyStopping(patience = self.patience, path = self.checkpoint_path)
         
         self.accumulate_step = configs.accumulate_step
+        self.batch_size = configs.batch_size
         print(f"accumulate step: {self.accumulate_step}")
 
         for param in self.model.parameters():
@@ -78,7 +78,9 @@ class NegationNCE(nn.Module):
     def get_metrics(self, split):
         # total_loss = 0.0
         all_probs = []
+        all_phase_logits = []
         all_labels = []
+        all_phase_labels = []
 
         if split == "val":
             feature_loader = self.val_feature
@@ -90,7 +92,7 @@ class NegationNCE(nn.Module):
         with torch.no_grad():
 
             for _ in range(len(feature_loader)):
-                global_image_features, local_image_features, label = feature_loader[_]
+                global_image_features, local_image_features, label, phase_label = feature_loader[_]
                 local_image_features = local_image_features.to(device)
                 global_image_features = global_image_features.to(device)
                 local_image_features = local_image_features.permute(0, 3, 1, 2)
@@ -101,6 +103,7 @@ class NegationNCE(nn.Module):
                     image_features = global_image_features
 
                 _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
+                _, phase_feats_templates, _ = self.model.extract_feat_text(ids=self.phase_input_ids, attn_mask=self.phase_attention_masks, token_type=self.phase_token_type_ids)
 
                 image_features = image_features / image_features.norm(dim = -1, keepdim = True)
 
@@ -108,16 +111,27 @@ class NegationNCE(nn.Module):
                 feats_templates = feats_templates[:7, :].cuda()
 
                 logits = self.temperature * image_features @ feats_templates.T
+                phase_logits = self.temperature * image_features @ phase_feats_templates.T
+                
                 probs = logits.sigmoid()
 
                 all_probs.append(probs)
+                all_phase_logits.append(phase_logits)
                 all_labels.append(label)
+                all_phase_labels.append(phase_label)
 
         final_labels = torch.cat(all_labels, dim=0)
         
+        final_phase_logits = torch.cat(all_phase_logits, dim=0)
+        final_phase_labels = torch.cat(all_phase_labels, dim=0)
+        
         final_probs = torch.cat(all_probs, dim=0).to('cpu')
         metrics = multilabel_metrics(final_labels, final_probs)
+        phase_metrics = cal_phase_metrics(final_phase_logits, final_phase_labels)
+        metrics.update(phase_metrics)
 
+        # print(metrics)
+        # print(phase_metrics)
         return metrics
     
     def get_nce_labels(self, target, negated_target, feats_template):
@@ -130,11 +144,13 @@ class NegationNCE(nn.Module):
             for index, mask in enumerate(target[bs]):
                 if mask:
                     positive_keys[bs][index] = feats_template[index]
+                    negative_keys[bs][index] = feats_template[index + 7]
 
         for bs in range(batch_size):
             for index, mask in enumerate(negated_target[bs]):
                 if mask:
-                    negative_keys[bs][index] = feats_template[index + 7]
+                    positive_keys[bs][index] = feats_template[index + 7]
+                    negative_keys[bs][index] = feats_template[index]
         
         return positive_keys, negative_keys
 
@@ -142,11 +158,13 @@ class NegationNCE(nn.Module):
                 dataset: MultiLabelDatasetBase):
         templates = dataset.templates
         negated_templates = dataset.negated_templates
+        phase_templates = dataset.phase_templates
 
         wandb.init(
-            project="negation-few-shot-surgvlp",
-            name=f"{'attn' if self.attn_pooling else 'avg'}_{'unfreeze' if self.unfreeze_vision or self.unfreeze_text else 'freeze'}_shot{self.configs.num_shots}_epoch{self.epochs}",
+            project=f"negation-few-shot-{self.configs.model_config.type}",
+            name=f"batchsize{self.batch_size * self.accumulate_step}_lr{self.lr}_shot{self.configs.num_shots}_epoch{self.epochs}",
             config=self.configs,
+            # mode="offline",
         )
 
         # test data preparations
@@ -155,13 +173,19 @@ class NegationNCE(nn.Module):
         self.input_ids = self.templates['input_ids']
         self.token_type_ids = self.templates['token_type_ids']
         self.attention_masks = self.templates['attention_mask']
+
+        self.phase_templates = self.tokenizer(phase_templates, device = device)
+        
+        self.phase_input_ids = self.phase_templates['input_ids']
+        self.phase_token_type_ids = self.phase_templates['token_type_ids']
+        self.phase_attention_masks = self.phase_templates['attention_mask']
         
         # (num_classes, dim)
 
-        test_loader = build_data_loader(data_source=dataset.test, batch_size = self.configs.batch_size, is_train = False, tfm = self.preprocess,
+        test_loader = build_data_loader(data_source=dataset.test, batch_size = self.batch_size, is_train = False, tfm = self.preprocess,
                                     num_classes = dataset.num_classes)
 
-        val_loader = build_data_loader(data_source=dataset.val, batch_size = self.configs.batch_size, tfm=self.preprocess, is_train=False, 
+        val_loader = build_data_loader(data_source=dataset.val, batch_size = self.batch_size, tfm=self.preprocess, is_train=False, 
                                        num_classes = dataset.num_classes)
 
         if not self.configs.preload_local_features:
@@ -172,12 +196,15 @@ class NegationNCE(nn.Module):
         self.val_feature = Cholec80Features(self.configs, "val")
 
         # Generate few shot data
-        train_data = dataset.generate_fewshot_dataset_(self.configs.num_shots, split="train")
-        # val_data = dataset.generate_fewshot_dataset_(self.configs.num_shots, split="val") 
+        if self.configs.num_shots == -1:
+            train_loader = build_data_loader(data_source=dataset.train_x, batch_size = self.batch_size, tfm=self.preprocess, is_train=True, 
+                                             num_classes = dataset.num_classes)
+        else:
+            train_data = dataset.generate_fewshot_dataset_(self.configs.num_shots, split="train")
+            # val_data = dataset.generate_fewshot_dataset_(self.configs.num_shots, split="val") 
 
-        train_loader = build_data_loader(data_source=train_data, batch_size = self.configs.batch_size, tfm=self.preprocess, is_train=True, 
-                                         num_classes = dataset.num_classes)
-
+            train_loader = build_data_loader(data_source=train_data, batch_size = self.batch_size, tfm=self.preprocess, is_train=True, 
+                                            num_classes = dataset.num_classes)
 
         optim_params = [
         ]
@@ -192,18 +219,22 @@ class NegationNCE(nn.Module):
         # self.scheduler = torch.optim.lr_scheduler.CosineAnnealingLR(self.optimizer, self.epochs * len(train_loader))
         
         if self.annealling:
-            self.scheduler = torch.optim.lr_scheduler.CosineAnnealingWarmRestarts(self.optimizer, T_0 = 10 * len(train_loader))
+            self.scheduler = WarmupCosineAnnealing(self.optimizer, warmup_epochs=5, total_epochs=self.epochs, train_loader_length=math.ceil(len(train_loader) / self.accumulate_step))
         
         train_loss = []
         best_val_map = 0
         
         test_metrics = self.get_metrics("test")
+        print(test_metrics)
         test_map = test_metrics["mAP"]
         print(f"Initial test mAP {test_map}")
         wandb.log({"test_map": test_map, "epoch": 0})
         wandb.log({"test_f1": test_metrics["f1"], "epoch": 0})
         wandb.log({"test_precision": test_metrics["precision"], "epoch": 0})
         wandb.log({"test_recall": test_metrics["recall"], "epoch": 0})
+        
+        wandb.log({"test_p_acc": test_metrics["phase_acc"], "epoch": 0})
+        wandb.log({"test_p_f1": test_metrics["phase_f1"], "epoch": 0})
 
         val_metrics = self.get_metrics("val")
         val_map = val_metrics["mAP"]
@@ -212,6 +243,9 @@ class NegationNCE(nn.Module):
         wandb.log({"val_f1": val_metrics["f1"], "epoch": 0})
         wandb.log({"val_precision": val_metrics["precision"], "epoch": 0})
         wandb.log({"val_recall": val_metrics["recall"], "epoch": 0})
+
+        wandb.log({"val_p_acc": val_metrics["phase_acc"], "epoch": 0})
+        wandb.log({"val_p_f1": val_metrics["phase_f1"], "epoch": 0})
 
         # print("==============1==============")
         # # device = torch.device('cuda')
@@ -237,9 +271,9 @@ class NegationNCE(nn.Module):
             
             # print(f"缓存中可用内存: {allocated_memory / 1024:.2f} MB")
             
-            for i, (images, target, negated_target) in enumerate(tqdm(train_loader)):
+            for i, (images, target, negated_target, _) in enumerate(tqdm(train_loader)):
                 images, target, negated_target = images.cuda(), target.cuda(), negated_target.cuda()
-                
+
                 if self.unfreeze_vision or self.unfreeze_text:
                     # get image embedding
                     # global_features: [bs, 768] local_features: [bs, 2048, 7, 7]
@@ -265,15 +299,19 @@ class NegationNCE(nn.Module):
                 
                 positive_keys, negative_keys = self.get_nce_labels(target, negated_target, feats_templates)
                 
-                loss = self.loss_func(image_features, positive_keys, negative_keys) / self.accumulate_step
+                loss, _, _ = self.loss_func(image_features, positive_keys, negative_keys) / self.accumulate_step
                 loss.backward()
 
-                if i % self.accumulate_step == 0:
+                if (i+1) % self.accumulate_step == 0 or (i + 1) == len(train_loader):
                     self.optimizer.step()
                     if self.annealling:
                         self.scheduler.step()
                     # print(f"Epoch {epoch}, LR: {self.optimizer.param_groups[0]['lr']}")
+                    # current_lr = self.optimizer.param_groups[0]['lr']
+                    # print(f'Epoch [{epoch+1}], Current Learning Rate: {current_lr:.6f}')
                     self.optimizer.zero_grad()
+                    wandb.log({"lr": self.optimizer.param_groups[0]['lr'], "epoch": epoch+1})
+
 
                 epoch_loss += loss.item()
                 batch_count += 1
@@ -315,6 +353,9 @@ class NegationNCE(nn.Module):
             wandb.log({"val_precision": val_metrics["precision"], "epoch": epoch+1})
             wandb.log({"val_recall": val_metrics["recall"], "epoch": epoch+1})
 
+            wandb.log({"val_p_acc": val_metrics["phase_acc"], "epoch": epoch+1})
+            wandb.log({"val_p_f1": val_metrics["phase_f1"], "epoch": epoch+1})
+
             # print("==============3==============")
             # reserved_memory = torch.cuda.memory_reserved(device)
             # allocated_memory = torch.cuda.memory_allocated(device)
@@ -327,7 +368,7 @@ class NegationNCE(nn.Module):
             if save_model:
                 torch.save(self.state_dict(), self.checkpoint_path)
                 # print(f'Validation map decreased ({self.val_map_max:.6f} --> {val_map:.6f}). Saving model...')
-                print(f'Validation map decreased. Saving model...')
+                print(f'Validation map increased. Saving model...')
 
             if self.early_stopping.early_stop:
                 print("Early stopping triggered!")
@@ -350,6 +391,9 @@ class NegationNCE(nn.Module):
                 wandb.log({"test_f1": test_metrics["f1"], "epoch": epoch+1})
                 wandb.log({"test_precision": test_metrics["precision"], "epoch": epoch+1})
                 wandb.log({"test_recall": test_metrics["recall"], "epoch": epoch+1})
+
+                wandb.log({"test_p_acc": test_metrics["phase_acc"], "epoch": epoch+1})
+                wandb.log({"test_p_f1": test_metrics["phase_f1"], "epoch": epoch+1})
 
             # print("==============5==============")
             # reserved_memory = torch.cuda.memory_reserved(device)

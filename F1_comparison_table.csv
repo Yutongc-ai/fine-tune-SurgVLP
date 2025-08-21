@@ -1,0 +1,13 @@
+﻿Method,Unfreeze,Backbone,1,16,64,128,256,512
+linear_probe,True,PeskaVLP,0.28 (30),0.34 (30),0.36 (30),0.35 (30),0.35 (30),0.38 (30)
+linear_probe,False,PeskaVLP,0.31 (30),0.36 (30),0.39 (30),0.36 (30),0.36 (30),0.40 (30)
+linear_probe,False,PeskaVLP_negation_pretrain,0.33 (30),0.36 (30),0.39 (30),0.37 (30),0.37 (30),-
+negation_nce,True,PeskaVLP,0.34 (50),0.37 (50),0.37 (50),0.37 (50),0.37 (50),0.37 (50)
+negation_nce,True,SurgVLP,0.41 (50),0.40 (50),0.40 (50),0.38 (50),0.38 (50),0.38 (50)
+bi_cross_attn_img,True,PeskaVLP,0.39 (30),0.47 (30),0.47 (30),0.50 (30),0.44 (30),0.45 (30)
+bi_cross_attn_img,True,SurgVLP,0.47 (30),0.57 (30),0.54 (30),0.62 (30),0.60 (30),0.61 (30)
+bi_cross_attn_text,True,PeskaVLP,0.44 (30),0.44 (30),0.47 (30),0.48 (30),0.46 (30),0.48 (30)
+bi_cross_attn_text,True,SurgVLP,0.44 (30),0.58 (30),0.62 (30),0.61 (30),0.63 (30),0.60 (30)
+mixture_img,True,PeskaVLP,0.44 (50),0.35 (50),0.41 (50),0.42 (50),0.44 (50),0.44 (50)
+mixture_text,True,PeskaVLP,0.44 (50),0.20 (50),0.48 (50),0.47 (50),0.47 (50),0.46 (50)
+clip_adapter,False,PeskaVLP,0.39 (200),0.39 (200),0.35 (200),0.38 (200),0.38 (200),0.38 (200)

@@ -23,8 +23,28 @@ class Cholec80Features(TorchDataset):
         global_features = torch.load(f"{self.root}/{self.split}global_f_part{index}.pt")
         local_features = torch.load(f"{self.root}/{self.split}local_f_part{index}.pt")
         labels = torch.load(f"{self.root}/{self.split}label_part{index}.pt")
+        phase_labels = torch.load(f"{self.root}/{self.split}phase_label_part{index}.pt")
 
-        return global_features, local_features, labels
+        return global_features, local_features, labels, phase_labels
+
+class Cholec80FeaturesVal(TorchDataset):
+    def __init__(self, cfg, split):
+        self.split = split
+        self.root = cfg.cache_dir
+        with open(f"{self.root}/{split}parts_info.txt", "r") as f:
+            # self.num_parts = int(f.read().strip())
+            self.num_parts = 2
+
+    def __len__(self):
+        return self.num_parts - 1
+
+    def __getitem__(self, index):
+        global_features = torch.load(f"{self.root}/{self.split}global_f_part{index}.pt")
+        local_features = torch.load(f"{self.root}/{self.split}local_f_part{index}.pt")
+        labels = torch.load(f"{self.root}/{self.split}label_part{index}.pt")
+        phase_labels = torch.load(f"{self.root}/{self.split}phase_label_part{index}.pt")
+
+        return global_features, local_features, labels, phase_labels
 
 def preload_local_features(cfg, split, model, loader):
     # if not cfg.preload_local_features:
@@ -33,13 +53,13 @@ def preload_local_features(cfg, split, model, loader):
     os.makedirs(cfg.cache_dir, exist_ok=True)
     
     part_idx = 0
-    cur_local_features, cur_global_features, cur_labels = [], [], []
+    cur_local_features, cur_global_features, cur_labels, cur_phase_labels = [], [], [], []
 
     with torch.no_grad():
-        for i, (images, target, _) in enumerate(tqdm(loader)):
+        for i, (images, target, _, phase_target) in enumerate(tqdm(loader)):
             torch.cuda.empty_cache()
             
-            images, target = images.cuda(), target.cuda()
+            images = images.cuda()
             if torch.isnan(images).any():
                 raise RuntimeError("image has nan value")
             
@@ -58,6 +78,7 @@ def preload_local_features(cfg, split, model, loader):
             cur_global_features.append(global_image_features.detach().cpu())
             cur_local_features.append(local_image_features.detach().cpu())
             cur_labels.append(target.detach().cpu())
+            cur_phase_labels.append(phase_target.detach().cpu())
             
             del images, target, global_image_features, local_image_features
             
@@ -65,6 +86,7 @@ def preload_local_features(cfg, split, model, loader):
                 save_local_features = torch.cat(cur_local_features)
                 save_global_features = torch.cat(cur_global_features)
                 save_labels = torch.cat(cur_labels)
+                save_phase_labels = torch.cat(cur_phase_labels)
                 
                 torch.save(save_local_features, 
                             f"{cfg.cache_dir}/{split}local_f_part{part_idx}.pt")
@@ -72,16 +94,19 @@ def preload_local_features(cfg, split, model, loader):
                             f"{cfg.cache_dir}/{split}global_f_part{part_idx}.pt")
                 torch.save(save_labels, 
                             f"{cfg.cache_dir}/{split}label_part{part_idx}.pt")
+                torch.save(save_phase_labels, 
+                            f"{cfg.cache_dir}/{split}phase_label_part{part_idx}.pt")
                 
                 part_idx += 1
-                cur_local_features, cur_global_features, cur_labels = [], [], []
-                del save_local_features, save_global_features, save_labels
+                cur_local_features, cur_global_features, cur_labels, cur_phase_labels = [], [], [], []
+                del save_local_features, save_global_features, save_labels, save_phase_labels
                 torch.cuda.empty_cache()
     
         if cur_global_features:
             save_local_features = torch.cat(cur_local_features)
             save_global_features = torch.cat(cur_global_features)
             save_labels = torch.cat(cur_labels)
+            save_phase_labels = torch.cat(cur_phase_labels)
             
             torch.save(save_local_features, 
                         f"{cfg.cache_dir}/{split}local_f_part{part_idx}.pt")
@@ -89,8 +114,10 @@ def preload_local_features(cfg, split, model, loader):
                         f"{cfg.cache_dir}/{split}global_f_part{part_idx}.pt")
             torch.save(save_labels, 
                         f"{cfg.cache_dir}/{split}label_part{part_idx}.pt")
+            torch.save(save_phase_labels, 
+                            f"{cfg.cache_dir}/{split}phase_label_part{part_idx}.pt")
             
-            del save_local_features, save_global_features, save_labels
+            del save_local_features, save_global_features, save_labels, save_phase_labels
             torch.cuda.empty_cache()
     
     with open(f"{cfg.cache_dir}/{split}parts_info.txt", "w") as f:
@@ -156,7 +183,7 @@ class MultiLabelDatum:
         classnames (list): list of class names.
     """
 
-    def __init__(self, impath='', labels=None, domain=-1, classnames=None, negated_labels = None):
+    def __init__(self, impath='', labels=None, phase_labels =None, domain=-1, classnames=None, negated_labels = None):
         assert isinstance(impath, str)
         assert isinstance(labels, list) or labels is None
         assert isinstance(domain, int)
@@ -164,6 +191,7 @@ class MultiLabelDatum:
 
         self._impath = impath
         self._labels = labels if labels is not None else []
+        self._phase_labels = phase_labels if phase_labels is not None else []
         self._negated_labels = negated_labels if negated_labels is not None else []
         self._domain = domain
         self._classnames = classnames if classnames is not None else []
@@ -179,6 +207,10 @@ class MultiLabelDatum:
     @property
     def labels(self):
         return self._labels
+    
+    @property
+    def phase_labels(self):
+        return self._phase_labels
 
     @property
     def domain(self):
@@ -285,6 +317,11 @@ class MultilabelDatasetWrapper():
             one_hot[sample] = 1
         output['labels'] = one_hot
 
+        phase_one_hot = torch.zeros(self.num_classes)
+        for i, sample in enumerate(item.phase_labels):
+            phase_one_hot[sample] = 1
+        output['phase_labels'] = phase_one_hot
+
         one_hot_negated = torch.zeros(self.num_classes)
         for i, sample in enumerate(item.negated_labels):
             one_hot_negated[sample] = 1
@@ -303,7 +340,7 @@ class MultilabelDatasetWrapper():
         else:
             raise RuntimeError("transform function is None!")
         
-        return output['img'], output['labels'], output['negated_labels']
+        return output['img'], output['labels'], output['negated_labels'], output['phase_labels']
 
     def _transform_image(self, tfm, img0):
         img_list = []

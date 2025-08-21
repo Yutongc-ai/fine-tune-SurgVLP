@@ -1,0 +1,8 @@
+﻿Method,Unfreeze,Backbone,1,16,64,128
+linear_probe,False,PeskaVLP,0.31 (30),0.36 (30),0.39 (30),0.36 (30)
+linear_probe++,False,PeskaVLP,0.38 (100),0.39 (100),0.39 (100),0.38 (100)
+clip_adapter,False,PeskaVLP,0.39 (200),0.39 (200),0.40 (200),0.43 (200)
+tip_adapter,False,PeskaVLP,0.30 (200),0.38 (200),0.38 (200),0.38 (200)
+coop,False,PeskaVLP,0.33 (200),0.33 (200),0.40 (200),0.39 (200)
+bi_cross_attn_text,False,PeskaVLP,0.39 (30),0.41 (30),0.46 (30),0.42 (30)
+negation_nce,False,PeskaVLP,0.35 (50),0.39 (50),0.38 (50),0.35 (50)

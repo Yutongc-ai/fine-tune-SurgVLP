@@ -1,0 +1,3 @@
+timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,p_acc_avg,p_f1_avg,batch_size,early_stop,annealling,lr,num_shots,tasks,epochs,unfreeze_vision,unfreeze_text,init_alpha,clip_ad_alpha,backbone,finetune,tip_alpha,tip_beta
+2025-08-20 04:15:39,ours,False,0.215,0.7844,0.3374,0.3203,0.3971,0.258,64,10,True,1e-05,4,1,3,False,True,NA,NA,PeskaVLP,NA,NA,NA
+2025-08-21 09:09:25,ours,False,0.2093,0.8357,0.3347,0.2645,0.3989,0.2501,0.2049,0.722,0.3192,0.2209,0.4005,0.2438,256,10,True,1e-05,12000,1,5,False,True,NA,NA,PeskaVLP,NA,NA,NA

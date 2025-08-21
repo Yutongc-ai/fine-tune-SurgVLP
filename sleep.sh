@@ -1,3 +1,2 @@
-sleep 200
-python few_shot.py --method avg_pooling_lp
-# echo 4
+python few_shot.py --method finetune
+python few_shot.py --method negation_nce_all

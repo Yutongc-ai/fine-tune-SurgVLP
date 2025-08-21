@@ -7,6 +7,97 @@ from torch import nn
 
 __all__ = ['InfoNCE', 'info_nce']
 
+class_freq = [56800, 4106, 48437, 1624, 3217, 5384, 5760]
+N_total = 86304
+
+class WeightedInfoNCE(nn.Module):
+    def __init__(self, temperature=100, reduction='mean', negative_mode='unpaired'):
+        super().__init__()
+        self.temperature = temperature
+        self.reduction = reduction
+        self.negative_mode = negative_mode
+
+        class_weights = [N_total / freq for freq in class_freq]
+        class_weights = torch.tensor(class_weights)
+        normalized_class_weights = class_weights / max(class_weights)
+        self.normalized_class_weights = normalized_class_weights.cuda()
+
+    def forward(self, query, positive_key, negative_keys=None, class_weights = None):
+        if class_weights is None:
+            return self.weighted_info_nce(query, positive_key, negative_keys,
+                            temperature=self.temperature,
+                            reduction=self.reduction,
+                            negative_mode=self.negative_mode,
+                            class_weights=self.normalized_class_weights)
+        else:
+            return self.weighted_info_nce(query, positive_key, negative_keys,
+                            temperature=self.temperature,
+                            reduction=self.reduction,
+                            negative_mode=self.negative_mode,
+                            class_weights=self.normalized_class_weights)
+
+    def weighted_info_nce(self, query, positive_key, negative_keys=None, temperature=100, reduction='mean', 
+                          negative_mode='unpaired', class_weights = None):
+        # Check input dimensionality.
+        if query.dim() != 2:
+            raise ValueError('<query> must have 2 dimensions.')
+        # if positive_key.dim() != 2:
+        #     raise ValueError('<positive_key> must have 2 dimensions.')
+        if negative_keys is not None:
+            if negative_mode == 'unpaired' and negative_keys.dim() != 2:
+                raise ValueError("<negative_keys> must have 2 dimensions if <negative_mode> == 'unpaired'.")
+            if negative_mode == 'paired' and negative_keys.dim() != 3:
+                raise ValueError("<negative_keys> must have 3 dimensions if <negative_mode> == 'paired'.")
+
+        # Check matching number of samples.
+        if len(query) != len(positive_key):
+            raise ValueError('<query> and <positive_key> must must have the same number of samples.')
+        if negative_keys is not None:
+            if negative_mode == 'paired' and len(query) != len(negative_keys):
+                raise ValueError("If negative_mode == 'paired', then <negative_keys> must have the same number of samples as <query>.")
+
+        # Embedding vectors should have same number of components.
+        if query.shape[-1] != positive_key.shape[-1]:
+            raise ValueError('Vectors of <query> and <positive_key> should have the same number of components.')
+        if negative_keys is not None:
+            if query.shape[-1] != negative_keys.shape[-1]:
+                raise ValueError('Vectors of <query> and <negative_keys> should have the same number of components.')
+
+        # Normalize to unit vectors
+        # no need for us cause alr conducted normalization
+        # query, positive_key, negative_keys = normalize(query, positive_key, negative_keys)
+        # Explicit negative keys
+
+        # Cosine between positive pairs
+
+        # print("multiple positive keys")
+        unsqueeze_query = query.unsqueeze(1)
+        # print(unsqueeze_query)
+        # print(positive_key)
+        # print(transpose(positive_key))
+        positive_logit = unsqueeze_query @ transpose(positive_key) * temperature
+        # print("positive logit\n", positive_logit)
+        positive_logit = positive_logit.squeeze(1)
+        # positive logit: [bs, num_positive]
+        
+        # query [bs, 1, embedding_length] negative key transpose [bs, embedding_length, num_negative]
+        query = query.unsqueeze(1)
+        negative_logits = query @ transpose(negative_keys) * temperature
+        # negative logits [bs, 1, num_negative]
+        negative_logits = negative_logits.squeeze(1)
+        # negative logits [bs, num_negative]
+
+        exp_positive_logits = torch.exp(positive_logit)
+        sumed_exp_positive = exp_positive_logits @ self.normalized_class_weights
+
+        exp_negative_logits = torch.exp(negative_logits)
+        sumed_exp_negative = exp_negative_logits.sum(dim = 1)
+
+        log_term = torch.log(sumed_exp_positive / (sumed_exp_positive + sumed_exp_negative))
+        losses = -log_term
+        losses = torch.mean(losses)
+
+        return losses
 
 class InfoNCE(nn.Module):
     """
@@ -50,7 +141,7 @@ class InfoNCE(nn.Module):
         >>> output = loss(query, positive_key, negative_keys)
     """
 
-    def __init__(self, temperature=0.1, reduction='mean', negative_mode='unpaired'):
+    def __init__(self, temperature=100, reduction='mean', negative_mode='unpaired'):
         super().__init__()
         self.temperature = temperature
         self.reduction = reduction
@@ -63,7 +154,7 @@ class InfoNCE(nn.Module):
                         negative_mode=self.negative_mode)
 
 
-def info_nce(query, positive_key, negative_keys=None, temperature=0.1, reduction='mean', negative_mode='unpaired'):
+def info_nce(query, positive_key, negative_keys=None, temperature=100, reduction='mean', negative_mode='unpaired'):
     # Check input dimensionality.
     if query.dim() != 2:
         raise ValueError('<query> must have 2 dimensions.')
@@ -90,7 +181,8 @@ def info_nce(query, positive_key, negative_keys=None, temperature=0.1, reduction
             raise ValueError('Vectors of <query> and <negative_keys> should have the same number of components.')
 
     # Normalize to unit vectors
-    query, positive_key, negative_keys = normalize(query, positive_key, negative_keys)
+    # no need for us cause alr conducted normalization
+    # query, positive_key, negative_keys = normalize(query, positive_key, negative_keys)
     if negative_keys is not None:
         # Explicit negative keys
 
@@ -101,7 +193,7 @@ def info_nce(query, positive_key, negative_keys=None, temperature=0.1, reduction
             # print(unsqueeze_query)
             # print(positive_key)
             # print(transpose(positive_key))
-            positive_logit = unsqueeze_query @ transpose(positive_key)
+            positive_logit = unsqueeze_query @ transpose(positive_key) * temperature
             # print("positive logit\n", positive_logit)
             positive_logit = positive_logit.squeeze(1)
             # positive logit: [bs, num_positive]
@@ -118,7 +210,7 @@ def info_nce(query, positive_key, negative_keys=None, temperature=0.1, reduction
         elif negative_mode == 'paired':
             # query [bs, 1, embedding_length] negative key transpose [bs, embedding_length, num_negative]
             query = query.unsqueeze(1)
-            negative_logits = query @ transpose(negative_keys)
+            negative_logits = query @ transpose(negative_keys) * temperature
             # negative logits [bs, 1, num_negative]
             negative_logits = negative_logits.squeeze(1)
             # negative logits [bs, num_negative]
@@ -134,7 +226,7 @@ def info_nce(query, positive_key, negative_keys=None, temperature=0.1, reduction
             losses = -log_term
             losses = torch.mean(losses)
 
-            return losses
+            return losses, positive_logit, negative_logits
 
         # First index in last dimension are the positive samples
         logits = torch.cat([positive_logit, negative_logits], dim=1)
@@ -236,3 +328,53 @@ if __name__ == "__main__":
     
     print("=====================")
     print(loss)
+
+
+class AsymmetricLoss(nn.Module):
+    def __init__(self, gamma_neg=4, gamma_pos=1, clip=0.05, eps=1e-8, disable_torch_grad_focal_loss=True):
+        super(AsymmetricLoss, self).__init__()
+
+        self.gamma_neg = gamma_neg
+        self.gamma_pos = gamma_pos
+        self.clip = clip
+        self.disable_torch_grad_focal_loss = disable_torch_grad_focal_loss
+        self.eps = eps
+
+    def forward(self, x, y):
+        """"
+        Parameters
+        ----------
+        x: input logits
+        y: targets (multi-label binarized vector)
+        """
+
+        # Calculating Probabilities
+        x_sigmoid = torch.sigmoid(x)
+        xs_pos = x_sigmoid
+        xs_neg = 1 - x_sigmoid
+
+        # Asymmetric Clipping
+        if self.clip is not None and self.clip > 0:
+            xs_neg = (xs_neg + self.clip).clamp(max=1)
+
+        # Basic CE calculation
+        los_pos = y * torch.log(xs_pos.clamp(min=self.eps))
+        los_neg = (1 - y) * torch.log(xs_neg.clamp(min=self.eps))
+
+        # Asymmetric Focusing
+        if self.gamma_neg > 0 or self.gamma_pos > 0:
+            if self.disable_torch_grad_focal_loss:
+                torch.set_grad_enabled(False)
+            pt0 = xs_pos * y
+            pt1 = xs_neg * (1 - y)  # pt = p if t > 0 else 1-p
+            pt = pt0 + pt1
+            one_sided_gamma = self.gamma_pos * y + self.gamma_neg * (1 - y)
+            one_sided_w = torch.pow(1 - pt, one_sided_gamma)
+            if self.disable_torch_grad_focal_loss:
+                torch.set_grad_enabled(True)
+            los_pos = one_sided_w * los_pos
+            los_neg = one_sided_w * los_neg
+
+        loss = - (los_pos + los_neg)
+        return loss.mean()
+
