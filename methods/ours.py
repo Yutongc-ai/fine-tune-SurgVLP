@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from methods.loss import InfoNCE
+from methods.loss import WeightedInfoNCE, InfoNCE
 from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features
 from methods.utils import multilabel_metrics, WarmupCosineAnnealing, cal_phase_metrics
 from methods.early_stopping import EarlyStopping
@@ -40,7 +40,7 @@ class Ours(nn.Module):
         if self.attn_pooling:
             assert(0, "attn pooling version of negation method is not realized yet")
 
-        self.temperature = 1
+        self.temperature = 100
         self.threshold = 0.5
         self.lr = configs.learning_rate
         print(f"learning rate is {self.lr}")
@@ -50,6 +50,7 @@ class Ours(nn.Module):
         self.num_classes = configs.dataset_config.num_classes
 
         self.criterion = torch.nn.BCEWithLogitsLoss()
+        # self.loss_func = WeightedInfoNCE(negative_mode='paired')
         self.loss_func = InfoNCE(negative_mode='paired')
 
         self.early_stop = configs.early_stop
@@ -174,12 +175,6 @@ class Ours(nn.Module):
                 if mask:
                     positive_keys[bs][index] = feats_template[index]
                     negative_keys[bs][index] = feats_template[index + 7]
-
-        for bs in range(batch_size):
-            for index, mask in enumerate(negated_target[bs]):
-                if mask:
-                    positive_keys[bs][index] = feats_template[index + 7]
-                    negative_keys[bs][index] = feats_template[index]
         
         return positive_keys, negative_keys
 
@@ -234,6 +229,26 @@ class Ours(nn.Module):
 
             train_loader = build_data_loader(data_source=train_data, batch_size = self.batch_size, tfm=self.preprocess, is_train=True, 
                                             num_classes = dataset.num_classes)
+
+        # # count class weights
+        # print("Counting weighted class")
+        # if self.configs.num_shots == -1:
+        #     class_freq = [56800, 4106, 48437, 1624, 3217, 5384, 5760]
+        #     total_frames = 86304
+        # else:
+        #     total_frames = len(train_loader)
+        #     class_freq = [0, 0, 0, 0, 0, 0, 0]
+        #     for i, (images, target, negated_target, _) in enumerate(tqdm(train_loader)):
+        #         sum_target = target.sum(dim =0)
+        #         for tool_idx in range(7):
+        #             class_freq[tool_idx] += sum_target[tool_idx].item()
+
+        # print(class_freq)
+
+        # class_weights = [total_frames / freq for freq in class_freq]
+        # class_weights = torch.tensor(class_weights)
+        # normalized_class_weights = class_weights / max(class_weights)
+        # self.normalized_class_weights = normalized_class_weights.cuda()
 
         optim_params = [
         ]
@@ -314,8 +329,9 @@ class Ours(nn.Module):
                 
                 positive_keys, negative_keys = self.get_nce_labels(target, negated_target, feats_templates)
                 
-                classification_loss, positive_logits, negative_logits = self.loss_func(image_features, positive_keys, negative_keys) / self.accumulate_step
-                logits = positive_logits * target + negative_logits * negated_target
+                classification_loss, positive_logits, negative_logits = self.loss_func(image_features, positive_keys, negative_keys) #, self.normalized_class_weights)
+                classification_loss /= self.accumulate_step
+                logits = image_features @ feats_templates[:7].T * self.temperature
                 probs = logits.sigmoid()
 
                 penalty_loss = 0.0
@@ -324,11 +340,11 @@ class Ours(nn.Module):
                     prob2 = probs[:, idx2] # (batch_size,)
 
                     # Product-based Penalty
-                    # 当 prob1 和 prob2 都高时，prob1 * prob2 接近1，惩罚项增加
+                    # 当 prob1 和 prob2 都高时，prob1 * prob2 接近1，惩罚增加
                     penalty_for_pair = prob1 * prob2
                     penalty_loss += penalty_for_pair.mean()
 
-                loss = penalty_loss + classification_loss
+                loss = 0.1 * penalty_loss + classification_loss
 
                 loss.backward()
 
@@ -357,10 +373,10 @@ class Ours(nn.Module):
 
             train_loss.append(avg_epoch_loss)
 
-            if epoch % self.avg_freq == 0:
-                sma_count += 1
-                with torch.no_grad():
-                    merge_we(self.model, self.model_ensemble, sma_count)
+            # if epoch % self.avg_freq == 0:
+            #     sma_count += 1
+            #     with torch.no_grad():
+            #         merge_we(self.model, self.model_ensemble, sma_count)
 
             val_metrics = self.get_metrics("val")
             cur_val_map = val_metrics["mAP"]
@@ -395,21 +411,21 @@ class Ours(nn.Module):
                 wandb.log({"test_p_acc": test_metrics["phase_acc"], "epoch": epoch+1})
                 wandb.log({"test_p_f1": test_metrics["phase_f1"], "epoch": epoch+1})
             
-            if epoch % self.eval_interval == 0:
-                en_test_metrics = self.get_metrics("test", True)
-                en_test_map = en_test_metrics["mAP"]
-                wandb.log({"we_test_map": en_test_map, "epoch": epoch+1})
-                wandb.log({"we_test_f1": en_test_metrics["f1"], "epoch": epoch+1})
-                wandb.log({"we_test_precision": en_test_metrics["precision"], "epoch": epoch+1})
-                wandb.log({"we_test_recall": en_test_metrics["recall"], "epoch": epoch+1})
+            # if epoch % self.eval_interval == 0:
+            #     en_test_metrics = self.get_metrics("test", True)
+            #     en_test_map = en_test_metrics["mAP"]
+            #     wandb.log({"we_test_map": en_test_map, "epoch": epoch+1})
+            #     wandb.log({"we_test_f1": en_test_metrics["f1"], "epoch": epoch+1})
+            #     wandb.log({"we_test_precision": en_test_metrics["precision"], "epoch": epoch+1})
+            #     wandb.log({"we_test_recall": en_test_metrics["recall"], "epoch": epoch+1})
 
-                wandb.log({"we_test_p_acc": en_test_metrics["phase_acc"], "epoch": epoch+1})
-                wandb.log({"we_test_p_f1": en_test_metrics["phase_f1"], "epoch": epoch+1})
+            #     wandb.log({"we_test_p_acc": en_test_metrics["phase_acc"], "epoch": epoch+1})
+            #     wandb.log({"we_test_p_f1": en_test_metrics["phase_f1"], "epoch": epoch+1})
 
         wandb.finish()
 
-        prefix = 'we_'
-        we_test_metrics = {prefix + k: v for k, v in en_test_metrics.items()}
+        # prefix = 'we_'
+        # we_test_metrics = {prefix + k: v for k, v in en_test_metrics.items()}
 
-        test_metrics.update(we_test_metrics)
+        # test_metrics.update(we_test_metrics)
         return test_metrics

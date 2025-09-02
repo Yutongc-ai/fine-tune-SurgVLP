@@ -7,6 +7,13 @@ from .utils import MultiLabelDatum, MultiLabelDatasetBase, read_json, write_json
 labels = []
 
 class_names = ["Grasper", "Bipolar", "Hook", "Scissors", "Clipper", "Irrigator", "SpecimenBag"]
+class_names_extend = ["grasper to cautery forcep to grasp it",
+                      "bipolar to coagulate and clean the bleeding",
+                      "hook to dissect it",
+                      "scissors",
+                      "clipper to clip it",
+                      "irrigator to suck it",
+                      "specimenbag to wrap it"]
 
 templates = {
     "Grasper" : "I use grasper to cautery forcep to grasp it",
@@ -30,26 +37,6 @@ phase_templates = {
 
 all_labels_set = set([0, 1, 2, 3, 4, 5, 6])
 
-# templates = {
-#     "I use grasper to cautery forcep to grasp it",
-#     "I use bipolar to coagulate and clean the bleeding",
-#     "I use hook to dissect it",
-#     "I use scissors",
-#     "I use clipper to clip it",
-#     "I use irrigator to suck it",
-#     "I use specimenbag to wrap it",
-# }
-
-# negated_templates = {
-#     "Grasper" : "I did not use grasper to cautery forcep to grasp it",
-#     "Bipolar" : "I did not use bipolar to coagulate and clean the bleeding",
-#     "Hook" : "I did not use hook to dissect it",
-#     "Scissors" : "I did not use scissors",
-#     "Clipper" : "I did not use clipper to clip it",
-#     "Irrigator" : "I did not use irrigator to suck it",
-#     "SpecimenBag" : "I did not use specimenbag to wrap it",
-# }
-
 negated_templates = {
     "Grasper" : "I did not use grasper",
     "Bipolar" : "I did not use bipolar",
@@ -60,15 +47,27 @@ negated_templates = {
     "SpecimenBag" : "I did not use specimenbag",
 }
 
-# negated_templates = {
-#     "I did not use grasper",
-#     "I did not use bipolar",
-#     "I did not use hook",
-#     "I did not use scissors",
-#     "I did not use clipper",
-#     "I did not use irrigator",
-#     "I did not use specimenbag",
-# }
+negated_templates_1 = {
+    "Grasper" : "I use grasper to coagulate and clean the bleeding",
+    "Bipolar" : "I use bipolar to dissect it",
+    "Hook" : "I use hook to clip it",
+    "Scissors" : "I use scissors to clip it",
+    "Clipper" : "I use clipper to suck it",
+    "Irrigator" : "I use irrigator to wrap it",
+    "SpecimenBag" : "I use specimenbag to cautery forcep to grasp it",
+}
+
+negated_templates_2 = {
+    "Grasper" : "I use bipolar to coagulate and clean the bleeding but I don't use grasper to cautery forcep to grasp it",
+    "Bipolar" : "I use hook to dissect it but I don't use bipolar to coagulate and clean the bleeding",
+    "Hook" : "I use scissors but I don't use hook to dissect it",
+    "Scissors" : "I use clipper to clip it but I don't use scissors",
+    "Clipper" : "I use irrigator to suck it but I don't use clipper to clip it",
+    "Irrigator" : "I use specimenbag to wrap it but I don't use irrigator to suck it",
+    "SpecimenBag" : "I use grasper to cautery forcep to grasp it but I don't use specimenbag to wrap it",
+}
+
+negated_templates_3 = "I use {} but I don't use {}"
 
 class Cholec80(MultiLabelDatasetBase):
     def __init__(self, config):
@@ -80,15 +79,18 @@ class Cholec80(MultiLabelDatasetBase):
         self.phase_dir = os.path.join(self.dataset_dir, "phase_annotations")
 
         train_video = [f"video{video_idx:02d}" for video_idx in range(1, 41)]
-        val_video = [f"video{video_idx:02d}" for video_idx in range(41, 45)]
+        val_video = [f"video{video_idx:02d}" for video_idx in range(41, 61)]
 
         test_video = [f"video{video_idx:02d}" for video_idx in range(61, 81)]
 
         self.templates = list(templates.values())
         self.negated_templates = list(negated_templates.values())
+        self.negated_templates_1 = list(negated_templates_1.values())
+        self.negated_templates_2 = list(negated_templates_2.values())
         self.phase_templates = list(phase_templates.values())
 
         self.class_names = class_names
+        self.class_names_extend = class_names_extend
 
         print("Preparing training dataset")
         train = self.read_data(train_video, "train")
@@ -173,6 +175,9 @@ class CholecPhase(MultiLabelDatasetBase):
 
         self.templates = list(templates.values())
         self.negated_templates = list(negated_templates.values())
+        self.negated_templates_1 = list(negated_templates_1.values())
+        self.negated_templates_2 = negated_templates_2
+        self.negated_templates_3 = negated_templates_3
 
         self.class_names = class_names
 

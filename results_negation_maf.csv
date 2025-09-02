@@ -1,0 +1,2 @@
+timestamp,method,precision_avg,recall_avg,f1_avg,mAP_avg,p_acc_avg,p_f1_avg,we_precision_avg,we_recall_avg,we_f1_avg,we_mAP_avg,we_p_acc_avg,we_p_f1_avg,batch_size,early_stop,annealling,lr,num_shots,tasks,epochs,unfreeze_vision,unfreeze_text,init_alpha,clip_ad_alpha,backbone,finetune,tip_alpha,tip_beta
+2025-08-29 07:35:49,negation_maf,0.1793,0.9995,0.3041,0.2924,0.4563,0.3376,-1,-1,-1,-1,-1,-1,2048,10,True,0.01,5000,1,50,False,False,NA,0.2,PeskaVLP,NA,0.2,NA

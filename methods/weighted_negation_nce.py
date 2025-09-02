@@ -145,12 +145,6 @@ class WeightedNegationNCE(nn.Module):
                 if mask:
                     positive_keys[bs][index] = feats_template[index]
                     negative_keys[bs][index] = feats_template[index + 7]
-
-        for bs in range(batch_size):
-            for index, mask in enumerate(negated_target[bs]):
-                if mask:
-                    positive_keys[bs][index] = feats_template[index + 7]
-                    negative_keys[bs][index] = feats_template[index]
         
         return positive_keys, negative_keys
 
@@ -319,7 +313,8 @@ class WeightedNegationNCE(nn.Module):
                 
                 positive_keys, negative_keys = self.get_nce_labels(target, negated_target, feats_templates)
                 
-                loss = self.loss_func(image_features, positive_keys, negative_keys, self.normalized_class_weights) / self.accumulate_step
+                loss= self.loss_func(image_features, positive_keys, negative_keys, self.normalized_class_weights)
+                loss /= self.accumulate_step
                 loss.backward()
 
                 if (i+1) % self.accumulate_step == 0 or (i + 1) == len(train_loader):

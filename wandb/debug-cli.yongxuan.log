@@ -198,3 +198,5 @@
 2025-08-04 14:41:57 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/config.yaml
 2025-08-04 14:41:57 INFO Uploaded file /home/yongxuan/SurgVLP/wandb/offline-run-20250801_162811-ny26drwl/files/output.log
 2025-08-04 14:41:57 INFO send defer: 9
+2025-08-29 02:58:19 ERROR dropped chunk 404 Client Error: Not Found for url: https://api.wandb.ai/files/caoyutong26-nus/negation-few-shot-PeskaVLP/izrw2oou/file_stream
+NoneType: None

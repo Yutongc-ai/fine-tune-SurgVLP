@@ -1,2 +1,4 @@
-python few_shot.py --method finetune
-python few_shot.py --method negation_nce_all
+python run_experiments_tip_adapter.py
+python run_experiments_lp++.py
+python run_experiments_lp.py
+python run_experiments_cocoop.py

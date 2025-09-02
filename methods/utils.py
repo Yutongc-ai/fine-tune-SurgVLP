@@ -109,7 +109,7 @@ def update_result_csv(
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         # "time_cost": 
         "method": method_name,
-        "attn_pool": configs.get("attention_pooling", "NA"),
+        # "attn_pool": configs.get("attention_pooling", "NA"),
         "precision_avg": metrics.get("precision_avg", -1),
         "recall_avg": metrics.get("recall_avg", -1),
         "f1_avg": metrics.get("f1_avg", -1),
@@ -227,7 +227,7 @@ def build_cache_model(cfg, clip_model, train_loader_cache, load_cache = False):
         cache_values = []
 
         with torch.no_grad():
-            for i, (images, target, _) in enumerate(tqdm(train_loader_cache)):
+            for i, (images, target, _, _) in enumerate(tqdm(train_loader_cache)):
                 # images and target are batch variables
                 images, target = images.cuda(), target.cuda()
                 image_features, _ = clip_model.extract_feat_img(images)
@@ -326,3 +326,104 @@ class ConstantWarmupScheduler(_BaseWarmupScheduler):
         if self.last_epoch >= self.warmup_epoch:
             return self.successor.get_last_lr()
         return [self.cons_lr for _ in self.base_lrs]
+
+def generate_negated_prompts(negated_template, *args):
+    return negated_template.format(args[0], args[1])
+
+def find_random_two_zero_indices(tensor: torch.Tensor) -> torch.Tensor:
+    bs = tensor.shape[0]
+    result_indices = torch.empty((bs, 2), dtype=torch.long, device=tensor.device)
+
+    # 遍历每个batch
+    for i in range(bs):
+        # 找到当前样本中所有为0的元素的列索引
+        current_sample_zero_indices = (tensor[i] == 0).nonzero(as_tuple=True)[0]
+        # current_sample_zero_indices 是一个1D Tensor，包含当前样本中所有0的列索引
+
+        num_zeros = current_sample_zero_indices.numel()
+
+        # 检查0的个数是否足够
+        if num_zeros < 2:
+            raise ValueError(f"样本 {i} 中0的个数不足两个 ({num_zeros} 个)。")
+
+        # 随机抽取两个不重复的索引
+        # torch.randperm(num_zeros) 生成一个从0到num_zeros-1的随机排列
+        # [:2] 取前两个元素作为随机选取的索引
+        random_selection_indices = torch.randperm(num_zeros)[:2]
+
+        # 使用这些随机索引从 current_sample_zero_indices 中取出对应的列索引
+        selected_zero_cols = current_sample_zero_indices[random_selection_indices]
+
+        # 存储结果
+        result_indices[i, 0] = selected_zero_cols[0]
+        result_indices[i, 1] = selected_zero_cols[1]
+
+    return result_indices
+
+def find_random_one_zero_indices(tensor: torch.Tensor) -> torch.Tensor:
+    bs = tensor.shape[0]
+    result_indices = torch.empty((bs), dtype=torch.long, device=tensor.device)
+
+    # 遍历每个batch
+    for i in range(bs):
+        # 找到当前样本中所有为0的元素的列索引
+        current_sample_zero_indices = (tensor[i] == 0).nonzero(as_tuple=True)[0]
+        # current_sample_zero_indices 是一个1D Tensor，包含当前样本中所有0的列索引
+
+        num_zeros = current_sample_zero_indices.numel()
+
+        # 随机抽取两个不重复的索引
+        # torch.randperm(num_zeros) 生成一个从0到num_zeros-1的随机排列
+        # [:2] 取前两个元素作为随机选取的索引
+        random_idx_in_zero_list = torch.randint(0, num_zeros, (1,), device=tensor.device)
+
+        # 使用这个随机索引从 current_sample_zero_indices 中取出对应的列索引
+        selected_zero_col = current_sample_zero_indices[random_idx_in_zero_list]
+
+        # 存储结果
+        result_indices[i] = selected_zero_col[0]
+
+    return result_indices
+
+def find_random_one_nonzero_indices(tensor: torch.Tensor) -> torch.Tensor:
+    bs = tensor.shape[0]
+    result_indices = torch.empty((bs), dtype=torch.long, device=tensor.device)
+
+    # 遍历每个batch
+    for i in range(bs):
+        # 找到当前样本中所有为0的元素的列索引
+        current_sample_zero_indices = (tensor[i] == 1).nonzero(as_tuple=True)[0]
+        # current_sample_zero_indices 是一个1D Tensor，包含当前样本中所有0的列索引
+
+        num_zeros = current_sample_zero_indices.numel()
+
+        # 随机抽取两个不重复的索引
+        # torch.randperm(num_zeros) 生成一个从0到num_zeros-1的随机排列
+        # [:2] 取前两个元素作为随机选取的索引
+        random_idx_in_zero_list = torch.randint(0, num_zeros, (1,), device=tensor.device)
+
+        # 使用这个随机索引从 current_sample_zero_indices 中取出对应的列索引
+        selected_zero_col = current_sample_zero_indices[random_idx_in_zero_list]
+
+        # 存储结果
+        result_indices[i] = selected_zero_col[0]
+
+    return result_indices
+
+if __name__ == "__main__":
+    # 示例2: 多个0，随机抽取
+    tensor2 = torch.tensor([
+        [0, 1, 0, 1, 0, 0, 1], # 有4个0
+        [1, 0, 1, 0, 1, 0, 0]  # 有4个0
+    ], dtype=torch.float32)
+    
+    print("Tensor 2:")
+    print(tensor2)
+    
+    print("Random Indices for Tensor 2 (run 1):")
+    indices2_run1 = find_random_one_nonzero_indices(tensor2)
+    print(indices2_run1) 
+
+    print("Random Indices for Tensor 2 (run 2):")
+    indices2_run2 = find_random_one_nonzero_indices(tensor2)
+    print(indices2_run2) # 可能会和run 1不同

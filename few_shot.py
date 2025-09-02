@@ -14,6 +14,9 @@ from methods.cross_attn_residual import ResidualCrossAttn
 from methods.negation_nce import NegationNCE
 from methods.weighted_negation_nce import WeightedNegationNCE
 from methods.negation_nce_all import NegationNCEAll
+from methods.negation_nce_dir import NegationNCEDir
+from methods.negation_nce_MAF import NegationMAF
+from methods.negation_nce_mul import NegationNCE_Mul
 from methods.ours import Ours
 from methods.fine_tune import FineTune
 from methods.part_negation_nce import PartNegationNCE
@@ -96,9 +99,6 @@ def main(configs, method_name):
             method = ZeroShot(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         elif method_name == "linear_probe":
             method = LP(configs, surgvlp_model, preprocess, surgvlp.tokenize)
-            if configs.get("preload_weights") is not None:
-                model_path = f"/home/yongxuan/SurgVLP/checkpoints/{configs.get('preload_weights')}.pth"
-                method.load_state_dict(torch.load(model_path, weights_only = True), strict=False)
         elif method_name == "linear_probe++":
             method = LPPlus2(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         elif method_name == "zoom_in":
@@ -114,6 +114,12 @@ def main(configs, method_name):
         #     method = Negation(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         elif method_name == "negation_nce":
             method = NegationNCE(configs, surgvlp_model, preprocess, surgvlp.tokenize)
+        elif method_name == "negation_mul":
+            method = NegationNCE_Mul(configs, surgvlp_model, preprocess, surgvlp.tokenize)
+        elif method_name == "negation_maf":
+            method = NegationMAF(configs, surgvlp_model, preprocess, surgvlp.tokenize)
+        elif method_name == "negation_nce_dir":
+            method = NegationNCEDir(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         elif method_name == "weighted_negation_nce":
             method = WeightedNegationNCE(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         elif method_name == "negation_nce_all":

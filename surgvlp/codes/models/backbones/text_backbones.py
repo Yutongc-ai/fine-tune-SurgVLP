@@ -145,6 +145,7 @@ class BertEncoder(nn.Module):
         word_embeddings = word_embeddings.view(batch_dim * num_words, feat_dim)
         
         word_embeddings = word_embeddings.view(batch_dim, num_words, self.embedding_dim)
+        # [batch_size, embed_dim, num_words]
         word_embeddings = word_embeddings.permute(0, 2, 1)
 
         if self.norm is True:

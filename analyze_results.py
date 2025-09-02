@@ -11,10 +11,11 @@ METHOD_ORDER = [
     'clip_adapter',
     'tip_adapter',
     'coop',
-    'dual_coop'
-    'bi_cross_attn_img',
-    'bi_cross_attn_text',
-    'negation_nce',
+    'cocoop',
+    'dual_coop',
+    'negation_maf',
+    'negation_mul',
+    'negation',
 ]
 FREEZE_ORDER = [
     True,
@@ -23,8 +24,6 @@ FREEZE_ORDER = [
 # 你想要比较的骨干网络列表，按你希望在表格中出现的顺序列出
 BACKBONE_ORDER = [
     'PeskaVLP',
-    # 'SurgVLP',
-    # 'PeskaVLP_negation_pretrain',
 ]
 # 你想要比较的 shot 数量，按你希望在表格中出现的顺序列出
 SHOT_ORDER = [1, 16, 64, 128]
@@ -117,15 +116,10 @@ def generate_comparison_table(df, metric_col, method_order, freeze_order, backbo
     available_methods = pivot_df.index.get_level_values('method').unique()
     available_backbones = pivot_df.index.get_level_values('backbone').unique()
     available_freeze = pivot_df.index.get_level_values('unfreeze_vision').unique()
-    # print(available_freeze)
     
     final_method_order = [m for m in method_order if m in available_methods]
     final_backbone_order = [b for b in backbone_order if b in available_backbones]
-    # print(freeze_order)
     final_freeze_order = [f for f in freeze_order if f in available_freeze]
-    # print(final_method_order)
-    # print(final_backbone_order)
-    # print(final_freeze_order)
 
     # 根据用户定义的顺序重新索引
     pivot_df = pivot_df.reindex(

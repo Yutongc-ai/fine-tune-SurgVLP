@@ -7,7 +7,7 @@ from torch.optim.lr_scheduler import _LRScheduler
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features
+from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features, Cholec80FeaturesVal
 from methods.utils import multilabel_metrics
 from methods.early_stopping import EarlyStopping
 from tqdm import tqdm
@@ -76,7 +76,7 @@ class ClipAdapter(nn.Module):
         with torch.no_grad():
 
             for _ in range(len(feature_loader)):
-                global_image_features, _, label = feature_loader[_]
+                global_image_features, _, label, _ = feature_loader[_]
                 global_image_features = global_image_features.to(device)
                 global_image_features = global_image_features / global_image_features.norm(dim = -1, keepdim = True)
 
@@ -141,7 +141,7 @@ class ClipAdapter(nn.Module):
             preload_local_features(self.configs, "val", self.model, val_loader)
         
         self.test_feature = Cholec80Features(self.configs, "test")
-        self.val_feature = Cholec80Features(self.configs, "val")
+        self.val_feature = Cholec80FeaturesVal(self.configs, "val")
 
         print(len(self.test_feature))
         print(len(self.val_feature))
@@ -211,7 +211,7 @@ class ClipAdapter(nn.Module):
             batch_count = 0
             print('Train Epoch: {:} / {:}'.format(epoch, self.epochs))
 
-            for i, (images, target, _) in enumerate(tqdm(train_loader)):
+            for i, (images, target, _, _) in enumerate(tqdm(train_loader)):
                 images, target = images.cuda(), target.cuda()
                 with torch.no_grad():
                     image_features, _ = self.model.extract_feat_img(images)

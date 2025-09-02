@@ -1,2 +1,8 @@
 timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,early_stop,annealling,lr,num_shots,tasks,epochs,unfreeze_vision,unfreeze_text,init_alpha,clip_ad_alpha,backbone,finetune,tip_alpha,tip_beta
 2025-08-17 20:32:56,part_negation_nce,False,0.2513,0.9194,0.3946,0.3183,64,10,True,1e-05,128,3,30,False,True,NA,NA,SurgVLP,NA,NA,NA
+
+
+2025-08-21 22:16:31,part_negation_nce,False,0.2128,0.7631,0.3328,0.351,0.4034,0.275,-1,-1,-1,-1,-1,-1,128,10,True,1e-05,256,1,10,False,True,NA,NA,PeskaVLP,NA,NA,NA
+
+2025-08-22 03:04:56,part_negation_nce,False,0.2128,0.7631,0.3328,0.351,0.4034,0.275,-1,-1,-1,-1,-1,-1,128,10,True,1e-05,256,1,10,False,True,NA,NA,PeskaVLP,NA,NA,NA
+2025-08-22 05:36:58,part_negation_nce,False,0.2362,0.8094,0.3656,0.3403,0.4088,0.2798,-1,-1,-1,-1,-1,-1,2048,10,True,1e-05,12000,1,20,False,True,NA,NA,PeskaVLP,NA,NA,NA

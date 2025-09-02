@@ -3,7 +3,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 import math
 from methods.utils import multilabel_metrics, WarmupCosineAnnealing
-from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features
+from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features, Cholec80FeaturesVal
 import wandb
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
@@ -91,7 +91,7 @@ class LPPlus2(nn.Module):
         with torch.no_grad():
 
             for _ in range(len(feature_loader)):
-                global_image_features, local_image_features, label = feature_loader[_]
+                global_image_features, local_image_features, label, _ = feature_loader[_]
                 local_image_features = local_image_features.to(device)
                 global_image_features = global_image_features.to(device)
                 local_image_features = local_image_features.permute(0, 3, 1, 2)
@@ -155,7 +155,7 @@ class LPPlus2(nn.Module):
             preload_local_features(self.configs, "val", self.model, val_loader)
 
         self.test_feature = Cholec80Features(self.configs, "test")
-        self.val_feature = Cholec80Features(self.configs, "val")
+        self.val_feature = Cholec80FeaturesVal(self.configs, "val")
 
         # Generate few shot data
         train_data = dataset.generate_fewshot_dataset_(self.configs.num_shots, split="train")
@@ -166,7 +166,7 @@ class LPPlus2(nn.Module):
         # compute centroid
         train_features ,train_labels = [], []
         with torch.no_grad():
-            for images, target,_ in train_loader:
+            for images, target,_, _ in train_loader:
                 images, target = images.cuda(), target.cuda()
             
                 global_image_features, image_features = self.model.extract_feat_img(images)
@@ -224,7 +224,7 @@ class LPPlus2(nn.Module):
             if self.unfreeze_vision or self.unfreeze_text:
                 self.model.train()
             
-            for i, (images, target, _) in enumerate(train_loader):
+            for i, (images, target, _, _) in enumerate(train_loader):
                 images, target = images.cuda(), target.cuda()
                 
                 if self.unfreeze_vision or self.unfreeze_text:

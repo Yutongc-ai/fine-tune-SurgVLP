@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features
+from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features, Cholec80FeaturesVal
 from methods.utils import multilabel_metrics, WarmupCosineAnnealing
 from tqdm import tqdm
 import wandb
@@ -26,6 +26,7 @@ class LP(nn.Module):
 
         self.checkpoint_path = configs.checkpoint_path
         
+        self.criterion = torch.nn.BCEWithLogitsLoss()
         self.accumulate_step = configs.accumulate_step
         self.batch_size = configs.batch_size
         print(f"accumulate step: {self.accumulate_step}")
@@ -34,7 +35,6 @@ class LP(nn.Module):
         self.num_classes = configs.dataset_config.num_classes
 
         self.classifier = torch.nn.Linear(self.feature_width, self.num_classes, bias=False).to(device)
-        self.criterion = torch.nn.BCEWithLogitsLoss()
 
         self.norm = nn.LayerNorm(self.feature_width).to(device)
 
@@ -75,7 +75,7 @@ class LP(nn.Module):
         with torch.no_grad():
 
             for _ in range(len(feature_loader)):
-                global_image_features, local_image_features, label = feature_loader[_]
+                global_image_features, local_image_features, label, _ = feature_loader[_]
                 local_image_features = local_image_features.to(device)
                 global_image_features = global_image_features.to(device)
                 local_image_features = local_image_features.permute(0, 3, 1, 2)
@@ -131,7 +131,7 @@ class LP(nn.Module):
             preload_local_features(self.configs, "val", self.model, val_loader)
         
         self.test_feature = Cholec80Features(self.configs, "test")
-        self.val_feature = Cholec80Features(self.configs, "val")
+        self.val_feature = Cholec80FeaturesVal(self.configs, "val")
 
         # Generate few shot data
         train_data = dataset.generate_fewshot_dataset_(self.configs.num_shots, split="train")
@@ -233,7 +233,7 @@ class LP(nn.Module):
             if self.unfreeze_vision or self.unfreeze_text:
                 self.model.train()
             
-            for i, (images, target, _) in enumerate(tqdm(train_loader)):
+            for i, (images, target, _, _) in enumerate(tqdm(train_loader)):
                 images, target = images.cuda(), target.cuda()
                 
                 if self.unfreeze_vision or self.unfreeze_text:

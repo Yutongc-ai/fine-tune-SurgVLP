@@ -68,7 +68,7 @@ class DualCOOP(nn.Module):
 
         with torch.no_grad():
             for _ in range(len(feature_loader)):
-                _, region_features, label = feature_loader[_]
+                _, region_features, label, _ = feature_loader[_]
                 region_features = region_features[:64]
                 label = label[:64]
                 bs, height, width, dim = region_features.shape
@@ -169,7 +169,7 @@ class DualCOOP(nn.Module):
             print('Train Epoch: {:} / {:}'.format(epoch, self.epochs))
             self.optimizer.zero_grad()
 
-            for i, (images, target, _) in enumerate(tqdm(train_loader)):
+            for i, (images, target, _, _) in enumerate(tqdm(train_loader)):
                 images, target = images.cuda(), target.cuda()
 
                 # 1. 获取区域视觉特征

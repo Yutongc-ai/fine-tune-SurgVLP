@@ -67,7 +67,7 @@ class COCOOP(nn.Module):
 
         with torch.no_grad():
             for _ in range(len(feature_loader)):
-                global_image_features, _, label = feature_loader[_]
+                global_image_features, _, label, _ = feature_loader[_]
                 global_image_features = global_image_features[:1024]
                 label = label[:1024]
                 global_image_features = global_image_features.to(device)
@@ -155,7 +155,7 @@ class COCOOP(nn.Module):
             print('Train Epoch: {:} / {:}'.format(epoch, self.epochs))
             self.optimizer.zero_grad()
 
-            for i, (images, target, _) in enumerate(tqdm(train_loader)):
+            for i, (images, target, _, _) in enumerate(tqdm(train_loader)):
                 images, target = images.cuda(), target.cuda()
 
                 # 1. Get image features

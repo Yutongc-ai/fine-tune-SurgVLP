@@ -78,3 +78,13 @@ timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,ea
 2025-08-12 06:03:23,clip_adapter,NA,0.2629,0.5777,0.3613,0.2251,64,100,True,0.02,16,3,200,False,False,NA,0.5,HecVL,NA,NA,NA
 2025-08-12 07:21:03,clip_adapter,NA,0.2674,0.5888,0.3677,0.2279,64,100,True,0.02,64,3,200,False,False,NA,0.5,HecVL,NA,NA,NA
 2025-08-12 09:14:37,clip_adapter,NA,0.2829,0.5792,0.3801,0.2315,64,100,True,0.02,128,3,200,False,False,NA,0.5,HecVL,NA,NA,NA
+
+2025-08-29 17:33:36,clip_adapter,0.2345,0.7599,0.3583,0.3009,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,1,1,50,False,False,NA,0.5,PeskaVLP,NA,NA,NA
+2025-08-29 17:36:58,clip_adapter,0.2146,0.7876,0.3373,0.2998,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,16,1,50,False,False,NA,0.5,PeskaVLP,NA,NA,NA
+2025-08-29 17:41:48,clip_adapter,0.2161,0.7836,0.3388,0.2998,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,64,1,50,False,False,NA,0.5,PeskaVLP,NA,NA,NA
+2025-08-29 17:49:28,clip_adapter,0.2237,0.7642,0.346,0.2998,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,128,1,50,False,False,NA,0.5,PeskaVLP,NA,NA,NA
+
+2025-08-30 18:58:12,clip_adapter,0.226,0.7706,0.3493,0.2997,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,1,3,50,False,False,NA,0.5,PeskaVLP,NA,NA,NA
+2025-08-30 19:01:37,clip_adapter,0.2158,0.7816,0.3382,0.2992,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,16,3,50,False,False,NA,0.5,PeskaVLP,NA,NA,NA
+2025-08-30 19:11:02,clip_adapter,0.2144,0.7857,0.3369,0.2991,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,64,3,50,False,False,NA,0.5,PeskaVLP,NA,NA,NA
+2025-08-30 19:29:06,clip_adapter,0.2212,0.7679,0.3435,0.2989,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,128,3,50,False,False,NA,0.5,PeskaVLP,NA,NA,NA

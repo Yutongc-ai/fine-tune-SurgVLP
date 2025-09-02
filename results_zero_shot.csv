@@ -1,8 +1,9 @@
-timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,early_stop,annealling,lr,num_shots,tasks,epochs,unfreeze_vision,unfreeze_text,init_alpha
-2025-07-20 01:46:12,zero_shot,False,0.2455,0.8413,0.38,0.2122,-64,NA,False,-1,-1,1,-1,False,False,NA
-2025-07-20 01:47:32,zero_shot,False,0.2493,0.5324,0.3396,0.2157,-64,NA,False,-1,-1,1,-1,False,False,NA
-2025-07-20 01:51:50,zero_shot,False,0.2493,0.5324,0.3396,0.2157,-64,NA,False,-1,-1,1,-1,False,False,NA
-2025-07-20 01:53:37,zero_shot,False,0.2493,0.5324,0.3396,0.2157,-64,NA,False,-1,-1,2,-1,False,False,NA
-2025-07-20 01:55:10,zero_shot,False,0.2455,0.8413,0.38,0.2122,-64,NA,False,-1,-1,2,-1,False,False,NA
-2025-08-01 15:20:51,zero_shot,False,0.2455,0.8413,0.38,0.2122,-64,NA,False,-1,1,2,-1,False,False,NA,NA,PeskaVLP,NA,NA,NA
-2025-08-01 16:35:32,zero_shot,False,0.238,0.6765,0.3521,0.1992,-64,NA,False,-1,1,2,-1,False,False,NA,NA,HecVL,NA,NA,NA
+timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,p_acc_avg,p_f1_avg,we_precision_avg,we_recall_avg,we_f1_avg,we_mAP_avg,we_p_acc_avg,we_p_f1_avg,batch_size,early_stop,annealling,lr,num_shots,tasks,epochs,unfreeze_vision,unfreeze_text,init_alpha,clip_ad_alpha,backbone,finetune,tip_alpha,tip_beta
+2025-08-24 19:16:27,zero_shot,False,0.2259,0.6593,0.3365,0.2237,0.441,0.2417,-1,-1,-1,-1,-1,-1,16384,NA,False,-1,-1,1,-1,False,False,NA,NA,HecVL,NA,NA,NA
+2025-08-24 19:21:17,zero_shot,False,0.2259,0.6593,0.3365,0.2237,0.441,0.2417,-1,-1,-1,-1,-1,-1,16384,NA,False,-1,-1,1,-1,False,False,NA,NA,HecVL,NA,NA,NA
+2025-08-24 19:24:15,zero_shot,False,0.2259,0.6593,0.3365,0.2237,0.441,0.2417,-1,-1,-1,-1,-1,-1,16384,NA,False,-1,-1,1,-1,False,False,NA,NA,HecVL,NA,NA,NA
+
+2025-08-24 19:30:23,zero_shot,False,0.2259,0.6593,0.3365,0.2237,0.441,0.2417,-1,-1,-1,-1,-1,-1,16384,NA,False,-1,-1,1,-1,False,False,NA,NA,HecVL,NA,NA,NA
+2025-08-24 19:56:31,zero_shot,False,0.2116,0.8022,0.3348,0.2668,0.4199,0.2697,-1,-1,-1,-1,-1,-1,16384,NA,False,-1,-1,1,-1,False,False,NA,NA,PeskaVLP,NA,NA,NA
+2025-08-24 19:59:27,zero_shot,False,0.2116,0.8022,0.3348,0.3012,0.4199,0.2697,-1,-1,-1,-1,-1,-1,16384,NA,False,-1,-1,1,-1,False,False,NA,NA,PeskaVLP,NA,NA,NA
+2025-08-24 20:48:47,zero_shot,False,0.2116,0.8022,0.3348,0.3012,0.4199,0.2697,-1,-1,-1,-1,-1,-1,16384,NA,False,-1,-1,1,-1,False,False,NA,NA,PeskaVLP,NA,NA,NA
