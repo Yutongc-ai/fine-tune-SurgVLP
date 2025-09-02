@@ -1,6 +1,6 @@
 ﻿Method,Unfreeze,Backbone,1,16,64,128
-linear_probe,False,PeskaVLP,0.27 (50),0.43 (50),0.48 (50),0.50 (50)
-linear_probe++,False,PeskaVLP,0.31 (50),0.35 (50),0.45 (50),0.47 (50)
+linear_probe,False,PeskaVLP,0.27 (50),0.42 (50),0.47 (50),0.49 (50)
+linear_probe++,False,PeskaVLP,0.31 (50),0.34 (50),0.44 (50),0.46 (50)
 clip_adapter,False,PeskaVLP,0.30 (50),0.30 (50),0.30 (50),0.30 (50)
 coop,False,PeskaVLP,0.21 (50),0.21 (50),0.29 (50),0.35 (50)
 cocoop,False,PeskaVLP,0.20 (50),0.22 (50),0.25 (50),-
