@@ -1,6 +1,6 @@
 import torch
 import torch.nn as nn
-from methods.loss import InfoNCE, WeightedInfoNCE
+from methods.loss import InfoNCE, WeightedInfoNCE, class_freq, class_neg_freq
 from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features, Cholec80FeaturesVal
 from methods.utils import multilabel_metrics, WarmupCosineAnnealing, cal_phase_metrics
 from methods.early_stopping import EarlyStopping
@@ -37,7 +37,7 @@ class CustomAdapter(nn.Module):
 
         return image_features
 
-class NegationNCE(nn.Module):
+class Negation(nn.Module):
     def __init__(self, configs, model, preprocess, tokenizer):
         super().__init__()
         self.model = model
@@ -63,7 +63,16 @@ class NegationNCE(nn.Module):
         self.checkpoint_path = configs.checkpoint_path
         self.early_stop = configs.early_stop
         self.early_stopping = EarlyStopping(patience = self.patience, path = self.checkpoint_path)
-        self.criterion = torch.nn.BCEWithLogitsLoss()
+
+        self.num_shots = configs.num_shots
+        if self.num_shots != -1:
+            self.criterion = torch.nn.BCEWithLogitsLoss()
+        else:
+            # full shot
+            pos_weight = [freq_pos / freq_neg for freq_pos, freq_neg in zip(class_freq, class_neg_freq)]
+            pos_weight = torch.tensor(pos_weight)
+            pos_weight = pos_weight.cuda()
+            self.criterion = torch.nn.BCEWithLogitsLoss(pos_weight = pos_weight)
         
         self.accumulate_step = configs.accumulate_step
         self.batch_size = configs.batch_size
@@ -119,69 +128,16 @@ class NegationNCE(nn.Module):
                 # ada_image_features = image_features / image_features.norm(dim = -1, keepdim = True)
                 feats_templates = feats_templates.cuda()
                 ada_feats_templates = self.text_adapter(feats_templates, self.alpha)
-                ada_phase_feats_templates = self.text_adapter(phase_feats_templates, self.alpha)
+                # ada_phase_feats_templates = self.text_adapter(phase_feats_templates, self.alpha)
 
                 # tool logit
                 pos_logit = ada_image_features @ ada_feats_templates[:7, :].T
                 neg_logit = ada_image_features @ ada_feats_templates[7:, :].T
                 logits = pos_logit - neg_logit
-                # logits = pos_logit
 
                 # phase logit
-                phase_logits = ada_image_features @ ada_phase_feats_templates.T
-                
-                probs = logits.sigmoid()
-
-                all_probs.append(probs)
-                all_phase_logits.append(phase_logits)
-                all_labels.append(label)
-                all_phase_labels.append(phase_label)
-
-        final_labels = torch.cat(all_labels, dim=0)
-        
-        final_phase_logits = torch.cat(all_phase_logits, dim=0)
-        final_phase_labels = torch.cat(all_phase_labels, dim=0)
-        
-        final_probs = torch.cat(all_probs, dim=0).to('cpu')
-        metrics = multilabel_metrics(final_labels, final_probs)
-        phase_metrics = cal_phase_metrics(final_phase_logits, final_phase_labels)
-        metrics.update(phase_metrics)
-
-        return metrics
-
-    def get_metrics_zero_shot(self, split):
-        # total_loss = 0.0
-        all_probs = []
-        all_phase_logits = []
-        all_labels = []
-        all_phase_labels = []
-
-        if split == "val":
-            feature_loader = self.val_feature
-        elif split == "test":
-            feature_loader = self.test_feature
-        else:
-            assert(0, "get metrics split not valid")
-
-        with torch.no_grad():
-
-            for _ in range(len(feature_loader)):
-                image_features, local_image_features, label, phase_label = feature_loader[_]
-                image_features = image_features.cuda()
-
-                _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
-                _, phase_feats_templates, _ = self.model.extract_feat_text(ids=self.phase_input_ids, attn_mask=self.phase_attention_masks, token_type=self.phase_token_type_ids)
-                
-                # ada_image_features = self.vision_adapter(image_features, self.alpha)
-                feats_templates = feats_templates.cuda()
-
-                # tool logit
-                pos_logit = image_features @ feats_templates[:7, :].T
-                neg_logit = image_features @ feats_templates[7:, :].T
-                logits = pos_logit - neg_logit
-                # logits = pos_logit
-
-                # phase logit
+                image_features = image_features / image_features.norm(dim=-1, keepdim = True)
+                phase_feats_templates = phase_feats_templates / phase_feats_templates.norm(dim = -1, keepdim = True)
                 phase_logits = image_features @ phase_feats_templates.T
                 
                 probs = logits.sigmoid()
@@ -233,7 +189,7 @@ class NegationNCE(nn.Module):
             project=f"negation-few-shot-{self.configs.model_config.type}",
             name=f"batchsize{self.batch_size * self.accumulate_step}_lr{self.lr}_shot{self.configs.num_shots}_epoch{self.epochs}",
             config=self.configs,
-            # mode="offline",
+            mode="offline",
         )
 
         # test data preparations

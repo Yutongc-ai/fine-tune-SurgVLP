@@ -205,7 +205,7 @@ config = {
         csv_path = "results_ours.csv",
         checkpoint_path = "checkpoints/ours.pth",
     ),
-    "negation_nce" : dict(
+    "negation" : dict(
         dataset_config = dict(
             dataset_root = "/home/yongxuan/datasets/cholec80",
             num_classes = 7,
@@ -245,7 +245,7 @@ config = {
         unfreeze_text = False,
         alpha = 0.2,
         csv_path = "results_negation.csv",
-        checkpoint_path = "checkpoints/negation_nce.pth",
+        checkpoint_path = "checkpoints/negation.pth",
     ),
     "negation_mul" : dict(
         dataset_config = dict(

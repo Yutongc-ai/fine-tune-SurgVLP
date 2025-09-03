@@ -11,7 +11,7 @@ from methods.zoom_in import ZoomIn
 from methods.cross_attn import CrossAttn
 from methods.cross_attn_noproj import CrossAttnNoProj
 from methods.cross_attn_residual import ResidualCrossAttn
-from methods.negation_nce import NegationNCE
+from methods.negation import Negation
 from methods.weighted_negation_nce import WeightedNegationNCE
 from methods.negation_nce_all import NegationNCEAll
 from methods.negation_nce_dir import NegationNCEDir
@@ -112,8 +112,8 @@ def main(configs, method_name):
             method = ResidualCrossAttn(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         # elif method_name == "negation":
         #     method = Negation(configs, surgvlp_model, preprocess, surgvlp.tokenize)
-        elif method_name == "negation_nce":
-            method = NegationNCE(configs, surgvlp_model, preprocess, surgvlp.tokenize)
+        elif method_name == "negation":
+            method = Negation(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         elif method_name == "negation_mul":
             method = NegationNCE_Mul(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         elif method_name == "negation_maf":
@@ -235,6 +235,8 @@ if __name__ == "__main__":
                         type=lambda x: (str(x).lower() == 'true'))
     parser.add_argument('--unfreeze_text', 
                         type=lambda x: (str(x).lower() == 'true'))
+    parser.add_argument('--tasks', 
+                        type=int)
     parser.add_argument('--csv_path',
                         type=str)
     parser.add_argument('--model_type',
@@ -258,6 +260,9 @@ if __name__ == "__main__":
     
     if args.num_shots:
         method_configs["num_shots"] = args.num_shots
+    
+    if args.tasks:
+        method_configs["tasks"] = args.tasks
     
     if args.epochs:
         method_configs["epochs"] = args.epochs

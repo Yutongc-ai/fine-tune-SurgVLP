@@ -9,6 +9,7 @@ __all__ = ['InfoNCE', 'info_nce']
 
 class_freq = [56800, 4106, 48437, 1624, 3217, 5384, 5760]
 N_total = 86304
+class_neg_freq = [29504, 82198, 37867, 84680, 83087, 80920, 80544]
 
 class WeightedInfoNCE(nn.Module):
     def __init__(self, temperature=100, reduction='mean', negative_mode='unpaired'):
