@@ -247,6 +247,48 @@ config = {
         csv_path = "results_negation.csv",
         checkpoint_path = "checkpoints/negation.pth",
     ),
+    "normal_finetune" : dict(
+        dataset_config = dict(
+            dataset_root = "/home/yongxuan/datasets/cholec80",
+            num_classes = 7,
+        ),
+        model_config = dict(
+            type='PeskaVLP',
+            backbone_img = dict(
+                type='img_backbones/ImageEncoder',
+                num_classes=768,
+                pretrained='imagenet',
+                backbone_name='resnet_50',
+                img_norm=False
+            ),
+            backbone_text= dict(
+                type='text_backbones/BertEncoder',
+                text_bert_type='emilyalsentzer/Bio_ClinicalBERT',
+                text_last_n_layers=4,
+                text_aggregate_method='sum',
+                text_norm=False,
+                text_embedding_dim=768,
+                text_freeze_bert=False,
+                text_agg_tokens=True
+            )
+        ),
+        preload_local_features = True,
+        cache_dir = "/home/yongxuan/SurgVLP/cache",
+        patience = 10,
+        early_stop = True,
+        batch_size = 8,
+        accumulate_step = 8,
+        learning_rate = 0.01,
+        annealling = True,
+        tasks = 3,
+        num_shots = 5000,
+        epochs = 50,
+        unfreeze_vision = False,
+        unfreeze_text = False,
+        alpha = 0.2,
+        csv_path = "results_negation.csv",
+        checkpoint_path = "checkpoints/negation.pth",
+    ),
     "negation_mul" : dict(
         dataset_config = dict(
             dataset_root = "/home/yongxuan/datasets/cholec80",

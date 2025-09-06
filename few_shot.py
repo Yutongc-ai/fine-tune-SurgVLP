@@ -12,6 +12,7 @@ from methods.cross_attn import CrossAttn
 from methods.cross_attn_noproj import CrossAttnNoProj
 from methods.cross_attn_residual import ResidualCrossAttn
 from methods.negation import Negation
+from methods.normal_finetune import NormalFinetune
 from methods.weighted_negation_nce import WeightedNegationNCE
 from methods.negation_nce_all import NegationNCEAll
 from methods.negation_nce_dir import NegationNCEDir
@@ -114,6 +115,8 @@ def main(configs, method_name):
         #     method = Negation(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         elif method_name == "negation":
             method = Negation(configs, surgvlp_model, preprocess, surgvlp.tokenize)
+        elif method_name == "normal_finetune":
+            method = NormalFinetune(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         elif method_name == "negation_mul":
             method = NegationNCE_Mul(configs, surgvlp_model, preprocess, surgvlp.tokenize)
         elif method_name == "negation_maf":

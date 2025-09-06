@@ -45,7 +45,7 @@ for idx, (lr, annealling, num_shot, epochs) in enumerate(all_combinations, 1):
     # 构建命令行参数
     command = [
         "python", "few_shot.py",
-        "--method", "negation",
+        "--method", "normal_finetune",
         "--num_shots", str(num_shot),
         "--model_type", "PeskaVLP",
         "--epochs", str(epochs),
