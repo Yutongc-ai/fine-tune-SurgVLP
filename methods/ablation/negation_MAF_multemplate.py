@@ -1,18 +1,26 @@
 import torch
 import torch.nn as nn
-from methods.loss import InfoNCE, WeightedInfoNCE
+from methods.loss import InfoNCE, WeightedInfoNCE, class_freq, class_neg_freq
 from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features, Cholec80FeaturesVal
-from methods.utils import multilabel_metrics, WarmupCosineAnnealing, cal_phase_metrics, generate_negated_prompts
-from methods.utils import find_random_two_zero_indices, find_random_one_zero_indices, find_random_one_nonzero_indices
+from methods.utils import multilabel_metrics, WarmupCosineAnnealing, cal_phase_metrics, cal_zs_phase_metrics
 from methods.early_stopping import EarlyStopping
 from tqdm import tqdm
 import wandb
 import math
+import random
 device = "cuda" if torch.cuda.is_available() else "cpu"
 
-class Adapter(nn.Module):
+class PatchMean(nn.Module):
+    def __init__(self, dim=1):
+        super().__init__()
+        self.dim = dim
+
+    def forward(self, x):
+        return x.mean(dim=self.dim)
+
+class VisionAdapter(nn.Module):
     def __init__(self, c_in, reduction=4):
-        super(Adapter, self).__init__()
+        super(VisionAdapter, self).__init__()
         self.fc = nn.Sequential(
             nn.Linear(c_in, c_in // reduction, bias=False),
             nn.ReLU(inplace=True),
@@ -24,10 +32,67 @@ class Adapter(nn.Module):
         x = self.fc(x)
         return x
 
+class Adapter(nn.Module):
+    def __init__(self, c_in, reduction = 4):
+        super(Adapter, self).__init__()
+        self.fc = nn.Sequential(
+            nn.Linear(c_in, c_in // reduction, bias=False),
+            nn.ReLU(inplace=True),
+            nn.Linear(c_in // reduction, c_in, bias=False),
+            nn.ReLU(inplace=True),
+            # nn.LayerNorm(c_in),
+            # nn.ReLU(inplace=True),
+            PatchMean(),
+        )
+
+    def forward(self, x):
+        x = self.fc(x)
+        return x
+
+class MultipleAdapter(nn.Module):
+    def __init__(self, width = 768, layer = 4, is_fuse_type = 1):
+        super(MultipleAdapter, self).__init__()
+        self.is_fuse_type = is_fuse_type
+        if self.is_fuse_type == 1:
+            adapter_weight = nn.Identity()
+        else:
+            raise NotImplementedError()
+        
+        self.adapter = nn.ModuleDict({
+            "adapter_1": Adapter(width, 2),  # adapter 1
+            "adapter_2": Adapter(width, 2),  # adapter 2
+            "adapter_3": Adapter(width, 2),  # adapter 3
+            "adapter_4": Adapter(width, 2),  # adapter 4
+            "adapter_weight": adapter_weight,  # adapter weight
+        })
+    
+    def forward(self, layer_features, alpha = 0.2):
+        features1, features2, features3, features4 = layer_features
+        features1a = self.adapter["adapter_1"](features1)
+        features2a = self.adapter["adapter_2"](features2)
+        features3a = self.adapter["adapter_3"](features3)
+        features4a = self.adapter["adapter_4"](features4)
+
+        if self.is_fuse_type == 1:
+            # sum mode, same with text backbone
+            featuresa = (self.adapter["adapter_weight"](features1a + features2a + features3a + features4a)) / 4
+        else:
+            raise NotImplementedError()
+        
+        layer_features = torch.stack(layer_features) # [layers, batch, sent_len, embedding size]
+        layer_features = layer_features.permute(1, 0, 2, 3) # [batch, layers, sent_len, embedding size]
+        sent_embeddings = layer_features.mean(axis=2).sum(axis = 1)
+
+        ret_features = alpha * featuresa + (1- alpha) * sent_embeddings
+        ret_features = ret_features / ret_features.norm(dim = -1, keepdim = True)
+
+        return ret_features
+
+
 class CustomAdapter(nn.Module):
     def __init__(self):
         super().__init__()
-        self.adapter = Adapter(768, 2)
+        self.adapter = VisionAdapter(768, 2)
 
     def forward(self, image_features, alpha = 0.2):
         x = self.adapter(image_features)
@@ -38,7 +103,7 @@ class CustomAdapter(nn.Module):
 
         return image_features
 
-class NegationNCE_Mul(nn.Module):
+class NegationMul(nn.Module):
     def __init__(self, configs, model, preprocess, tokenizer):
         super().__init__()
         self.model = model
@@ -47,7 +112,7 @@ class NegationNCE_Mul(nn.Module):
         self.configs = configs
 
         self.vision_adapter = CustomAdapter()
-        self.text_adapter = CustomAdapter()
+        self.text_adapter = MultipleAdapter()
         self.alpha = configs.alpha
 
         self.temperature = 100
@@ -57,15 +122,23 @@ class NegationNCE_Mul(nn.Module):
         self.epochs = configs.epochs
         
         self.num_classes = configs.dataset_config.num_classes
-        self.loss_func = InfoNCE(negative_mode='paired')
 
         self.patience = configs.patience
         self.annealling = configs.annealling
         self.checkpoint_path = configs.checkpoint_path
         self.early_stop = configs.early_stop
         self.early_stopping = EarlyStopping(patience = self.patience, path = self.checkpoint_path)
-        self.criterion = torch.nn.BCEWithLogitsLoss()
         
+        # self.criterion = torch.nn.BCEWithLogitsLoss()
+        self.num_shots = configs.num_shots
+        if self.num_shots != -1:
+            self.criterion = torch.nn.BCEWithLogitsLoss()
+        else:
+            # full shot
+            pos_weight = [freq_pos / freq_neg for freq_pos, freq_neg in zip(class_freq, class_neg_freq)]
+            pos_weight = torch.tensor(pos_weight)
+            pos_weight = pos_weight.cuda()
+            self.criterion = torch.nn.BCEWithLogitsLoss(pos_weight = pos_weight)
         self.accumulate_step = configs.accumulate_step
         self.batch_size = configs.batch_size
         print(f"accumulate step: {self.accumulate_step}")
@@ -96,9 +169,7 @@ class NegationNCE_Mul(nn.Module):
     def get_metrics(self, split):
         # total_loss = 0.0
         all_probs = []
-        all_phase_logits = []
         all_labels = []
-        all_phase_labels = []
 
         if split == "val":
             feature_loader = self.val_feature
@@ -113,184 +184,106 @@ class NegationNCE_Mul(nn.Module):
                 image_features, local_image_features, label, phase_label = feature_loader[_]
                 image_features = image_features.cuda()
 
-                _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
-                _, phase_feats_templates, _ = self.model.extract_feat_text(ids=self.phase_input_ids, attn_mask=self.phase_attention_masks, token_type=self.phase_token_type_ids)
-                
+                # _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
+                feats_outputs = self.model.backbone_text.model(self.input_ids, self.attention_masks, self.token_type_ids)
+                layer_templates_feats = feats_outputs[2][-4:]
+                layer_templates_feats = tuple(t.cuda() for t in layer_templates_feats)
+
                 ada_image_features = self.vision_adapter(image_features, self.alpha)
-                # ada_image_features = image_features / image_features.norm(dim = -1, keepdim = True)
-                feats_templates = feats_templates.cuda()
-                ada_feats_templates = self.text_adapter(feats_templates, self.alpha)
-                ada_phase_feats_templates = self.text_adapter(phase_feats_templates, self.alpha)
+                ada_feats_templates = self.text_adapter(layer_templates_feats, self.alpha)
+                
+                test_feats_outputs = self.model.backbone_text.model(self.test_input_ids, self.test_attention_masks, self.test_token_type_ids)
+                test_layer_templates_feats = test_feats_outputs[2][-4:]
+                test_layer_templates_feats = tuple(t.cuda() for t in test_layer_templates_feats)
+                # print("test", len(test_layer_templates_feats))
+
+                ada_test_feats_templates = self.text_adapter(test_layer_templates_feats, self.alpha)
 
                 # tool logit
                 pos_logit = ada_image_features @ ada_feats_templates[:7, :].T
-                neg_logit = ada_image_features @ ada_feats_templates[7:, :].T
-                logits = pos_logit - neg_logit
-                # logits = pos_logit
 
-                # phase logit
-                phase_logits = ada_image_features @ ada_phase_feats_templates.T
+                test_prompt_type_number = int(ada_test_feats_templates.shape[0] / 7)
+
+                neg_logit = ada_image_features @ ada_test_feats_templates[: 7, :].T
+                for test_prompt_type in range(1, test_prompt_type_number):
+                    neg_logit = neg_logit + ada_image_features @ ada_test_feats_templates[7*test_prompt_type: 7*test_prompt_type + 7, :].T
+                
+                logits = pos_logit - neg_logit / test_prompt_type_number
                 
                 probs = logits.sigmoid()
 
                 all_probs.append(probs)
-                all_phase_logits.append(phase_logits)
                 all_labels.append(label)
-                all_phase_labels.append(phase_label)
 
         final_labels = torch.cat(all_labels, dim=0)
-        
-        final_phase_logits = torch.cat(all_phase_logits, dim=0)
-        final_phase_labels = torch.cat(all_phase_labels, dim=0)
-        
+
         final_probs = torch.cat(all_probs, dim=0).to('cpu')
         metrics = multilabel_metrics(final_labels, final_probs)
-        phase_metrics = cal_phase_metrics(final_phase_logits, final_phase_labels)
-        metrics.update(phase_metrics)
 
         return metrics
 
-    def get_metrics_zero_shot(self, split):
-        # total_loss = 0.0
-        all_probs = []
-        all_phase_logits = []
-        all_labels = []
-        all_phase_labels = []
+    def generate_tool_negation(self):
+        prompts = []
 
-        if split == "val":
-            feature_loader = self.val_feature
-        elif split == "test":
-            feature_loader = self.test_feature
-        else:
-            assert(0, "get metrics split not valid")
-
-        with torch.no_grad():
-
-            for _ in range(len(feature_loader)):
-                image_features, local_image_features, label, phase_label = feature_loader[_]
-                image_features = image_features.cuda()
-
-                _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
-                _, feats_templates_1, _ = self.model.extract_feat_text(ids=self.input_ids_1, attn_mask=self.attention_masks_1, token_type=self.token_type_ids_1)
-                _, feats_templates_2, _ = self.model.extract_feat_text(ids=self.input_ids_2, attn_mask=self.attention_masks_2, token_type=self.token_type_ids_2)
-                _, phase_feats_templates, _ = self.model.extract_feat_text(ids=self.phase_input_ids, attn_mask=self.phase_attention_masks, token_type=self.phase_token_type_ids)
-                
-                # ada_image_features = self.vision_adapter(image_features, self.alpha)
-                feats_templates = feats_templates.cuda()
-                feats_templates_1 = feats_templates_1.cuda()
-                feats_templates_2 = feats_templates_2.cuda()
-
-                # tool logit
-                pos_logit = image_features @ feats_templates[:7, :].T
-                neg_logit = image_features @ feats_templates[7:, :].T
-                neg_logit_1 = image_features @ feats_templates_1.T
-                neg_logit_2 = image_features @ feats_templates_2.T
-                logits = pos_logit - (neg_logit + neg_logit_1 + neg_logit_2) / 3
-                # logits = pos_logit
-
-                # phase logit
-                phase_logits = image_features @ phase_feats_templates.T
-                
-                probs = logits.sigmoid()
-
-                all_probs.append(probs)
-                all_phase_logits.append(phase_logits)
-                all_labels.append(label)
-                all_phase_labels.append(phase_label)
-
-        final_labels = torch.cat(all_labels, dim=0)
+        for tool in self.tool_names:
+            template = random.choice(self.all_templates)
+            prompts.append(template.format(tool = tool))
         
-        final_phase_logits = torch.cat(all_phase_logits, dim=0)
-        final_phase_labels = torch.cat(all_phase_labels, dim=0)
-        
-        final_probs = torch.cat(all_probs, dim=0).to('cpu')
-        metrics = multilabel_metrics(final_labels, final_probs)
-        phase_metrics = cal_phase_metrics(final_phase_logits, final_phase_labels)
-        metrics.update(phase_metrics)
-
-        return metrics
+        return prompts
     
-    def get_nce_labels(self, target, negated_target, feats_template):
-        batch_size = target.shape[0]
-        _, emb_size = feats_template.shape
-        positive_keys = torch.zeros((batch_size, self.num_classes, emb_size), device=device)
-        negative_keys = torch.zeros((batch_size, self.num_classes, emb_size), device=device)
+    def generate_all_tool_negation(self):
+        prompts = []
 
-        for bs in range(batch_size):
-            for index, mask in enumerate(target[bs]):
-                if mask:
-                    positive_keys[bs][index] = feats_template[index]
-                    negative_keys[bs][index] = feats_template[index + 7]
+        for template in self.all_templates:
+            for tool in self.tool_names:
+                prompts.append(template.format(tool = tool))
 
-        for bs in range(batch_size):
-            for index, mask in enumerate(negated_target[bs]):
-                if mask:
-                    # positive_keys[bs][index] = feats_template[index + 7]
-                    negative_keys[bs][index] = feats_template[index]
-        
-        return positive_keys, negative_keys
-
-    # def generate_templates_2(self, target):
-    #     two_zero_indices = find_random_two_zero_indices(target)
-    #     bs = two_zero_indices.shape[0]
-    #     result_templates = []
-    #     for index in range(bs):
-    #         result_templates.append(generate_negated_prompts(self.negated_templates_2, two_zero_indices[index][0],
-    #                                                          two_zero_indices[index][1]))
-        
-    #     self.result_templates = self.tokenizer(result_templates, device = device)
-    #     self.input_ids = self.result_templates['input_ids']
-    #     self.token_type_ids = self.result_templates['token_type_ids']
-    #     self.attention_masks = self.result_templates['attention_mask']
-    #     return result_templates
-
-    # def generate_templates_3(self, target):
-    #     one_zero_indices = find_random_one_zero_indices(target)
-    #     one_nonzero_indices = find_random_one_nonzero_indices(target)
-    #     bs = one_zero_indices.shape[0]
-    #     result_templates = []
-    #     for index in range(bs):
-    #         result_templates.append(generate_negated_prompts(self.negated_templates_3, one_zero_indices[index],
-    #                                                          one_nonzero_indices[index]))
-    #     return result_templates
-
+        return prompts
+    
     def forward(self,
                 dataset: MultiLabelDatasetBase):
         templates = dataset.templates
-        negated_templates = dataset.negated_templates
-        negated_templates_1 = dataset.negated_templates_1
-        negated_templates_2 = dataset.negated_templates_2
-        self.class_names_extend = dataset.class_names_extend
+        # training negation templates
+        self.all_templates = dataset.all_templates
+        # test negation templates
+        
+        if self.configs["train_test"]:
+            test_prompt = dataset.test_prompt_simple
+        else:
+            test_prompt = dataset.test_prompt_hard
+        self.tool_names = dataset.tool_names
         phase_templates = dataset.phase_templates
+
+        self.random_select = self.configs["random_select"]
+        training_prompt = self.generate_all_tool_negation()
 
         wandb.init(
             project=f"negation-few-shot-{self.configs.model_config.type}",
-            name=f"negation_mul_batchsize{self.batch_size * self.accumulate_step}_lr{self.lr}_shot{self.configs.num_shots}_epoch{self.epochs}",
+            name=f"maf_batchsize{self.batch_size * self.accumulate_step}_lr{self.lr}_shot{self.configs.num_shots}_epoch{self.epochs}",
             config=self.configs,
             # mode="offline",
         )
 
         # test data preparations
-        self.templates = self.tokenizer(templates + negated_templates, device = device)
+        self.templates = self.tokenizer(templates, device = device)
         self.input_ids = self.templates['input_ids']
         self.token_type_ids = self.templates['token_type_ids']
         self.attention_masks = self.templates['attention_mask']
 
-        self.templates_1 = self.tokenizer(negated_templates_1, device = device)
-        self.input_ids_1 = self.templates_1['input_ids']
-        self.token_type_ids_1 = self.templates_1['token_type_ids']
-        self.attention_masks_1 = self.templates_1['attention_mask']
+        self.test_prompt = self.tokenizer(test_prompt, device = device)
+        self.test_input_ids = self.test_prompt['input_ids']
+        self.test_token_type_ids = self.test_prompt['token_type_ids']
+        self.test_attention_masks = self.test_prompt['attention_mask']
 
-        self.templates_2 = self.tokenizer(negated_templates_2, device = device)
-        self.input_ids_2 = self.templates_2['input_ids']
-        self.token_type_ids_2 = self.templates_2['token_type_ids']
-        self.attention_masks_2 = self.templates_2['attention_mask']
+        self.train_prompt = self.tokenizer(training_prompt, device = device)
+        self.train_input_ids = self.train_prompt['input_ids']
+        self.train_token_type_ids = self.train_prompt['token_type_ids']
+        self.train_attention_masks = self.train_prompt['attention_mask']
 
-        self.phase_templates = self.tokenizer(phase_templates, device = device)
-        self.phase_input_ids = self.phase_templates['input_ids']
-        self.phase_token_type_ids = self.phase_templates['token_type_ids']
-        self.phase_attention_masks = self.phase_templates['attention_mask']
-        
+        train_feats_outputs = self.model.backbone_text.model(self.train_input_ids, self.train_attention_masks, self.train_token_type_ids)
+        train_layer_templates_feats = train_feats_outputs[2][-4:]
+        train_layer_templates_feats = tuple(t.cuda() for t in train_layer_templates_feats)
+
         self.vision_adapter.to(device)
         self.text_adapter.to(device)
 
@@ -320,7 +313,6 @@ class NegationNCE_Mul(nn.Module):
 
         optim_params = [{'params': self.vision_adapter.parameters(), 'lr': self.lr},
                         {'params': self.text_adapter.parameters(), 'lr': self.lr}]
-        # optim_params = [{'params': self.text_adapter.parameters(), 'lr': self.lr}]
         if self.unfreeze_vision:
             optim_params.append({'params': self.model.backbone_img.parameters(), 'lr': self.lr * 0.001})
         
@@ -342,9 +334,7 @@ class NegationNCE_Mul(nn.Module):
         wandb.log({"test_f1": test_metrics["f1"], "epoch": 0})
         wandb.log({"test_precision": test_metrics["precision"], "epoch": 0})
         wandb.log({"test_recall": test_metrics["recall"], "epoch": 0})
-        
-        wandb.log({"test_p_acc": test_metrics["phase_acc"], "epoch": 0})
-        wandb.log({"test_p_f1": test_metrics["phase_f1"], "epoch": 0})
+
 
         val_metrics = self.get_metrics("val")
         val_map = val_metrics["mAP"]
@@ -353,9 +343,6 @@ class NegationNCE_Mul(nn.Module):
         wandb.log({"val_f1": val_metrics["f1"], "epoch": 0})
         wandb.log({"val_precision": val_metrics["precision"], "epoch": 0})
         wandb.log({"val_recall": val_metrics["recall"], "epoch": 0})
-
-        wandb.log({"val_p_acc": val_metrics["phase_acc"], "epoch": 0})
-        wandb.log({"val_p_f1": val_metrics["phase_f1"], "epoch": 0})
 
         for epoch in range(self.epochs):
             epoch_loss = 0.0
@@ -374,39 +361,55 @@ class NegationNCE_Mul(nn.Module):
                     # global_features: [bs, 768] local_features: [bs, 2048, 7, 7]
                     image_features, local_features = self.model.extract_feat_img(images)
                     
-                    # get text embedding
-                    # [14, 768]
-                    _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
-                    _, feats_templates_1, _ = self.model.extract_feat_text(ids=self.input_ids_1, attn_mask=self.attention_masks_1, token_type=self.token_type_ids_1)
-                    _, feats_templates_2, _ = self.model.extract_feat_text(ids=self.input_ids_2, attn_mask=self.attention_masks_2, token_type=self.token_type_ids_2)
-
                 else:
                     with torch.no_grad():
                         image_features, local_features = self.model.extract_feat_img(images)
-                        _, feats_templates, _ = self.model.extract_feat_text(ids=self.input_ids, attn_mask=self.attention_masks, token_type=self.token_type_ids)
-                        _, feats_templates_1, _ = self.model.extract_feat_text(ids=self.input_ids_1, attn_mask=self.attention_masks_1, token_type=self.token_type_ids_1)
-                        _, feats_templates_2, _ = self.model.extract_feat_text(ids=self.input_ids_2, attn_mask=self.attention_masks_2, token_type=self.token_type_ids_2)
-                
-                feats_templates = feats_templates.cuda()
-                feats_templates_1 = feats_templates_1.cuda()
-                feats_templates_2 = feats_templates_2.cuda()
 
                 image_features = self.vision_adapter(image_features, self.alpha)
                 # image features has been normed in vision adapter
-                # image_features = image_features / image_features.norm(dim = -1, keepdim = True)
-                feats_templates = self.text_adapter(feats_templates, self.alpha)
-                feats_templates_1 = self.text_adapter(feats_templates_1, self.alpha)
-                feats_templates_2 = self.text_adapter(feats_templates_2, self.alpha)
+                image_features = image_features / image_features.norm(dim = -1, keepdim = True)
 
-                # feats_templates = feats_templates / feats_templates.norm(dim = -1, keepdim = True)
-                pos_logit = image_features @ feats_templates[:7, :].T * self.temperature
-                neg_logit = image_features @ feats_templates[7:, :].T * self.temperature
-                neg_logit_1 = image_features @ feats_templates_1.T * self.temperature
-                neg_logit_2 = image_features @ feats_templates_2.T * self.temperature
-                logits = pos_logit - (neg_logit+ neg_logit_1 + neg_logit_2) / 3
-                # positive_keys, negative_keys = self.get_nce_labels(target, negated_target, feats_templates)
+                # negation_prompt = self.generate_tool_negation()
+                # negation_prompt = self.tokenizer(negation_prompt, device = device)
+                # negation_input_ids = negation_prompt['input_ids']
+                # negation_token_type_ids = negation_prompt['token_type_ids']
+                # negation_attention_masks = negation_prompt['attention_mask']
                 
-                # loss = self.loss_func(image_features, positive_keys, negative_keys)
+                # positive feats
+                feats_outputs = self.model.backbone_text.model(self.input_ids, self.attention_masks, self.token_type_ids)
+                layer_templates_feats = feats_outputs[2][-4:]
+                layer_templates_feats = tuple(t.cuda() for t in layer_templates_feats)
+
+                # negative feats
+                # negation_feats_outputs = self.model.backbone_text.model(negation_input_ids, negation_attention_masks, negation_token_type_ids)
+                # negation_layer_templates_feats = negation_feats_outputs[2][-4:]
+                # negation_layer_templates_feats = tuple(t.cuda() for t in negation_layer_templates_feats)
+
+                image_features = self.vision_adapter(image_features, self.alpha)
+                # image_features = image_features / image_features.norm(dim = -1, keepdim = True)
+                feats_templates = self.text_adapter(layer_templates_feats, self.alpha)
+                # negation_feats_templates = self.text_adapter(negation_layer_templates_feats, self.alpha)
+                # feats_templates = feats_templates / feats_templates.norm(dim = -1, keepdim = True)
+                
+                pos_logit = image_features @ feats_templates.T * self.temperature
+                # neg_logit = image_features @ negation_feats_templates.T * self.temperature
+
+                # print("train", len(train_layer_templates_feats))
+                test_prompt_type_number = int(len(training_prompt) / 7)
+                # print("template number:", test_prompt_type_number)
+                
+                ada_negation_feats_templates = self.text_adapter(train_layer_templates_feats, self.alpha)
+                if self.random_select:
+                    tmp_number = random.randint(0, test_prompt_type_number-1)
+                    neg_logit = image_features @ ada_negation_feats_templates[7*tmp_number: 7*tmp_number+7, :].T*self.temperature
+                else:
+                    neg_logit = image_features @ ada_negation_feats_templates[: 7, :].T * self.temperature
+                    for test_prompt_type in range(1, test_prompt_type_number):
+                        neg_logit = neg_logit + image_features @ ada_negation_feats_templates[7*test_prompt_type: 7*test_prompt_type + 7, :].T * self.temperature
+                    neg_logit = neg_logit / test_prompt_type_number
+
+                logits = pos_logit - neg_logit
+
                 loss = self.criterion(logits, target)
                 loss /= self.accumulate_step
                 loss.backward()
@@ -430,7 +433,7 @@ class NegationNCE_Mul(nn.Module):
             
             if self.unfreeze_vision or self.unfreeze_text:
                 self.model.eval()
-            self.vision_adapter.eval()
+            self.vision_adapter.eval() 
             self.text_adapter.eval()
 
             train_loss.append(avg_epoch_loss)
@@ -442,12 +445,13 @@ class NegationNCE_Mul(nn.Module):
             wandb.log({"val_precision": val_metrics["precision"], "epoch": epoch+1})
             wandb.log({"val_recall": val_metrics["recall"], "epoch": epoch+1})
 
-            wandb.log({"val_p_acc": val_metrics["phase_acc"], "epoch": epoch+1})
-            wandb.log({"val_p_f1": val_metrics["phase_f1"], "epoch": epoch+1})
-
             save_model = self.early_stopping(cur_val_map)
             if save_model:
-                torch.save(self.state_dict(), self.checkpoint_path)
+                adapters_weights = {
+                    'vision_adapter': self.vision_adapter.state_dict(),
+                    'text_adapter': self.text_adapter.state_dict()
+                }
+                torch.save(adapters_weights, self.checkpoint_path)
                 print(f'Validation map increased. Saving model...')
 
             if self.early_stopping.early_stop:
@@ -463,10 +467,11 @@ class NegationNCE_Mul(nn.Module):
                 wandb.log({"test_f1": test_metrics["f1"], "epoch": epoch+1})
                 wandb.log({"test_precision": test_metrics["precision"], "epoch": epoch+1})
                 wandb.log({"test_recall": test_metrics["recall"], "epoch": epoch+1})
-
-                wandb.log({"test_p_acc": test_metrics["phase_acc"], "epoch": epoch+1})
-                wandb.log({"test_p_f1": test_metrics["phase_f1"], "epoch": epoch+1})
         
         test_metrics["clip_ad_alpha"] = self.alpha
+
+        test_metrics["train_test"] = self.configs["train_test"]
+        test_metrics["random_select"] = self.random_select
+
         wandb.finish()
         return test_metrics

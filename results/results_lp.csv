@@ -1,0 +1,9 @@
+timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,early_stop,annealling,lr,num_shots,tasks,epochs,unfreeze_vision,unfreeze_text,init_alpha,backbone
+2025-08-31 05:10:05,linear_probe,0.361,0.5983,0.4478,0.2724,-1,-1,-1,-1,-1,-1,-1,-1,64,NA,True,0.01,1,5,50,False,False,NA,NA,PeskaVLP
+2025-09-11 20:31:13,linear_probe,0.3951,0.6611,0.4937,0.2914,-1,-1,-1,-1,-1,-1,-1,-1,64,NA,True,0.01,2,5,50,False,False,NA,NA,PeskaVLP
+2025-09-11 20:34:25,linear_probe,0.4911,0.6812,0.5698,0.336,-1,-1,-1,-1,-1,-1,-1,-1,64,NA,True,0.01,4,5,50,False,False,NA,NA,PeskaVLP
+2025-09-11 20:39:48,linear_probe,0.4661,0.7385,0.5712,0.364,-1,-1,-1,-1,-1,-1,-1,-1,64,NA,True,0.01,8,5,50,False,False,NA,NA,PeskaVLP
+2025-09-11 20:47:08,linear_probe,0.5444,0.7852,0.6429,0.4356,-1,-1,-1,-1,-1,-1,-1,-1,64,NA,True,0.01,32,5,50,False,False,NA,NA,PeskaVLP
+2025-08-31 05:14:40,linear_probe,0.476,0.7956,0.5949,0.4147,-1,-1,-1,-1,-1,-1,-1,-1,64,NA,True,0.01,16,5,50,False,False,NA,NA,PeskaVLP
+2025-08-31 05:25:47,linear_probe,0.5914,0.7747,0.6706,0.4667,-1,-1,-1,-1,-1,-1,-1,-1,64,NA,True,0.01,64,5,50,False,False,NA,NA,PeskaVLP
+2025-08-31 05:45:39,linear_probe,0.5726,0.8113,0.6712,0.486,-1,-1,-1,-1,-1,-1,-1,-1,64,NA,True,0.01,128,5,50,False,False,NA,NA,PeskaVLP

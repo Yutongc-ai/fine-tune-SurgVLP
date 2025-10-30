@@ -2,7 +2,7 @@ import torch
 import torch.nn as nn
 from methods.loss import InfoNCE, WeightedInfoNCE, class_freq, class_neg_freq
 from datasets.utils import MultiLabelDatasetBase, build_data_loader, preload_local_features, Cholec80Features, Cholec80FeaturesVal
-from methods.utils import multilabel_metrics, WarmupCosineAnnealing, cal_phase_metrics
+from methods.utils import multilabel_metrics, WarmupCosineAnnealing, cal_phase_metrics, cal_zs_phase_metrics
 from methods.early_stopping import EarlyStopping
 from tqdm import tqdm
 import wandb
@@ -40,8 +40,8 @@ class Adapter(nn.Module):
             nn.ReLU(inplace=True),
             nn.Linear(c_in // reduction, c_in, bias=False),
             nn.ReLU(inplace=True),
-            nn.LayerNorm(c_in),
-            nn.ReLU(inplace=True),
+            # nn.LayerNorm(c_in),
+            # nn.ReLU(inplace=True),
             PatchMean(),
         )
 
@@ -59,10 +59,10 @@ class MultipleAdapter(nn.Module):
             raise NotImplementedError()
         
         self.adapter = nn.ModuleDict({
-            "adapter_1": Adapter(width),  # adapter 1
-            "adapter_2": Adapter(width),  # adapter 2
-            "adapter_3": Adapter(width),  # adapter 3
-            "adapter_4": Adapter(width),  # adapter 4
+            "adapter_1": Adapter(width, 2),  # adapter 1
+            "adapter_2": Adapter(width, 2),  # adapter 2
+            "adapter_3": Adapter(width, 2),  # adapter 3
+            "adapter_4": Adapter(width, 2),  # adapter 4
             "adapter_weight": adapter_weight,  # adapter weight
         })
     
@@ -75,7 +75,7 @@ class MultipleAdapter(nn.Module):
 
         if self.is_fuse_type == 1:
             # sum mode, same with text backbone
-            featuresa = self.adapter["adapter_weight"](features1a + features2a + features3a + features4a)
+            featuresa = (self.adapter["adapter_weight"](features1a + features2a + features3a + features4a)) / 4
         else:
             raise NotImplementedError()
         
@@ -171,6 +171,7 @@ class NegationMAF(nn.Module):
         # total_loss = 0.0
         all_probs = []
         all_phase_logits = []
+        all_zs_phase_logits = []
         all_labels = []
         all_phase_labels = []
 
@@ -191,14 +192,20 @@ class NegationMAF(nn.Module):
                 feats_outputs = self.model.backbone_text.model(self.input_ids, self.attention_masks, self.token_type_ids)
                 layer_templates_feats = feats_outputs[2][-4:]
                 layer_templates_feats = tuple(t.cuda() for t in layer_templates_feats)
-                phase_feats_outputs = self.model.backbone_text.model(self.phase_input_ids, self.phase_attention_masks, self.phase_token_type_ids)
-                layer_phase_feats = phase_feats_outputs[2][-4:]
-                layer_phase_feats = tuple(t.cuda() for t in layer_phase_feats)
 
                 ada_image_features = self.vision_adapter(image_features, self.alpha)
-                # ada_image_features = image_features / image_features.norm(dim = -1, keepdim = True)
                 ada_feats_templates = self.text_adapter(layer_templates_feats, self.alpha)
-                ada_phase_feats = self.text_adapter(layer_phase_feats, self.alpha)
+
+                # compute frozen phase prompt features
+                _, phase_feats_templates, _ = self.model.extract_feat_text(ids=self.phase_input_ids, attn_mask=self.phase_attention_masks, token_type=self.phase_token_type_ids)
+                phase_feats_templates = phase_feats_templates / phase_feats_templates.norm(dim = -1, keepdim = True)                
+                
+                # compute adapted phase prompt features
+                phase_feats_outputs = self.model.backbone_text.model(self.phase_input_ids, self.phase_attention_masks, self.phase_token_type_ids)
+                phase_layer_templates_feats = phase_feats_outputs[2][-4:]
+                phase_layer_templates_feats = tuple(t.cuda() for t in phase_layer_templates_feats)
+
+                ada_phase_feats_templates = self.text_adapter(phase_layer_templates_feats, self.alpha)
 
                 # tool logit
                 pos_logit = ada_image_features @ ada_feats_templates[:7, :].T
@@ -206,24 +213,29 @@ class NegationMAF(nn.Module):
                 logits = pos_logit - neg_logit
                 
                 # phase logit
-                phase_logits = image_features @ ada_phase_feats.T
+                zs_phase_logits = image_features @ phase_feats_templates.T
+                phase_logits = ada_image_features @ ada_phase_feats_templates.T
                 
                 probs = logits.sigmoid()
 
                 all_probs.append(probs)
                 all_phase_logits.append(phase_logits)
+                all_zs_phase_logits.append(zs_phase_logits)
                 all_labels.append(label)
                 all_phase_labels.append(phase_label)
 
         final_labels = torch.cat(all_labels, dim=0)
         
         final_phase_logits = torch.cat(all_phase_logits, dim=0)
+        final_zs_phase_logits = torch.cat(all_zs_phase_logits, dim=0)
         final_phase_labels = torch.cat(all_phase_labels, dim=0)
         
         final_probs = torch.cat(all_probs, dim=0).to('cpu')
         metrics = multilabel_metrics(final_labels, final_probs)
         phase_metrics = cal_phase_metrics(final_phase_logits, final_phase_labels)
+        zs_phase_metrics = cal_zs_phase_metrics(final_zs_phase_logits, final_phase_labels)
         metrics.update(phase_metrics)
+        metrics.update(zs_phase_metrics)
 
         return metrics
     
@@ -251,13 +263,14 @@ class NegationMAF(nn.Module):
                 dataset: MultiLabelDatasetBase):
         templates = dataset.templates
         negated_templates = dataset.negated_templates
+        negated_templates_2 = dataset.negated_templates
         phase_templates = dataset.phase_templates
 
         wandb.init(
             project=f"negation-few-shot-{self.configs.model_config.type}",
             name=f"maf_batchsize{self.batch_size * self.accumulate_step}_lr{self.lr}_shot{self.configs.num_shots}_epoch{self.epochs}",
             config=self.configs,
-            mode="offline",
+            # mode="offline",
         )
 
         # test data preparations
@@ -324,6 +337,8 @@ class NegationMAF(nn.Module):
         
         wandb.log({"test_p_acc": test_metrics["phase_acc"], "epoch": 0})
         wandb.log({"test_p_f1": test_metrics["phase_f1"], "epoch": 0})
+        wandb.log({"test_zs_p_acc": test_metrics["zs_phase_acc"], "epoch": 0})
+        wandb.log({"test_zs_p_f1": test_metrics["zs_phase_f1"], "epoch": 0})
 
         val_metrics = self.get_metrics("val")
         val_map = val_metrics["mAP"]
@@ -335,6 +350,8 @@ class NegationMAF(nn.Module):
 
         wandb.log({"val_p_acc": val_metrics["phase_acc"], "epoch": 0})
         wandb.log({"val_p_f1": val_metrics["phase_f1"], "epoch": 0})
+        wandb.log({"val_zs_p_acc": val_metrics["zs_phase_acc"], "epoch": 0})
+        wandb.log({"val_zs_p_f1": val_metrics["zs_phase_f1"], "epoch": 0})
 
         for epoch in range(self.epochs):
             epoch_loss = 0.0
@@ -411,6 +428,8 @@ class NegationMAF(nn.Module):
 
             wandb.log({"val_p_acc": val_metrics["phase_acc"], "epoch": epoch+1})
             wandb.log({"val_p_f1": val_metrics["phase_f1"], "epoch": epoch+1})
+            wandb.log({"val_zs_p_acc": val_metrics["zs_phase_acc"], "epoch": 0})
+            wandb.log({"val_zs_p_f1": val_metrics["zs_phase_f1"], "epoch": 0})
 
             save_model = self.early_stopping(cur_val_map)
             if save_model:
@@ -433,6 +452,8 @@ class NegationMAF(nn.Module):
 
                 wandb.log({"test_p_acc": test_metrics["phase_acc"], "epoch": epoch+1})
                 wandb.log({"test_p_f1": test_metrics["phase_f1"], "epoch": epoch+1})
+                wandb.log({"test_zs_p_acc": test_metrics["zs_phase_acc"], "epoch": 0})
+                wandb.log({"test_zs_p_f1": test_metrics["zs_phase_f1"], "epoch": 0})
         
         test_metrics["clip_ad_alpha"] = self.alpha
         wandb.finish()

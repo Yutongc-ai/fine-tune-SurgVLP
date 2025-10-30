@@ -1,0 +1,8 @@
+timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,early_stop,annealling,lr,num_shots,tasks,epochs,unfreeze_vision,unfreeze_text,init_alpha,clip_ad_alpha,backbone
+2025-08-30 19:36:04,coop,0.1838,0.1428,0.1602,0.2086,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,1,5,50,False,False,NA,NA,PeskaVLP
+2025-09-11 19:21:25,coop,0.2131,0.1147,0.1455,0.2009,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,2,5,50,False,False,NA,NA,PeskaVLP
+2025-09-11 19:30:13,coop,0.1781,0.089,0.1104,0.2047,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,4,5,50,False,False,NA,NA,PeskaVLP
+2025-09-11 19:34:47,coop,0.1753,0.0447,0.0709,0.1976,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,8,5,50,False,False,NA,NA,PeskaVLP
+2025-08-30 19:49:05,coop,0.2991,0.0747,0.1191,0.2135,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,16,5,50,False,False,NA,NA,PeskaVLP
+2025-09-11 19:49:46,coop,0.4735,0.1855,0.259,0.2508,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,32,5,50,False,False,NA,NA,PeskaVLP
+2025-08-30 20:07:08,coop,0.5361,0.4745,0.5015,0.2878,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,64,5,50,False,False,NA,NA,PeskaVLP

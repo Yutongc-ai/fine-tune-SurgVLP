@@ -59,6 +59,49 @@ def cal_phase_metrics(logits: torch.Tensor, ground_truth: torch.Tensor, average_
         "phase_f1": f1,
     }
 
+def cal_zs_phase_metrics(logits: torch.Tensor, ground_truth: torch.Tensor, average_type: str = 'macro'):
+    """
+    计算多类别分类任务的准确率和 F1 分数。
+
+    Args:
+        logits (torch.Tensor): 形状为 [bs, num_class] 的模型输出 (未经 softmax 或已 softmax)。
+        ground_truth (torch.Tensor): 形状为 [bs, num_class] 的 one-hot 编码的真实标签。
+        average_type (str): F1 分数的平均类型。可以是 'micro', 'macro', 'weighted', 'None'。
+                            推荐 'weighted' 或 'macro'。
+
+    Returns:
+        tuple: (accuracy, f1)
+    """
+
+    # 1. 从 logits 获取预测的类别索引
+    # torch.argmax 默认在指定维度上返回最大值的索引
+    # dim=1 表示在每个样本的类别维度上找最大值
+    predicted_classes = torch.argmax(logits, dim=1)
+
+    # 2. 从 one-hot 编码的 ground_truth 获取真实的类别索引
+    # 同样，在类别维度上找 1 所在的位置
+    true_classes = torch.argmax(ground_truth, dim=1)
+
+    # 将 PyTorch 张量转换为 NumPy 数组，因为 sklearn.metrics 函数通常接受 NumPy 数组
+    predicted_classes_np = predicted_classes.cpu().numpy()
+    true_classes_np = true_classes.cpu().numpy()
+
+    # 3. 计算准确率
+    accuracy = accuracy_score(true_classes_np, predicted_classes_np)
+
+    # 4. 计算 F1 分数
+    # average 参数对于多分类 F1 非常重要
+    # - 'micro': 全局计算 TP, FP, FN，然后计算 F1。适用于类别不平衡的情况，但可能无法反映少数类的性能。
+    # - 'macro': 为每个类别计算 F1，然后取平均。所有类别权重相同。
+    # - 'weighted': 为每个类别计算 F1，然后按该类别在真实标签中的出现频率加权平均。推荐用于类别不平衡的情况。
+    # - 'None': 返回每个类别的 F1 分数数组。
+    f1 = f1_score(true_classes_np, predicted_classes_np, average=average_type)
+
+    return {
+        "zs_phase_acc" : accuracy,
+        "zs_phase_f1": f1,
+    }
+
 def multilabel_metrics(targets, probs, threshold = 0.5):
     preds = (probs > threshold).int()
 
@@ -109,7 +152,8 @@ def update_result_csv(
         "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         # "time_cost": 
         "method": method_name,
-        # "attn_pool": configs.get("attention_pooling", "NA"),
+        "random_select": metrics.get("random_select_avg", -1),
+        "train_test": metrics.get("train_test_avg", -1),
         "precision_avg": metrics.get("precision_avg", -1),
         "recall_avg": metrics.get("recall_avg", -1),
         "f1_avg": metrics.get("f1_avg", -1),
@@ -152,6 +196,7 @@ def aggregate_metrics(metrics_list: List[Dict], configs: Dict) -> Dict:
         "num_shots": configs.get("num_shots", -1),
         "tasks": str(configs.get("tasks", -1)),
         "epochs": configs.get("epochs", -1),
+
     }
     
     if not metrics_list:
@@ -183,7 +228,7 @@ def aggregate_metrics(metrics_list: List[Dict], configs: Dict) -> Dict:
             aggregated[f"{name}_std"] = round(float(np.std(values)), 4)
             aggregated[f"{name}_min"] = round(float(np.min(values)), 4)
             aggregated[f"{name}_max"] = round(float(np.max(values)), 4)
-    
+
     return aggregated
 
 class WarmupCosineAnnealing:

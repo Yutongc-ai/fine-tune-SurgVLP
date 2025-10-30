@@ -37,37 +37,48 @@ phase_templates = {
 
 all_labels_set = set([0, 1, 2, 3, 4, 5, 6])
 
-negated_templates = {
-    "Grasper" : "I did not use grasper",
-    "Bipolar" : "I did not use bipolar",
-    "Hook" : "I did not use hook",
-    "Scissors" : "I did not use scissors",
-    "Clipper" : "I did not use clipper",
-    "Irrigator" : "I did not use irrigator",
-    "SpecimenBag" : "I did not use specimenbag",
-}
+simple_templates = [
+    # do not
+    "I do not use {tool}",
+    "The surgeon is not using the {tool}"
+    # Without
+    "I operate without {tool}",
+    "I work without the {tool}",
+    # No / Not any
+    "I use no {tool}",
+    "There is no {tool} used",
+    "The {tool} is not used",
+    "The {tool} is not in use",
+]
 
-negated_templates_1 = {
-    "Grasper" : "I use grasper to coagulate and clean the bleeding",
-    "Bipolar" : "I use bipolar to dissect it",
-    "Hook" : "I use hook to clip it",
-    "Scissors" : "I use scissors to clip it",
-    "Clipper" : "I use clipper to suck it",
-    "Irrigator" : "I use irrigator to wrap it",
-    "SpecimenBag" : "I use specimenbag to cautery forcep to grasp it",
-}
+hard_templates = [
+    # Different Verbs
+    "I am avoiding the use of the {tool}",
+    "The procedure exclude the use of a {tool}",
+    "The toolkit lack a {tool}",
+    "The {tool} is missing from view",
+    "The {tool} is absent from the surgical field",
+]
 
-negated_templates_2 = {
-    "Grasper" : "I use bipolar to coagulate and clean the bleeding but I don't use grasper to cautery forcep to grasp it",
-    "Bipolar" : "I use hook to dissect it but I don't use bipolar to coagulate and clean the bleeding",
-    "Hook" : "I use scissors but I don't use hook to dissect it",
-    "Scissors" : "I use clipper to clip it but I don't use scissors",
-    "Clipper" : "I use irrigator to suck it but I don't use clipper to clip it",
-    "Irrigator" : "I use specimenbag to wrap it but I don't use irrigator to suck it",
-    "SpecimenBag" : "I use grasper to cautery forcep to grasp it but I don't use specimenbag to wrap it",
-}
+tools = [
+    "grasper",
+    "bipolar",
+    "hook",
+    "scissors",
+    "clipper",
+    "irrigator",
+    "specimenbag",
+]
 
-negated_templates_3 = "I use {} but I don't use {}"
+class_names_extend = [
+    "to cautery forcep to grasp it",
+    "to coagulate and clean the bleeding",
+    "to dissect it",
+    "to cut it",
+    "to clip it",
+    "to suck it",
+    "to wrap it"
+]
 
 class Cholec80(MultiLabelDatasetBase):
     def __init__(self, config):
@@ -84,9 +95,30 @@ class Cholec80(MultiLabelDatasetBase):
         test_video = [f"video{video_idx:02d}" for video_idx in range(61, 81)]
 
         self.templates = list(templates.values())
-        self.negated_templates = list(negated_templates.values())
-        self.negated_templates_1 = list(negated_templates_1.values())
-        self.negated_templates_2 = list(negated_templates_2.values())
+        self.all_templates = simple_templates # + hard_templates
+
+        test_templates = simple_templates
+        test_prompt = [
+            [template.format(tool = tool_name) for tool_name in tools]
+            for template in test_templates
+        ]
+        test_prompt = [
+            item for sublist in test_prompt for item in sublist
+        ]
+        self.test_prompt_simple = test_prompt
+
+        test_templates = hard_templates
+        test_prompt = [
+            [template.format(tool = tool_name) for tool_name in tools]
+            for template in test_templates
+        ]
+        test_prompt = [
+            item for sublist in test_prompt for item in sublist
+        ]
+        self.test_prompt_hard = test_prompt
+
+        self.tool_names = tools
+
         self.phase_templates = list(phase_templates.values())
 
         self.class_names = class_names

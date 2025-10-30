@@ -1,0 +1,8 @@
+timestamp,method,random_select,train_test,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,early_stop,annealling,lr,num_shots,tasks,epochs,unfreeze_vision,unfreeze_text,init_alpha,backbone
+2025-10-20 00:15:12,negation_mul_dist,1.0,1.0,0.3452,0.6889,0.4573,0.3252,-1,-1,-1,-1,-1,-1,-1,-1,64,10,True,0.01,1,5,50,False,False,NA,0.2,PeskaVLP
+2025-10-20 00:28:59,negation_mul_dist,1.0,1.0,0.3542,0.6724,0.4624,0.3419,-1,-1,-1,-1,-1,-1,-1,-1,64,10,True,0.01,2,5,50,False,False,NA,0.2,PeskaVLP
+2025-10-20 00:50:06,negation_mul_dist,1.0,1.0,0.4655,0.6649,0.5476,0.3445,-1,-1,-1,-1,-1,-1,-1,-1,64,10,True,0.01,4,5,50,False,False,NA,0.2,PeskaVLP
+2025-10-20 01:10:01,negation_mul_dist,1.0,1.0,0.5004,0.7706,0.6066,0.4187,-1,-1,-1,-1,-1,-1,-1,-1,64,10,True,0.01,8,5,50,False,False,NA,0.2,PeskaVLP
+2025-10-20 02:59:38,negation_mul_dist,1.0,1.0,0.5068,0.7831,0.6149,0.4371,-1,-1,-1,-1,-1,-1,-1,-1,64,10,True,0.01,16,5,50,False,False,NA,0.2,PeskaVLP
+2025-10-20 01:24:51,negation_mul_dist,1.0,1.0,0.5414,0.8159,0.6505,0.4649,-1,-1,-1,-1,-1,-1,-1,-1,64,10,True,0.01,32,5,50,False,False,NA,0.2,PeskaVLP
+2025-10-20 01:41:56,negation_mul_dist,1.0,1.0,0.5715,0.7969,0.665,0.5222,-1,-1,-1,-1,-1,-1,-1,-1,64,10,True,0.01,64,5,50,False,False,NA,0.2,PeskaVLP

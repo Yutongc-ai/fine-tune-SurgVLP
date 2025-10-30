@@ -379,3 +379,16 @@ class AsymmetricLoss(nn.Module):
         loss = - (los_pos + los_neg)
         return loss.mean()
 
+def neg_entropy_loss(attention_map, target):
+    """计算负熵损失，鼓励注意力图变得更弥散（高熵）。"""
+    epsilon = 1e-9
+    entropy = (attention_map * torch.log(attention_map + epsilon)).sum(dim=-1)
+    entropy = entropy * (1 - target)
+    return entropy.mean()
+
+def kl_divergence_loss(A_pos, A_neg, target):
+    """计算负KL散度，鼓励A_pos和A_neg的分布差异最大化。"""
+    epsilon = 1e-9
+    kl_div = (A_pos * (torch.log(A_pos + epsilon) - torch.log(A_neg + epsilon))).sum(dim=-1)
+    kl_div = kl_div * target
+    return (-kl_div).mean()

@@ -1,0 +1,8 @@
+timestamp,method,attn_pool,precision_avg,recall_avg,f1_avg,mAP_avg,batch_size,early_stop,annealling,lr,num_shots,tasks,epochs,unfreeze_vision,unfreeze_text,init_alpha,backbone
+2025-08-30 18:58:12,clip_adapter,0.226,0.7706,0.3493,0.2997,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,1,5,50,False,False,NA,0.5,PeskaVLP
+2025-09-11 18:39:14,clip_adapter,0.2155,0.7837,0.3381,0.2991,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,2,5,50,False,False,NA,0.5,PeskaVLP
+2025-09-11 18:41:51,clip_adapter,0.2209,0.7696,0.3433,0.2988,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,4,5,50,False,False,NA,0.5,PeskaVLP
+2025-09-11 18:44:53,clip_adapter,0.2185,0.7756,0.3408,0.2991,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,8,5,50,False,False,NA,0.5,PeskaVLP
+2025-08-30 19:01:37,clip_adapter,0.2158,0.7816,0.3382,0.2992,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,16,5,50,False,False,NA,0.5,PeskaVLP
+2025-09-11 18:50:25,clip_adapter,0.2129,0.7903,0.3355,0.2991,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,32,5,50,False,False,NA,0.5,PeskaVLP
+2025-08-30 19:11:02,clip_adapter,0.2144,0.7857,0.3369,0.2991,-1,-1,-1,-1,-1,-1,-1,-1,64,100,True,0.01,64,5,50,False,False,NA,0.5,PeskaVLP
