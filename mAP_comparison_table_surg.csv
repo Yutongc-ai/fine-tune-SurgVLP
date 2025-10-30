@@ -1,5 +1,0 @@
-﻿Method,Unfreeze,Backbone,1,16,64,128
-linear_probe,False,SurgVLP,0.21 (30),0.29 (30),0.34 (30),0.35 (30)
-linear_probe++,False,SurgVLP,0.28 (100),0.29 (100),0.30 (100),0.32 (100)
-bi_cross_attn_text,False,SurgVLP,0.22 (30),0.30 (30),0.34 (30),0.35 (30)
-negation_nce,False,SurgVLP,0.28 (50),0.30 (50),0.31 (50),0.32 (50)
